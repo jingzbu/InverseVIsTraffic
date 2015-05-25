@@ -1,18 +1,8 @@
 ## File that runs the entire cross-val analysis and dumps it for the traffic stuff
-type Arc
-	initNode::Int
-	termNode::Int 
-    capacity::Float64
-    freeflowtime::Float64
-    trueflow::Float64
-    obsflow::Float64
-end
 
-Arc(initNode::Int, termNode::Int, capacity::Float64,freeflowtime::Float64) = 
-    Arc(initNode, termNode, capacity, freeflowtime, 0., 0.)
 
-include("fitTraffic.jl")
-using PyPlot
+#include("fitTraffic.jl")
+#using PyPlot
 
 
 ############
@@ -96,7 +86,7 @@ for iRun = 1:numData
     end
     #solve using FW and record
     conv_tol, flow_data[:, iRun] = frank_wolfe(g, vArcs, demand_data, iRun)
-    println(conv_tol)
+    #println(conv_tol)
 end
 
 #Randomzie the flow data a little bit too
