@@ -1,1 +1,2 @@
-.pynb_checkpoints/*
+./.pynb_checkpoints/*
+*checkpoint.ipynb
