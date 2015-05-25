@@ -1,6 +1,6 @@
 type Arc
-	initNode::Int
-	termNode::Int 
+    initNode::Int 
+    termNode::Int 
     capacity::Float64
     freeflowtime::Float64
     trueflow::Float64
