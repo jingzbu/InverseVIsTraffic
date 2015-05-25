@@ -12,6 +12,8 @@ Arc(initNode::Int, termNode::Int, capacity::Float64,freeflowtime::Float64) =
     Arc(initNode, termNode, capacity, freeflowtime, 0., 0.)
 
 include("fitTraffic.jl")
+using PyPlot
+
 
 ############
 #Read in the demand file
@@ -69,7 +71,7 @@ assert( abs( tot_cost - test_cost) <= 1e-8 ) #note, these costs are not scaled b
 ##########
 #Generate the simulated data
 ##########
-numData = 20 ; sigma = .1
+numData = 1 ; sigma = .1
 flow_data = Array(Float64, length(arcs), numData)
 demand_data = Dict{(Int, Int), Array{Float64, 1}}()
 
@@ -82,7 +84,7 @@ for arc in values(arcs)
     push!(vArcs, arc)
 end
 
-srand(8675309)
+#srand(8675309)
 for iRun = 1:numData
     #perturb the demand_data
     for odpair in keys(demands)
