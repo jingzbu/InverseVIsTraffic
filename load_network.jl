@@ -44,6 +44,10 @@ function load_ta_network(network_name="Sioux Falls")
         network_data_file = "SiouxFalls_net.txt"
         trip_table_file = "SiouxFalls_trips.txt"
         best_objective = 4.231335287107440e6 #42.31335287107440
+    elseif network_name == "Sioux Falls simplified"
+        network_data_file = "SiouxFalls_net_simplified.txt"
+        trip_table_file = "SiouxFalls_trips_simplified.txt"
+        best_objective = 4.231335287107440e6 #42.31335287107440
     elseif network_name == "Barcelona"
         network_data_file = "Barcelona_net.txt"
         trip_table_file = "Barcelona_trips.txt"
