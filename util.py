@@ -57,3 +57,17 @@ class RoadSegInrCapac(RoadSegInr):
         self.AB_MD_capac = AB_MD_capac
         self.AB_PM_capac = AB_PM_capac
         self.AB_NT_capac = AB_NT_capac
+        
+# define a road link class
+class Link(object):
+    def __init__(self, init_node, term_node, AM_capac, MD_capac, \
+                 PM_capac, NT_capac, free_flow_time, \
+                 AM_flow, MD_flow, PM_flow, NT_flow):
+        self.MD_capac = MD_capac
+        self.PM_capac = PM_capac
+        self.NT_capac = NT_capac
+        self.free_flow_time = free_flow_time
+        self.AM_flow = AM_flow
+        self.MD_flow = MD_flow
+        self.PM_flow = PM_flow
+        self.NT_flow = NT_flow
