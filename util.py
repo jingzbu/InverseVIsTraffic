@@ -63,6 +63,8 @@ class Link(object):
     def __init__(self, init_node, term_node, AM_capac, MD_capac, \
                  PM_capac, NT_capac, free_flow_time, \
                  AM_flow, MD_flow, PM_flow, NT_flow):
+	self.init_node = init_node
+	self.term_node = term_node
         self.AM_capac = AM_capac
         self.MD_capac = MD_capac
         self.PM_capac = PM_capac
