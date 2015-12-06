@@ -20,7 +20,9 @@ class Link_with_Free_Flow_Time(Link):
 	Link.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
                       PM_capac, NT_capac, free_flow_time, \
                       AM_flow, MD_flow, PM_flow, NT_flow)
-        self.free_flow_time = sum([tmc_length_dict[i]/tmc_ref_speed_dict[i] for i in self.tmc_set])
+	# notice that the length is in meters, and the speed is in mph; we calculate the time in minutes
+        self.free_flow_time = sum([60 * 0.000621371 * tmc_length_dict[i]/tmc_ref_speed_dict[i] for i in self.tmc_set])
+
 
 
 
