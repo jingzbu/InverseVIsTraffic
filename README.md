@@ -9,12 +9,12 @@ The Julia code for solving the inverse Variational Inequality problem is based o
 INRIX real data processing
 ====
 
-Due to confidentiality of the data, currently the whole INRIX dataset can not be made publicly available.　When dealing with this dataset, 
+Due to confidentiality of the data, currently the whole INRIX dataset can not be made publicly available. When dealing with this dataset, 
 only Python is used.
 
 
 Author
-=============
+===
 Jing Zhang
 
 Jing Zhang currently is a PhD student in Division of Systems Engineering at Boston University, working with Professor [Yannis Paschalidis](http://sites.bu.edu/paschalidis/).
