@@ -4,12 +4,12 @@ tmc_list_link_1, tmc_list_link_2, tmc_list_link_3, tmc_list_link_4, tmc_list_lin
 	tmc_list_link_6, tmc_list_link_7, tmc_list_link_8, tmc_list_link_9, tmc_list_link_10, \
 	tmc_list_link_11, tmc_list_link_12, tmc_list_link_13, tmc_list_link_14, \
 	tmc_list_link_15, tmc_list_link_16, tmc_list_link_17, tmc_list_link_18, \
-	tmc_list_link_19, tmc_list_link_20, tmc_list_link_21, tmc_list_link_22 = zload('./temp_files/tmc_list_links.pkz')
+	tmc_list_link_19, tmc_list_link_20, tmc_list_link_21, tmc_list_link_22 = zload('../temp_files/tmc_list_links.pkz')
 
 tmc_capac_dict_AM, tmc_capac_dict_MD, tmc_capac_dict_PM, \
-    tmc_capac_dict_NT, tmc_length_dict = zload('./temp_files/link_dicts.pkz')
+    tmc_capac_dict_NT, tmc_length_dict = zload('../temp_files/link_dicts.pkz')
 
-tmc_ref_speed_dict = zload('./temp_files/tmc_ref_speed_dict.pkz')
+tmc_ref_speed_dict = zload('../temp_files/tmc_ref_speed_dict.pkz')
 
 
 # define a road link class that is a derived class of Link
@@ -451,4 +451,4 @@ zdump([link_1_1, link_1_2, link_2_1, link_2_2, link_3_1, link_3_2, \
 	link_13_1, link_13_2, link_14_1, link_14_2, link_15_1, link_15_2, \
 	link_16_1, link_16_2, link_17_1, link_17_2, link_18_1, link_18_2, \
 	link_19_1, link_19_2, link_20_1, link_20_2, link_21_1, link_21_2, \
-	link_22_1, link_22_2], './temp_files/links_with_capac.pkz')
+	link_22_1, link_22_2], '../temp_files/links_with_capac.pkz')
