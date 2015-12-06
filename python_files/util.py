@@ -24,6 +24,7 @@ def zload(f_name):
 ##### define classes
 
 # define a road segment class corresponding to the original filtered shape file
+# Inr indicates INRIX
 class RoadSegInr(object):
     def __init__(self, tmc, road_num, shape_length):
         self.tmc = tmc
