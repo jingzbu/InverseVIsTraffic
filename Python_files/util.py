@@ -20,6 +20,17 @@ def zload(f_name):
     f.close()
     return obj
 
+def dump(obj, f_name):
+    f = open(f_name,'wb', proto)
+    pickle.dump(obj,f)
+    f.close()
+
+def load(f_name):
+    f = open(f_name,'rb', proto)
+    obj = pickle.load(f)
+    f.close()
+    return obj
+
 
 ##### define classes
 
