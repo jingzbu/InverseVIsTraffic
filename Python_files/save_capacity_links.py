@@ -1,29 +1,5 @@
+from load_dicts import *
 from util import *
-
-tmc_list_link_1, tmc_list_link_2, tmc_list_link_3, tmc_list_link_4, tmc_list_link_5, \
-	tmc_list_link_6, tmc_list_link_7, tmc_list_link_8, tmc_list_link_9, tmc_list_link_10, \
-	tmc_list_link_11, tmc_list_link_12, tmc_list_link_13, tmc_list_link_14, \
-	tmc_list_link_15, tmc_list_link_16, tmc_list_link_17, tmc_list_link_18, \
-	tmc_list_link_19, tmc_list_link_20, tmc_list_link_21, tmc_list_link_22 = zload('../temp_files/tmc_list_links.pkz')
-
-tmc_capac_dict_AM, tmc_capac_dict_MD, tmc_capac_dict_PM, \
-    tmc_capac_dict_NT, tmc_length_dict = zload('../temp_files/link_dicts.pkz')
-
-tmc_ref_speed_dict = zload('../temp_files/tmc_ref_speed_dict.pkz')
-
-
-# define a road link class that is a derived class of Link
-class Link_with_Free_Flow_Time(Link):
-    def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-                 PM_capac, NT_capac, free_flow_time, \
-                 AM_flow, MD_flow, PM_flow, NT_flow):
-	Link.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-                      PM_capac, NT_capac, free_flow_time, \
-                      AM_flow, MD_flow, PM_flow, NT_flow)
-	# notice that the length is in meters, and the speed is in mph; we calculate the time in minutes
-        self.free_flow_time = sum([60 * 0.000621371 * tmc_length_dict[i]/tmc_ref_speed_dict[i] for i in self.tmc_set])
-
-
 
 
 tmc_set_link_1_1 = [i for i in tmc_list_link_1 if ('P' in i or '+' in i)]
