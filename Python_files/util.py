@@ -39,7 +39,11 @@ except ImportError:
 
 # define a function converting speed to flow, based on Greenshield's model
 def speed_to_flow(capac, ref_speed, speed):
-    return 4 * capac * speed / ref_speed - 4 * capac * (speed ** 2) / (ref_speed ** 2)
+    # assume the free speed equals 1.5 * ref_speed
+    free_speed = 1.5 * ref_speed
+    if speed > free_speed:
+	return 0
+    return 4 * capac * speed / free_speed - 4 * capac * (speed ** 2) / (free_speed ** 2)
 
 ##### define classes
 
@@ -78,6 +82,16 @@ class RoadSegInrCapac(RoadSegInr):
         self.AB_MD_capac = AB_MD_capac
         self.AB_PM_capac = AB_PM_capac
         self.AB_NT_capac = AB_NT_capac
+
+# define a class containing tmc, day, and average speed
+class TMC_Day_Speed(object):
+    def __init__(self, tmc, day, speed, travel_time):
+        self.tmc = tmc
+        self.day = day
+        self.speed = speed
+        self.travel_time = travel_time
+    def ave_speed(self):
+        return sum([self.speed[i] * self.travel_time[i] for i in range(len(self.speed))]) / sum(self.travel_time)
 
 # define a derived road segment class containing the flow info
 class RoadSegInrCapacFlow(RoadSegInrCapac):
@@ -127,7 +141,8 @@ class Link_with_Free_Flow_Time(Link):
                       PM_capac, NT_capac, free_flow_time, \
                       AM_flow, MD_flow, PM_flow, NT_flow)
 	# notice that the length is in meters, and the speed is in mph; we calculate the time in minutes
-        self.free_flow_time = sum([60 * 0.000621371 * tmc_length_dict[i]/tmc_ref_speed_dict[i] for i in self.tmc_set])
+	# assume free_speed = 1.5 * ref_speed
+        self.free_flow_time = sum([60 * 0.000621371 * tmc_length_dict[i] / (1.5 * tmc_ref_speed_dict[i]) for i in self.tmc_set])
 
 
 
