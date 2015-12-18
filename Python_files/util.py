@@ -86,8 +86,8 @@ class RoadSegInrCapacFlow(RoadSegInrCapac):
 # define a road link class
 class Link(object):
     def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-                 PM_capac, NT_capac, free_flow_time, \
-                 AM_flow, MD_flow, PM_flow, NT_flow):
+			PM_capac, NT_capac, free_flow_time, length, \
+			AM_flow, MD_flow, PM_flow, NT_flow):
 	self.init_node = init_node
         self.term_node = term_node
         self.tmc_set = tmc_set
@@ -96,6 +96,7 @@ class Link(object):
         self.PM_capac = PM_capac
         self.NT_capac = NT_capac
         self.free_flow_time = free_flow_time
+	self.length = length
         self.AM_flow = AM_flow
         self.MD_flow = MD_flow
         self.PM_flow = PM_flow
@@ -104,14 +105,15 @@ class Link(object):
 # define a road link class that is a derived class of Link
 class Link_with_Free_Flow_Time(Link):
     def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-                 PM_capac, NT_capac, free_flow_time, \
-                 AM_flow, MD_flow, PM_flow, NT_flow):
+			PM_capac, NT_capac, free_flow_time, length, \
+			AM_flow, MD_flow, PM_flow, NT_flow):
 	Link.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-                      PM_capac, NT_capac, free_flow_time, \
+                      PM_capac, NT_capac, free_flow_time, length, \
                       AM_flow, MD_flow, PM_flow, NT_flow)
 	# notice that the length is in meters, and the speed is in mph; we calculate the time in minutes
 	# assume free_speed = 1.5 * ref_speed
         self.free_flow_time = sum([60 * 0.000621371 * tmc_length_dict[i] / (1.5 * tmc_ref_speed_dict[i]) for i in self.tmc_set])
+	self.length = sum([tmc_length_dict[i] for i in self.tmc_set])
 
 
 
