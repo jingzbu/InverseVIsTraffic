@@ -165,3 +165,27 @@ class Link_with_Free_Flow_Time_Minute(Link_with_Free_Flow_Time):
 	self.PM_flow_minute = PM_flow_minute
 	self.NT_flow_minute = NT_flow_minute
 
+# define a road link class that is a derived class of Link, containing sensitivity analysis info 
+class Link_with_Sensitivity(Link_with_Free_Flow_Time):
+    def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+			PM_capac, NT_capac, free_flow_time, length, \
+			AM_flow, MD_flow, PM_flow, NT_flow, \
+			fcoeffs):
+	Link_with_Free_Flow_Time.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+                      PM_capac, NT_capac, free_flow_time, length, \
+                      AM_flow, MD_flow, PM_flow, NT_flow)
+    	self.fcoeffs = fcoeffs  # fcoeffs is the coefficients of the polynomial function g(.)
+    def DV_Dc_0a(self):
+	n = len(self.fcoeffs)
+	term_list = []
+	for i in range(n):
+	    term_list.append((1.0 / (i+1)) * self.fcoeffs[i] * (self.AM_flow / self.AM_capac) ** (i+1))
+	return self.AM_capac * sum(term_list)
+
+    def DV_Dm_a(self):
+	n = len(self.fcoeffs)
+	term_list = []
+	for i in range(n)[1:]:
+	    term_list.append((float(i) / (i+1)) * self.fcoeffs[i] * (self.AM_flow / self.AM_capac) ** (i+1))
+	# print(term_list)  # for debugging purpose only
+	return - self.free_flow_time * sum(term_list)
