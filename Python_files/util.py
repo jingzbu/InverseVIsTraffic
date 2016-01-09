@@ -14,6 +14,57 @@ def speed_to_flow(capac, ref_speed, speed):
 	return 0
     return 4 * capac * speed / free_speed - 4 * capac * (speed ** 2) / (free_speed ** 2)
 
+from gurobipy import *
+
+# define a function converting rough flow vector to feasible flow vector 
+# (satisfying flow conservation law)
+def flow_conservation_adjustment(y_0):
+
+    L = len(y_0)  # dimension of flow vector x
+    assert(L == 24)
+
+    # y_0 = x[:,1]  # initial flow vector
+
+
+    model = Model("Flow_conservation_adjustment")
+
+    y = []
+    for l in range(L):
+        y.append(model.addVar(name='y_' + str(l)))
+
+    model.update() 
+
+    # Set objective: ||y-y_0||^2
+    obj = 0
+    for l in range(L):
+        obj += (y[l] - y_0[l]) * (y[l] - y_0[l])
+    model.setObjective(obj)
+
+    # Add nonnegative constraint: y >= 0
+    for l in range(L):
+        model.addConstr(y[l] >= 0)
+    # Add flow conservation constraints
+    model.addConstr(y[1] + y[3] == y[0] + y[2])
+    model.addConstr(y[0] + y[5] + y[7] == y[1] + y[4] + y[6])
+    model.addConstr(y[2] + y[4] + y[9] + y[11] == y[3] + y[5] + y[8] + y[10])
+    model.addConstr(y[6] + y[13] + y[17] == y[7] + y[12] + y[16])
+    model.addConstr(y[8] + y[12] + y[15] + y[19] == y[9] + y[13] + y[14] + y[18])
+    model.addConstr(y[10] + y[14] + y[21] == y[11] + y[15] + y[20])
+    model.addConstr(y[18] + y[20] + y[23] == y[19] + y[21] + y[22])
+    model.addConstr(y[16] + y[22] == y[17] + y[23])
+
+    model.update() 
+
+    model.setParam('OutputFlag', False)
+    model.optimize()
+
+    y = []
+    for v in model.getVars():
+        # print('%s %g' % (v.varName, v.x))
+        y.append(v.x)
+    # print('Obj: %g' % obj.getValue())
+    return y
+
 ##### define classes
 
 # define a road segment class corresponding to the original filtered shape file
