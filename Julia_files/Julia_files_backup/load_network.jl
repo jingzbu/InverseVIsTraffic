@@ -43,24 +43,33 @@ function load_ta_network(network_name="Sioux Falls")
     if network_name == "Sioux Falls"
         network_data_file = "SiouxFalls_net.txt"
         trip_table_file = "SiouxFalls_trips.txt"
-        best_objective = 0
-    elseif network_name == "East Massachusetts"
-        network_data_file = "EastMassachusetts_net.txt"
-        trip_table_file = "EastMassachusetts_trips.txt"
-        best_objective = 0
+        best_objective = 4.231335287107440e6 #42.31335287107440
     elseif network_name == "Sioux Falls simplified"
         network_data_file = "SiouxFalls_net_simplified.txt"
         trip_table_file = "SiouxFalls_trips_simplified.txt"
-        best_objective = 0
+        best_objective = 4.231335287107440e6 #42.31335287107440
+    elseif network_name == "Barcelona"
+        network_data_file = "Barcelona_net.txt"
+        trip_table_file = "Barcelona_trips.txt"
+        best_objective = 1
+    elseif network_name =="Chicago Sketch"
+        network_data_file = "ChicagoSketch_net.txt"
+        trip_table_file = "ChicagoSketch_trips.txt"
+        best_objective = 1
+        toll_factor = 0.02
+        distance_factor = 0.04
+    elseif network_name == "Anaheim"
+        network_data_file = "Anaheim_net.txt"
+        trip_table_file = "Anaheim_trips.txt"
+        best_objective = 1
+    elseif network_name == "Winnipeg"
+        network_data_file = "Winnipeg_net.txt"
+        trip_table_file = "Winnipeg_trips.txt"
+        best_objective = 1
     end
 
-
-    network_data_file = joinpath("/home/jzh/Dropbox/Research/", 
-			"Data-driven_estimation_inverse_optimization/Experiments/InverseVIsTraffic/", 
-			"data_traffic_assignment", network_data_file)
-    trip_table_file = joinpath("/home/jzh/Dropbox/Research/", 
-			"Data-driven_estimation_inverse_optimization/Experiments/InverseVIsTraffic/", 
-			"data_traffic_assignment", trip_table_file)
+    network_data_file = joinpath("/home/jzh/Dropbox/Research/Data-driven_estimation_inverse_optimization/TrafficAssignment.jl", "data", network_data_file)
+    trip_table_file = joinpath("/home/jzh/Dropbox/Research/Data-driven_estimation_inverse_optimization/TrafficAssignment.jl", "data", trip_table_file)
 
 
 
