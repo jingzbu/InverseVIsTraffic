@@ -45,8 +45,8 @@ function load_ta_network(network_name="Sioux Falls")
         trip_table_file = "SiouxFalls_trips.txt"
         best_objective = 0
     elseif network_name == "East Massachusetts"
-        network_data_file = "EastMassachusetts_net.txt"
-        trip_table_file = "EastMassachusetts_trips.txt"
+        network_data_file = "East_Massachusetts_net.txt"
+        trip_table_file = "East_Massachusetts_trips.txt"
         best_objective = 0
     elseif network_name == "Sioux Falls simplified"
         network_data_file = "SiouxFalls_net_simplified.txt"
@@ -57,10 +57,10 @@ function load_ta_network(network_name="Sioux Falls")
 
     network_data_file = joinpath("/home/jzh/Dropbox/Research/", 
 			"Data-driven_estimation_inverse_optimization/Experiments/InverseVIsTraffic/", 
-			"data_traffic_assignment", network_data_file)
+			"data_traffic_assignment_uni-class", network_data_file)
     trip_table_file = joinpath("/home/jzh/Dropbox/Research/", 
 			"Data-driven_estimation_inverse_optimization/Experiments/InverseVIsTraffic/", 
-			"data_traffic_assignment", trip_table_file)
+			"data_traffic_assignment_uni-class", trip_table_file)
 
 
 
@@ -125,7 +125,7 @@ function load_ta_network(network_name="Sioux Falls")
             power[idx] = parsefloat(numbers[7])
             speed_limit[idx] = parsefloat(numbers[8])
             toll[idx] = parsefloat(numbers[9])
-            link_type[idx] = parseint(numbers[10])
+            link_type[idx] = parsefloat(numbers[10])
 
             idx = idx + 1
         end
@@ -151,7 +151,6 @@ function load_ta_network(network_name="Sioux Falls")
     end
 
     @assert number_of_zones_trip == number_of_zones # Check if number_of_zone is same in both txt files
-    @assert total_od_flow > 0
 
     travel_demand = zeros(number_of_zones, number_of_zones)
     od_pairs = Array((Int64,Int64),0)
