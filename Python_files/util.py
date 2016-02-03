@@ -8,8 +8,9 @@ except ImportError:
 
 # define a function converting speed to flow, based on Greenshield's model
 def speed_to_flow(capac, ref_speed, speed):
-    # assume the free speed equals 1.5 * ref_speed
-    free_speed = 1.5 * ref_speed
+    ## assume the free speed equals 1.5 * ref_speed
+    #free_speed = 1.5 * ref_speed
+    free_speed = ref_speed
     if speed > free_speed:
 	return 0
     return 4 * capac * speed / free_speed - 4 * capac * (speed ** 2) / (free_speed ** 2)
