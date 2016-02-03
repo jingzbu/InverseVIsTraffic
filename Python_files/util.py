@@ -8,8 +8,6 @@ except ImportError:
 
 # define a function converting speed to flow, based on Greenshield's model
 def speed_to_flow(capac, ref_speed, speed):
-    ## assume the free speed equals 1.5 * ref_speed
-    #free_speed = 1.5 * ref_speed
     free_speed = ref_speed
     if speed > free_speed:
 	return 0
@@ -126,15 +124,14 @@ class RoadSegInrCapacFlow(RoadSegInrCapac):
         self.MD_ave_speed = MD_ave_speed
         self.PM_ave_speed = PM_ave_speed
 	self.NT_ave_speed = NT_ave_speed
-    # introduce a rescaling factor 0.1 for capacity
     def AM_flow(self):
-	return speed_to_flow(0.1 * self.AB_AM_capac, tmc_ref_speed_dict[self.tmc], self.AM_ave_speed)
+	return speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict[self.tmc], self.AM_ave_speed)
     def MD_flow(self):
-	return speed_to_flow(0.1 * self.AB_MD_capac, tmc_ref_speed_dict[self.tmc], self.MD_ave_speed)
+	return speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict[self.tmc], self.MD_ave_speed)
     def PM_flow(self):
-	return speed_to_flow(0.1 * self.AB_PM_capac, tmc_ref_speed_dict[self.tmc], self.PM_ave_speed)
+	return speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict[self.tmc], self.PM_ave_speed)
     def NT_flow(self):
-	return speed_to_flow(0.1 * self.AB_NT_capac, tmc_ref_speed_dict[self.tmc], self.NT_ave_speed)
+	return speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict[self.tmc], self.NT_ave_speed)
 
 ## define a derived road segment class containing the "instaneous" flow (for each minute) info 
 ## for purpose of estimating the O-D demand matrix 
@@ -153,23 +150,22 @@ class RoadSegInrCapacFlowMinute(RoadSegInrCapacFlow):
     def AM_flow_minute(self):
 	AM_flow_minute_list = []
 	for i in range(len(self.AM_speed_minute)):
-	    # introduce a rescaling factor 0.1 for capacity
-	    AM_flow_minute_list.append(speed_to_flow(0.1 * self.AB_AM_capac, tmc_ref_speed_dict[self.tmc], self.AM_speed_minute[i]))
+	    AM_flow_minute_list.append(speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict[self.tmc], self.AM_speed_minute[i]))
 	return AM_flow_minute_list
     def MD_flow_minute(self):
 	MD_flow_minute_list = []
 	for i in range(len(self.MD_speed_minute)):
-	    MD_flow_minute_list.append(speed_to_flow(0.1 * self.AB_MD_capac, tmc_ref_speed_dict[self.tmc], self.MD_speed_minute[i]))
+	    MD_flow_minute_list.append(speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict[self.tmc], self.MD_speed_minute[i]))
 	return MD_flow_minute_list
     def PM_flow_minute(self):
 	PM_flow_minute_list = []
 	for i in range(len(self.PM_speed_minute)):
-	    PM_flow_minute_list.append(speed_to_flow(0.1 * self.AB_PM_capac, tmc_ref_speed_dict[self.tmc], self.PM_speed_minute[i]))
+	    PM_flow_minute_list.append(speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict[self.tmc], self.PM_speed_minute[i]))
 	return PM_flow_minute_list
     def NT_flow_minute(self):
 	NT_flow_minute_list = []
 	for i in range(len(self.NT_speed_minute)):
-	    NT_flow_minute_list.append(speed_to_flow(0.1 * self.AB_NT_capac, tmc_ref_speed_dict[self.tmc], self.NT_speed_minute[i]))
+	    NT_flow_minute_list.append(speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict[self.tmc], self.NT_speed_minute[i]))
 	return NT_flow_minute_list
 
 # define a road link class
@@ -200,8 +196,7 @@ class Link_with_Free_Flow_Time(Link):
                       PM_capac, NT_capac, free_flow_time, length, \
                       AM_flow, MD_flow, PM_flow, NT_flow)
 	# notice that the original length is in meters, and the speed is in mph; we calculate the time in hours
-	# assume free_speed = 1.5 * ref_speed
-        self.free_flow_time = sum([0.000621371 * tmc_length_dict[i] / (1.5 * tmc_ref_speed_dict[i]) for i in self.tmc_set])
+        self.free_flow_time = sum([0.000621371 * tmc_length_dict[i] / tmc_ref_speed_dict[i] for i in self.tmc_set])
 	self.length = 0.000621371 * sum([tmc_length_dict[i] for i in self.tmc_set])  # in miles
 
 # define a road link class that is a derived class of Link, containing "instaneous" flow (for each minute) info 
