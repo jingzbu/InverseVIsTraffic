@@ -45,83 +45,83 @@ function load_ta_network(network_name="Sioux Falls")
         trip_table_file = "SiouxFalls_trips.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Jan_AM"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Jan_AM.txt"
         trip_table_file = "East_Massachusetts_trips_Jan_AM.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Jan_MD"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Jan_MD.txt"
         trip_table_file = "East_Massachusetts_trips_Jan_MD.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Jan_PM"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Jan_PM.txt"
         trip_table_file = "East_Massachusetts_trips_Jan_PM.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Jan_NT"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Jan_NT.txt"
         trip_table_file = "East_Massachusetts_trips_Jan_NT.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Jan_weekend"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Jan_weekend.txt"
         trip_table_file = "East_Massachusetts_trips_Jan_weekend.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Apr_AM"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Apr_AM.txt"
         trip_table_file = "East_Massachusetts_trips_Apr_AM.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Apr_MD"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Apr_MD.txt"
         trip_table_file = "East_Massachusetts_trips_Apr_MD.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Apr_PM"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Apr_PM.txt"
         trip_table_file = "East_Massachusetts_trips_Apr_PM.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Apr_NT"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Apr_NT.txt"
         trip_table_file = "East_Massachusetts_trips_Apr_NT.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Apr_weekend"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Apr_weekend.txt"
         trip_table_file = "East_Massachusetts_trips_Apr_weekend.txt"
 	best_objective = 0
     elseif network_name == "East_Massachusetts_Jul_AM"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Jul_AM.txt"
         trip_table_file = "East_Massachusetts_trips_Jul_AM.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Jul_MD"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Jul_MD.txt"
         trip_table_file = "East_Massachusetts_trips_Jul_MD.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Jul_PM"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Jul_PM.txt"
         trip_table_file = "East_Massachusetts_trips_Jul_PM.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Jul_NT"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Jul_NT.txt"
         trip_table_file = "East_Massachusetts_trips_Jul_NT.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Jul_weekend"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Jul_weekend.txt"
         trip_table_file = "East_Massachusetts_trips_Jul_weekend.txt"
 	best_objective = 0
     elseif network_name == "East_Massachusetts_Oct_AM"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Oct_AM.txt"
         trip_table_file = "East_Massachusetts_trips_Oct_AM.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Oct_MD"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Oct_MD.txt"
         trip_table_file = "East_Massachusetts_trips_Oct_MD.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Oct_PM"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Oct_PM.txt"
         trip_table_file = "East_Massachusetts_trips_Oct_PM.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Oct_NT"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Oct_NT.txt"
         trip_table_file = "East_Massachusetts_trips_Oct_NT.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Oct_weekend"
-        network_data_file = "East_Massachusetts_net.txt"
+        network_data_file = "East_Massachusetts_net_Oct_weekend.txt"
         trip_table_file = "East_Massachusetts_trips_Oct_weekend.txt"
 	best_objective = 0
     elseif network_name == "Sioux Falls simplified"
