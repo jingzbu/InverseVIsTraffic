@@ -228,13 +228,13 @@ class Link_with_Sensitivity(Link_with_Free_Flow_Time):
 	n = len(self.fcoeffs)
 	term_list = []
 	for i in range(n):
-	    term_list.append((1.0 / (i+1)) * self.fcoeffs[i] * (self.AM_flow / self.AM_capac) ** (i+1))
-	return self.AM_capac * sum(term_list)
+	    term_list.append((1.0 / (i+1)) * self.fcoeffs[i] * (self.PM_flow / self.PM_capac) ** (i+1))
+	return self.PM_capac * sum(term_list)
 
     def DV_Dm_a(self):
 	n = len(self.fcoeffs)
 	term_list = []
 	for i in range(n)[1:]:
-	    term_list.append((float(i) / (i+1)) * self.fcoeffs[i] * (self.AM_flow / self.AM_capac) ** (i+1))
+	    term_list.append((float(i) / (i+1)) * self.fcoeffs[i] * (self.PM_flow / self.PM_capac) ** (i+1))
 	# print(term_list)  # for debugging purpose only
 	return - self.free_flow_time * sum(term_list)
