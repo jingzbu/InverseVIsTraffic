@@ -1,0 +1,5 @@
+digraph G {
+	A [label="historical data"]
+	B [label="empirical Probability Law &pi;"]
+		A -> B [label="statistical inference"]
+}

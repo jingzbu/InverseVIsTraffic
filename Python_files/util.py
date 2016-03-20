@@ -13,6 +13,32 @@ def speed_to_flow(capac, ref_speed, speed):
 	return 0
     return 4 * capac * speed / free_speed - 4 * capac * (speed ** 2) / (free_speed ** 2)
 
+# obtain the number of days plus 1 for each month
+def days(month):
+    if month == 1:
+        return 32
+    elif month == 4:
+        return 31
+    elif month == 7:
+        return 32
+    elif month == 10:
+        return 32
+    else:
+        raise IOError("Invalid input; please input another month.")
+
+# convert the month number to string
+def month_to_str(month):
+    if month == 1:
+        return 'Jan'
+    elif month == 4:
+        return 'Apr'
+    elif month == 7:
+        return 'Jul'
+    elif month == 10:
+        return 'Oct'
+    else:
+        raise IOError("Invalid input; please input another month.")
+
 from gurobipy import *
 
 # define a function converting rough flow vector to feasible flow vector 
