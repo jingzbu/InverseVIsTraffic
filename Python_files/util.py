@@ -83,7 +83,6 @@ def GLS(x, A, P, L):
     Q = np.dot(np.dot(PA_t, inv_S), AP_t)
     b = sum([np.dot(np.dot(PA_t, inv_S), x[:, k]) for k in range(K)])
 
-
     model = Model("OD_matrix_estimation")
 
     lam = []
@@ -107,24 +106,23 @@ def GLS(x, A, P, L):
 
     model.update() 
 
+    model.setParam('OutputFlag', False)
     model.optimize()
 
     lam_list = []
     for v in model.getVars():
-        print('%s %g' % (v.varName, v.x))
+        # print('%s %g' % (v.varName, v.x))
         lam_list.append(v.x)
-    print('Obj: %g' % obj.getValue())
+    # print('Obj: %g' % obj.getValue())
     return lam_list
 
 # define a function converting rough flow vector to feasible flow vector 
 # (satisfying flow conservation law)
 def flow_conservation_adjustment(y_0):
-
     L = len(y_0)  # dimension of flow vector x
     assert(L == 24)
 
     # y_0 = x[:,1]  # initial flow vector
-
 
     model = Model("Flow_conservation_adjustment")
 

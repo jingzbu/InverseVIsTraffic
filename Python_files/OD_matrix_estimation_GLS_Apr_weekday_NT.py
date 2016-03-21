@@ -15,7 +15,7 @@ import json
 # load logit_route_choice_probability_matrix
 P = zload('../temp_files/logit_route_choice_probability_matrix.pkz')
 P = np.matrix(P)
-print(np.size(P,0), np.size(P,1))
+# print(np.size(P,0), np.size(P,1))
 
 # load path-link incidence matrix
 A = zload('../temp_files/path-link_incidence_matrix.pkz')
@@ -33,7 +33,7 @@ for link_idx in range(24):
             key = 'link_' + str(link_idx) + '_' + str(day)
             link_day_minute_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['NT_flow_minute'][minute_idx])
 
-print(len(link_day_minute_Apr_list))
+# print(len(link_day_minute_Apr_list))
 
 x = np.matrix(link_day_minute_Apr_list)
 x = np.matrix.reshape(x, 24, 2520)
@@ -44,9 +44,9 @@ y = y[np.all(y != 0, axis=1)]
 x = np.transpose(y)
 x = np.matrix(x)
 
-print(np.size(x,0), np.size(x,1))
-print(x[:,:2])
-print(np.size(A,0), np.size(A,1))
+# print(np.size(x,0), np.size(x,1))
+# print(x[:,:2])
+# print(np.size(A,0), np.size(A,1))
 
 L = 56  # dimension of lam
 
