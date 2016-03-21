@@ -1,4 +1,7 @@
 from util_data_storage_and_load import *
+import numpy as np
+from numpy.linalg import inv
+from gurobipy import *
 
 
 try:
@@ -39,7 +42,79 @@ def month_to_str(month):
     else:
         raise IOError("Invalid input; please input another month.")
 
-from gurobipy import *
+# compute sample covariance matrix S for estimating OD demand matrix
+def samp_cov(x):
+    """
+    x: sample matrix, each column is a link flow vector sample; 24 * K
+    K: number of samples
+    S: sample covariance matrix
+    ----------------
+    return: S
+    ----------------
+    """
+    x = np.matrix(x)
+    K = np.size(x, 1)
+    x_mean = sum(x[:,k] for k in range(K)) / K
+    S = sum(np.dot(x[:,k] - x_mean, np.transpose(x[:,k] - x_mean)) for k in range(K)) / (K - 1)
+    return S
+
+# implement GLS method to estimate OD demand matrix
+def GLS(x, A, P, L):
+    """
+    x: sample matrix, each column is a link flow vector sample; 24 * K
+    A: path-link incidence matrix
+    P: logit route choice probability matrix
+    L: dimension of lam
+    ----------------
+    return: lam
+    ----------------
+    """
+    K = np.size(x, 1)
+    S = samp_cov(x)
+    inv_S = inv(S)
+
+    A_t = np.transpose(A)
+    P_t = np.transpose(P)
+    # PA'
+    PA_t = np.dot(P, A_t)
+    # AP_t
+    AP_t = np.transpose(PA_t)
+
+    Q = np.dot(np.dot(PA_t, inv_S), AP_t)
+    b = sum([np.dot(np.dot(PA_t, inv_S), x[:, k]) for k in range(K)])
+
+
+    model = Model("OD_matrix_estimation")
+
+    lam = []
+    for l in range(L):
+        lam.append(model.addVar(name='lam_' + str(l)))
+
+    model.update() 
+
+    # Set objective: (K/2) lam' * Q * lam - b' * lam
+    obj = 0
+    for i in range(L):
+        for j in range(L):
+            obj += (1.0 /2) * K * lam[i] * Q[i, j] * lam[j]
+    for l in range(L):
+        obj += - b[l] * lam[l]
+    model.setObjective(obj)
+
+    # Add constraint: lam >= 0
+    for l in range(L):
+        model.addConstr(lam[l] >= 0)
+
+    model.update() 
+
+    model.optimize()
+
+    lam_list = []
+    for v in model.getVars():
+        print('%s %g' % (v.varName, v.x))
+        lam_list.append(v.x)
+    print('Obj: %g' % obj.getValue())
+    return lam_list
 
 # define a function converting rough flow vector to feasible flow vector 
 # (satisfying flow conservation law)
