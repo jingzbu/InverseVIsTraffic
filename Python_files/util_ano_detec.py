@@ -118,6 +118,27 @@ def plot_points(X, Y, threshold=None,  pic_show=False,
     if pic_show: plt.show()
 ###########################################################################################################
 
+def quantize(x, n, inf, sup):
+    """
+    x: the input data (scalar)
+    n: quantization level
+    inf: the lower bound of the input data x
+    sup: the upper bound of the input data x
+    -------------------
+    Example:
+    >>> quantize(4, 3, 2, 8)
+    >>> 1
+    >>> quantize(6.9, 3, 2, 8)
+    >>> 2
+    """
+    if (x < inf):
+        return 0
+    elif (x >= sup):
+        return (n-1)
+    else:
+        lev_length = (sup - inf) / float(n)
+        return int(np.floor((x - inf) / lev_length))
+
 def rand_x(p):
     """
     Generate a random variable in 0, 1, ..., (N-1) given a distribution vector p
