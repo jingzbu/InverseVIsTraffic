@@ -12,6 +12,7 @@ from util import *
 from util_ano_detec import *
 from load_dicts import *
 
+
 def detec_stati(N, n):
     """
     N: number of states in the original chain
