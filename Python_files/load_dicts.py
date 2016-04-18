@@ -8,3 +8,6 @@ tmc_capac_dict_AM, tmc_capac_dict_MD, tmc_capac_dict_PM, \
     tmc_capac_dict_NT, tmc_length_dict = zload('../temp_files/link_dicts.pkz')
 
 tmc_ref_speed_dict = zload('../temp_files/tmc_ref_speed_dict.pkz')
+
+##### for extended sup-map
+tmc_list_ext_link_dict = zload('../temp_files/tmc_list_ext_links_dict.pkz')

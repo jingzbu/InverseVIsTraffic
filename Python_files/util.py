@@ -185,6 +185,19 @@ class RoadSegCapac(object):
         self.AB_PM_capac = AB_PM_capac
         self.AB_NT_capac = AB_NT_capac
 
+# define a derived road segment capacity class corresponding to the capacity file
+# with info of "number of lanes"
+class RoadSegCapacLane(RoadSegCapac):
+    def __init__(self, road_invent, length, route_num, AB_AM_capac, \
+                 AB_MD_capac, AB_PM_capac, AB_NT_capac, AB_AM_lane, \
+		 AB_MD_lane, AB_PM_lane, AB_NT_lane):
+	RoadSegCapac.__init__(self, road_invent, length, route_num, AB_AM_capac, \
+                 AB_MD_capac, AB_PM_capac, AB_NT_capac)
+        self.AB_AM_lane = AB_AM_lane
+        self.AB_MD_lane = AB_MD_lane
+        self.AB_PM_lane = AB_PM_lane
+        self.AB_NT_lane = AB_NT_lane
+
 # define a lookup class corresponding to the lookup table file
 class LookUp(object):
     def __init__(self, road_inv_ID, tmc):
