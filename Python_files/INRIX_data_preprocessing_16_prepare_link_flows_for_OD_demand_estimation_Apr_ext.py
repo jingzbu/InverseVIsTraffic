@@ -157,7 +157,8 @@ for day in range(31)[1:]:
 print(link_day_minute_Apr_dict['link_0_10'].PM_flow_minute[0:10])
 
 link_day_minute_Apr_dict_ext_JSON = {}
-for link_idx in range(24):
+num_links = len(link_with_capac_list)
+for link_idx in range(num_links):
     for day in range(31)[1:]:   
         key = 'link_' + str(link_idx) + '_' + str(day)
         data = {'link_idx': link_idx, 'day': day, \
