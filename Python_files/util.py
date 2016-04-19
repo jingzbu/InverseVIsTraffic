@@ -5,14 +5,14 @@ from gurobipy import *
 
 
 try:
-    from load_dicts import tmc_length_dict, tmc_ref_speed_dict
+    from load_dicts import tmc_length_dict, tmc_ref_speed_dict, tmc_length_dict_ext, tmc_ref_speed_dict_ext
 except ImportError:
     print "No dicts found; please check load_dicts..."
 
 # define a function converting speed to flow, based on Greenshield's model
 def speed_to_flow(capac, ref_speed, speed):
     free_speed = ref_speed
-    if speed > free_speed:
+    if speed > free_speed or capac < 0:
 	return 0
     return 4 * capac * speed / free_speed - 4 * capac * (speed ** 2) / (free_speed ** 2)
 
@@ -245,6 +245,27 @@ class RoadSegInrCapacFlow(RoadSegInrCapac):
     def NT_flow(self):
 	return speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict[self.tmc], self.NT_ave_speed)
 
+# define a derived road segment class containing the average flow info, for the extended map
+class RoadSegInrCapacFlowExt(RoadSegInrCapac):
+    def __init__(self, tmc, road_num, shape_length, day,
+		 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+		 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed):
+        RoadSegInrCapac.__init__(self, tmc, road_num, shape_length, \
+				 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac)
+        self.day = day
+        self.AM_ave_speed = AM_ave_speed
+        self.MD_ave_speed = MD_ave_speed
+        self.PM_ave_speed = PM_ave_speed
+	self.NT_ave_speed = NT_ave_speed
+    def AM_flow(self):
+	return speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict_ext[self.tmc], self.AM_ave_speed)
+    def MD_flow(self):
+	return speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict_ext[self.tmc], self.MD_ave_speed)
+    def PM_flow(self):
+	return speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict_ext[self.tmc], self.PM_ave_speed)
+    def NT_flow(self):
+	return speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_ext[self.tmc], self.NT_ave_speed)
+
 ## define a derived road segment class containing the "instaneous" flow (for each minute) info 
 ## for purpose of estimating the O-D demand matrix 
 class RoadSegInrCapacFlowMinute(RoadSegInrCapacFlow):
@@ -310,6 +331,18 @@ class Link_with_Free_Flow_Time(Link):
 	# notice that the original length is in meters, and the speed is in mph; we calculate the time in hours
         self.free_flow_time = sum([0.000621371 * tmc_length_dict[i] / tmc_ref_speed_dict[i] for i in self.tmc_set])
 	self.length = 0.000621371 * sum([tmc_length_dict[i] for i in self.tmc_set])  # in miles
+
+# define a road link class that is a derived class of Link, for the extended map
+class Link_with_Free_Flow_Time_Ext(Link):
+    def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+			PM_capac, NT_capac, free_flow_time, length, \
+			AM_flow, MD_flow, PM_flow, NT_flow):
+	Link.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+                      PM_capac, NT_capac, free_flow_time, length, \
+                      AM_flow, MD_flow, PM_flow, NT_flow)
+	# notice that the original length is in meters, and the speed is in mph; we calculate the time in hours
+        self.free_flow_time = sum([0.000621371 * tmc_length_dict_ext[i] / tmc_ref_speed_dict_ext[i] for i in self.tmc_set])
+	self.length = 0.000621371 * sum([tmc_length_dict_ext[i] for i in self.tmc_set])  # in miles
 
 # define a road link class that is a derived class of Link, containing "instaneous" flow (for each minute) info 
 class Link_with_Free_Flow_Time_Minute(Link_with_Free_Flow_Time):

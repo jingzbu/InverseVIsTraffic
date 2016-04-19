@@ -11,3 +11,8 @@ tmc_ref_speed_dict = zload('../temp_files/tmc_ref_speed_dict.pkz')
 
 ##### for extended sup-map
 tmc_list_ext_link_dict = zload('../temp_files/tmc_list_ext_links_dict.pkz')
+
+tmc_ref_speed_dict_ext = zload('../temp_files/tmc_ref_speed_dict_ext.pkz')
+
+tmc_capac_dict_AM_ext, tmc_capac_dict_MD_ext, tmc_capac_dict_PM_ext, \
+    tmc_capac_dict_NT_ext, tmc_length_dict_ext = zload('../temp_files/link_dicts_ext.pkz')
