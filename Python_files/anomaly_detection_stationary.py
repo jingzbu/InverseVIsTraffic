@@ -82,7 +82,7 @@ def detec_stati(N, n):
     H_list = [H_11]
     U_list = [U_11]
     eta_1 = HoeffdingRuleMarkovRobust_(beta, G_list, H_list, U_list, n)
-    eta_2 =  - log(beta) / n
+    eta_2 = - log(beta) / n
     eta_wc[key] = eta_1
     eta_Sanov[key] = eta_2
     zdump([eta_wc, eta_Sanov], '../temp_files/traffic_ano_detec_threshold_(%s_%s).pkz'%(N,n))
@@ -106,6 +106,12 @@ def detec_stati(N, n):
         KL.append(KL_est(test_sample[idx], mu_11))
 
     zdump(KL, '../temp_files/traffic_ano_detec_KL_(%s_%s).pkz'%(N,n))
+
+    # Report the earliest time instance detecting the anomaly 
+    for idx in range(num_test_sample):
+	if KL[idx] > eta_wc_list[idx]:
+	    print('The earliest time instance detecting the anomaly is: %s' %(idx))
+	    break
 
     plot_points(time_range, KL, eta_wc_list)
     plt.ylabel('divergence')
