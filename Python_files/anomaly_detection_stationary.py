@@ -12,6 +12,9 @@ from util import *
 from util_ano_detec import *
 from load_dicts import *
 
+import pylab
+from pylab import *
+
 
 def detec_stati(N, n):
     """
@@ -24,7 +27,7 @@ def detec_stati(N, n):
 
     tmc = '129-04138'
     month = 1
-    day_list = [2, 3, 4, 5, 6]
+    day_list = [2, 3, 4, 5, 9, 10, 11]
 
     traffic_data_ref_list = []
     for hour in range(24):
@@ -48,7 +51,7 @@ def detec_stati(N, n):
                                                            traffic_data_ref_list_quantized[i+1])] \
                                              for i in range(len(traffic_data_ref_list_quantized)-1)]
 
-    day = 9
+    day = 12
 
     traffic_data_with_anomaly_list = []
     for hour in range(24):
@@ -110,17 +113,26 @@ def detec_stati(N, n):
     # Report the earliest time instance detecting the anomaly 
     for idx in range(num_test_sample):
 	if KL[idx] > eta_wc_list[idx]:
-	    print('The earliest time instance detecting the anomaly is: %s' %(idx + n))
+	    print('(WC-robust) The earliest time instance detecting the anomaly is: %s' %(idx + n))
+	    break
+
+    for idx in range(num_test_sample):
+	if KL[idx] > eta_Sanov_list[idx]:
+	    print('(Sanov-robust) The earliest time instance detecting the anomaly is: %s' %(idx + n))
 	    break
 
     plot_points(time_range, KL, eta_wc_list)
     plt.ylabel('divergence')
     plt.xlabel('time (min)')
+    pylab.ylim(-0.01, max(KL)+0.1)
+    pylab.xlim(0, 24 * 60)
     plt.savefig('../temp_files/detec_results_(%s_%s)_WC.eps'%(N,n))
     # plt.show()
 
     plot_points(time_range, KL, eta_Sanov_list)
     plt.ylabel('divergence')
     plt.xlabel('time (min)')
+    pylab.ylim(-0.01, max(KL)+0.1)
+    pylab.xlim(0, 24 * 60)
     plt.savefig('../temp_files/detec_results_(%s_%s)_Sanov.eps'%(N,n))
     # plt.show()

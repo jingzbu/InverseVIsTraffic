@@ -12,6 +12,9 @@ from util import *
 from util_ano_detec import *
 from load_dicts import *
 
+import pylab
+from pylab import *
+
 
 def detec_robu(N, n):
     """
@@ -30,8 +33,7 @@ def detec_robu(N, n):
 
     tmc = '129-04138'
     month = 1
-    # day_list = [2, 3, 4, 5, 6]
-    day_list = [2]
+    day_list = [2, 3, 4, 5, 9, 10, 11]
 
     # extract reference traffic data for AM period
     traffic_data_ref_AM_list = []
@@ -93,7 +95,7 @@ def detec_robu(N, n):
                                                            traffic_data_ref_NT_list_quantized[i+1])] \
                                              for i in range(len(traffic_data_ref_NT_list_quantized)-1)]
 
-    day = 9
+    day = 12
 
     traffic_data_with_anomaly_list = []
     for hour in range(24):
@@ -142,7 +144,7 @@ def detec_robu(N, n):
     H_list = [H_11, H_12, H_13, H_14]
     U_list = [U_11, U_12, U_13, U_14]
     eta_1 = HoeffdingRuleMarkovRobust_(beta, G_list, H_list, U_list, n)
-    eta_2 =  - log(beta) / n
+    eta_2 = - log(beta) / n
     eta_wc[key] = eta_1
     eta_Sanov[key] = eta_2
     zdump([eta_wc, eta_Sanov], '../temp_files/traffic_ano_detec_threshold_(%s_%s)_robust.pkz'%(N,n))
@@ -169,16 +171,34 @@ def detec_robu(N, n):
         KL_est_ = min([KL_est_1, KL_est_2, KL_est_3, KL_est_4])
         KL.append(KL_est_)
 
+    # print(KL)
+    # assert(1 == 2)
+
     zdump(KL, '../temp_files/traffic_ano_detec_KL_(%s_%s)_robust.pkz'%(N,n))
+
+    # Report the earliest time instance detecting the anomaly 
+    for idx in range(num_test_sample):
+	if KL[idx] > eta_wc_list[idx]:
+	    print('(WC-robust) The earliest time instance detecting the anomaly is: %s' %(idx + n))
+	    break
+
+    for idx in range(num_test_sample):
+	if KL[idx] > eta_Sanov_list[idx]:
+	    print('(Sanov-robust) The earliest time instance detecting the anomaly is: %s' %(idx + n))
+	    break
 
     plot_points(time_range, KL, eta_wc_list)
     plt.ylabel('divergence')
     plt.xlabel('time (min)')
+    pylab.ylim(-0.01, max(KL)+0.1)
+    pylab.xlim(0, 24 * 60)
     plt.savefig('../temp_files/detec_results_(%s_%s)_WC_robust.eps'%(N,n))
     # plt.show()
 
     plot_points(time_range, KL, eta_Sanov_list)
     plt.ylabel('divergence')
     plt.xlabel('time (min)')
+    pylab.ylim(-0.01, max(KL)+0.1)
+    pylab.xlim(0, 24 * 60)
     plt.savefig('../temp_files/detec_results_(%s_%s)_Sanov_robust.eps'%(N,n))
     # plt.show()
