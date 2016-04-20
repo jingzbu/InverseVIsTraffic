@@ -110,7 +110,7 @@ def detec_stati(N, n):
     # Report the earliest time instance detecting the anomaly 
     for idx in range(num_test_sample):
 	if KL[idx] > eta_wc_list[idx]:
-	    print('The earliest time instance detecting the anomaly is: %s' %(idx))
+	    print('The earliest time instance detecting the anomaly is: %s' %(idx + n))
 	    break
 
     plot_points(time_range, KL, eta_wc_list)
