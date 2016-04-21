@@ -14,6 +14,7 @@ from load_dicts import *
 
 import pylab
 from pylab import *
+import json
 
 
 def detec_stati(N, n):
@@ -22,12 +23,12 @@ def detec_stati(N, n):
     n: num of samples per window
     """
     
-    traffic_data_with_anomaly = zload('../temp_files/traffic_data_with_anomaly.pkz')
-    traffic_data_ref = zload('../temp_files/traffic_data_ref.pkz')
+    traffic_data_with_anomaly = zload('../temp_files/traffic_data_with_anomaly_actual.pkz')
+    traffic_data_ref = zload('../temp_files/traffic_data_ref_actual.pkz')
 
-    tmc = '129-04138'
-    month = 1
-    day_list = [2, 3, 4, 5, 9, 10, 11]
+    tmc = '129+04292'
+    month = 7
+    day_list = [2, 3, 5, 9, 10, 11, 12, 16, 17, 18]  # July 4 is a holiday; we do not include Fridays
 
     traffic_data_ref_list = []
     for hour in range(24):
@@ -51,7 +52,7 @@ def detec_stati(N, n):
                                                            traffic_data_ref_list_quantized[i+1])] \
                                              for i in range(len(traffic_data_ref_list_quantized)-1)]
 
-    day = 12
+    day = 19
 
     traffic_data_with_anomaly_list = []
     for hour in range(24):
@@ -71,7 +72,7 @@ def detec_stati(N, n):
     mu_1 = mu_adjust(mu_1)  # normal PL
     mu_01, mu1, mu_11, P1, G_11, H_11, U_11 = ChainGen_(mu_1)
 
-    zdump([mu1, mu_11, P1, G_11, H_11, U_11], '../temp_files/Traffic_ano_detec_PLs_(%s_%s).pkz'%(N,n))
+    zdump([mu1, mu_11, P1, G_11, H_11, U_11], '../temp_files/Traffic_ano_detec_PLs_(%s_%s)_actual.pkz'%(N,n))
 
     num_test_sample = 24 * 60 - n
     beta = 0.001
@@ -88,7 +89,7 @@ def detec_stati(N, n):
     eta_2 = - log(beta) / n
     eta_wc[key] = eta_1
     eta_Sanov[key] = eta_2
-    zdump([eta_wc, eta_Sanov], '../temp_files/traffic_ano_detec_threshold_(%s_%s).pkz'%(N,n))
+    zdump([eta_wc, eta_Sanov], '../temp_files/traffic_ano_detec_threshold_(%s_%s)_actual.pkz'%(N,n))
 
     time_range = range(num_test_sample)
 
@@ -108,25 +109,35 @@ def detec_stati(N, n):
     for idx in range(num_test_sample):
         KL.append(KL_est(test_sample[idx], mu_11))
 
-    zdump(KL, '../temp_files/traffic_ano_detec_KL_(%s_%s).pkz'%(N,n))
+    zdump(KL, '../temp_files/traffic_ano_detec_KL_(%s_%s)_actual.pkz'%(N,n))
 
-    # Report the earliest time instance detecting the anomaly 
+    # Output the time instances reporting an anomaly  
+    alarm_instance_WC_list = []
     for idx in range(num_test_sample):
 	if KL[idx] > eta_wc_list[idx]:
-	    print('(WC-stationary) The earliest time instance detecting the anomaly is: %s' %(idx + n))
-	    break
+	    # print('(WC-stationary) The earliest time instance detecting the anomaly is: %s' %(idx + n))
+	    # break
+	    alarm_instance_WC_list.append(idx + n)
 
+    alarm_instance_Sanov_list = []
     for idx in range(num_test_sample):
 	if KL[idx] > eta_Sanov_list[idx]:
-	    print('(Sanov-stationary) The earliest time instance detecting the anomaly is: %s' %(idx + n))
-	    break
+	    # print('(Sanov-stationary) The earliest time instance detecting the anomaly is: %s' %(idx + n))
+	    # break
+	    alarm_instance_Sanov_list.append(idx + n)
+
+    alarm_instance_dict = {}
+    alarm_instance_dict['WC'] = alarm_instance_WC_list
+    alarm_instance_dict['Sanov'] = alarm_instance_Sanov_list
+    with open('../temp_files/alarm_instance_dict_stationary_(%s_%s).json'%(N,n), 'w') as json_file:
+	json.dump(alarm_instance_dict, json_file)
 
     plot_points(time_range, KL, eta_wc_list)
     plt.ylabel('divergence')
     plt.xlabel('time (min)')
     pylab.ylim(-0.01, max(KL)+0.1)
     pylab.xlim(0, 24 * 60)
-    plt.savefig('../temp_files/detec_results_(%s_%s)_WC.eps'%(N,n))
+    plt.savefig('../temp_files/detec_results_(%s_%s)_WC_actual.eps'%(N,n))
     # plt.show()
 
     plot_points(time_range, KL, eta_Sanov_list)
@@ -134,5 +145,5 @@ def detec_stati(N, n):
     plt.xlabel('time (min)')
     pylab.ylim(-0.01, max(KL)+0.1)
     pylab.xlim(0, 24 * 60)
-    plt.savefig('../temp_files/detec_results_(%s_%s)_Sanov.eps'%(N,n))
+    plt.savefig('../temp_files/detec_results_(%s_%s)_Sanov_actual.eps'%(N,n))
     # plt.show()
