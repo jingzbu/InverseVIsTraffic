@@ -18,7 +18,7 @@ link_length_dict = zload('../temp_files/link_length_dict_ext.pkz')
 # number of links
 m = 64
 # number of routes (obtained by counting the rows with '->' in 'path-link_incidence.txt')
-r = 2462
+r = 58390
 
 # number of O-D pairs
 s = 17 * (17 - 1)
@@ -111,7 +111,14 @@ for i in range(s):
                          for j in OD_pair_route_dict[str(i)]])
 zdump(P, '../temp_files/logit_route_choice_probability_matrix_ext.pkz')
 
-# P[2, 3], P[2, 4], P[2, 5]
+# print(A[0, :])
+# print(sum(A[0, :]))
+# print(np.size(A, 0))
+# print(np.size(A, 1))
+# print(sum(A[:, 0]))
+# print(sum(A[:, 1]))
+# print(sum(A[:, 100]))
+# print(len(A[:, 3]))
 
 # length_of_route_list[3], length_of_route_list[4], length_of_route_list[5]
 
