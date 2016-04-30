@@ -14,20 +14,22 @@ import json
 # load logit_route_choice_probability_matrix
 P = zload('../temp_files/logit_route_choice_probability_matrix_ext.pkz')
 P = np.matrix(P)
-print(matrix_rank(P))
-assert(1 == 2)
+
+# print(matrix_rank(P))
+
 
 # print(np.size(P,0), np.size(P,1))
 
 # load path-link incidence matrix
 A = zload('../temp_files/path-link_incidence_matrix_ext.pkz')
 
+# assert(1 == 2)
+
 # load link counts data
 with open('../temp_files/link_day_minute_Jan_dict_ext_JSON.json', 'r') as json_file:
     link_day_minute_Jan_dict_ext_JSON = json.load(json_file)
 
-# week_day_Jan_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30, 31]
-week_day_Jan_list = [2, 5]
+week_day_Jan_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30, 31]
 
 link_day_minute_Jan_list = []
 for link_idx in range(64):
@@ -39,7 +41,7 @@ for link_idx in range(64):
 # print(len(link_day_minute_Jan_list))
 
 x = np.matrix(link_day_minute_Jan_list)
-x = np.matrix.reshape(x, 64, 240)
+x = np.matrix.reshape(x, 64, 2640)
 
 x = np.nan_to_num(x)
 y = np.array(np.transpose(x))

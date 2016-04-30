@@ -1,6 +1,7 @@
 from util_data_storage_and_load import *
 import numpy as np
 from numpy.linalg import inv
+from numpy import linalg as LA
 from gurobipy import *
 
 
@@ -58,6 +59,20 @@ def samp_cov(x):
     S = sum(np.dot(x[:,k] - x_mean, np.transpose(x[:,k] - x_mean)) for k in range(K)) / (K - 1)
     return S
 
+def adj_PSD(Sigma):
+    # Ensure Sigma to be symmetric
+    Sigma = (1.0 / 2) * (Sigma + np.transpose(Sigma))
+
+    # Ensure Sigma to be positive semi-definite
+    D, V = LA.eig(Sigma)
+    D = np.diag(D)
+    Q, R = LA.qr(V)
+    for i in range(0, np.size(Sigma,0)):
+        if D[i, i] < 1e-5:
+            D[i, i] = 1e-5
+    Sigma = np.dot(np.dot(Q, D), LA.inv(Q))
+    return Sigma
+
 # implement GLS method to estimate OD demand matrix
 def GLS(x, A, P, L):
     """
@@ -80,7 +95,9 @@ def GLS(x, A, P, L):
     # AP_t
     AP_t = np.transpose(PA_t)
 
-    Q = np.dot(np.dot(PA_t, inv_S), AP_t)
+    Q_ = np.dot(np.dot(PA_t, inv_S), AP_t)
+    Q = adj_PSD(Q_)  # Ensure Q to be PSD
+
     b = sum([np.dot(np.dot(PA_t, inv_S), x[:, k]) for k in range(K)])
 
     model = Model("OD_matrix_estimation")
@@ -95,7 +112,7 @@ def GLS(x, A, P, L):
     obj = 0
     for i in range(L):
         for j in range(L):
-            obj += (1.0 /2) * K * lam[i] * Q[i, j] * lam[j]
+            obj += (1.0 / 2) * K * lam[i] * Q[i, j] * lam[j]
     for l in range(L):
         obj += - b[l] * lam[l]
     model.setObjective(obj)
