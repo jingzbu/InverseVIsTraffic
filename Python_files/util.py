@@ -180,6 +180,61 @@ def flow_conservation_adjustment(y_0):
     # print('Obj: %g' % obj.getValue())
     return y
 
+# for the extended network
+def flow_conservation_adjustment_ext(y_0):
+    L = len(y_0)  # dimension of flow vector x
+    assert(L == 64)
+
+    # y_0 = x[:,1]  # initial flow vector
+
+    model = Model("Flow_conservation_adjustment_ext")
+
+    y = []
+    for l in range(L):
+        y.append(model.addVar(name='y_' + str(l)))
+
+    model.update() 
+
+    # Set objective: ||y-y_0||^2
+    obj = 0
+    for l in range(L):
+        obj += (y[l] - y_0[l]) * (y[l] - y_0[l])
+    model.setObjective(obj)
+
+    # Add nonnegative constraint: y >= 0
+    for l in range(L):
+        model.addConstr(y[l] >= 0)
+    # Add flow conservation constraints
+    model.addConstr(y[1] + y[3] == y[0] + y[2])  # node 1
+    model.addConstr(y[0] + y[5] + y[7] == y[1] + y[4] + y[6])  # node 2
+    model.addConstr(y[2] + y[4] + y[9] == y[3] + y[5] + y[8])  # node 3
+    model.addConstr(y[6] + y[11] + y[15] + y[17] == y[7] + y[10] + y[12] + y[16])  # node 4
+    model.addConstr(y[16] + y[21] + y[23] == y[17] + y[20] + y[22])  # node 5
+    model.addConstr(y[8] + y[10] + y[19] == y[9] + y[11] + y[18])  # node 6
+    model.addConstr(y[12] + y[14] + y[18] + y[25] + y[27] == y[13] + y[15] + y[19] + y[24] + y[26])  # node 7
+    model.addConstr(y[20] + y[31] + y[35] == y[21] + y[30] + y[34])  # node 8
+    model.addConstr(y[22] + y[24] + y[29] == y[23] + y[25] + y[28])  # node 9
+    model.addConstr(y[28] + y[30] + y[33] + y[37] == y[29] + y[31] + y[32] + y[36])  # node 10
+    model.addConstr(y[26] + y[32] + y[39] == y[27] + y[33] + y[38])  # node 11
+    model.addConstr(y[34] + y[41] + y[43] + y[45] + y[51] == y[35] + y[40] + y[42] + y[44] + y[50])  # node 12
+    model.addConstr(y[36] + y[40] + y[42] + y[44] + y[47] + y[49] + y[53] + y[55] == y[37] + y[41] + y[43] + y[45] + y[46] + y[48] + y[52] + y[54])  # node 13
+    model.addConstr(y[38] + y[46] + y[48] + y[57] + y[59] == y[39] + y[47] + y[49] + y[56] + y[58])  # node 14
+    model.addConstr(y[50] + y[52] + y[61] == y[51] + y[53] + y[60])  # node 15
+    model.addConstr(y[54] + y[56] + y[58] + y[63] == y[55] + y[57] + y[59] + y[62])  # node 16
+    model.addConstr(y[60] + y[62] == y[61] + y[63])  # node 17
+
+    model.update() 
+
+    model.setParam('OutputFlag', False)
+    model.optimize()
+
+    y = []
+    for v in model.getVars():
+        # print('%s %g' % (v.varName, v.x))
+        y.append(v.x)
+    # print('Obj: %g' % obj.getValue())
+    return y
+
 ##### define classes
 
 # define a road segment class corresponding to the original filtered shape file
