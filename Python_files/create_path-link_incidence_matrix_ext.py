@@ -18,7 +18,7 @@ link_length_dict = zload('../temp_files/link_length_dict_ext.pkz')
 # number of links
 m = 64
 # number of routes (obtained by counting the rows with '->' in 'path-link_incidence.txt')
-r = 2462
+r = 888
 
 # number of O-D pairs
 s = 17 * (17 - 1)
