@@ -52,15 +52,15 @@ def adj_PSD(Sigma):
     D = np.diag(D)
     Q, R = LA.qr(V)
     for i in range(0, np.size(Sigma,0)):
-        if D[i, i] < 1e-3:
-            D[i, i] = 1e-3
+        if D[i, i] < 1e-5:
+            D[i, i] = 1e-5
     Sigma = np.dot(np.dot(Q, D), LA.inv(Q))
     return Sigma
 
 # compute sample covariance matrix S for estimating OD demand matrix
 def samp_cov(x):
     """
-    x: sample matrix, each column is a link flow vector sample; 24 * K
+    x: sample matrix, each column is a link flow vector sample
     K: number of samples
     S: sample covariance matrix
     ----------------
@@ -88,39 +88,41 @@ def GLS(x, A, P, L):
     K = np.size(x, 1)
     S = samp_cov(x)
 
-    print("rank of S is: \n")
-    print(matrix_rank(S))
-    print("sizes of S are: \n")
-    print(np.size(S, 0))
-    print(np.size(S, 1))
+    #print("rank of S is: \n")
+    #print(matrix_rank(S))
+    #print("sizes of S are: \n")
+    #print(np.size(S, 0))
+    #print(np.size(S, 1))
 
-    inv_S = inv(S)
+    inv_S = inv(S).real
 
     A_t = np.transpose(A)
     P_t = np.transpose(P)
     # PA'
     PA_t = np.dot(P, A_t)
 
-    print("rank of PA_t is: \n")
-    print(matrix_rank(PA_t))
-    print("sizes of PA_t are: \n")
-    print(np.size(PA_t, 0))
-    print(np.size(PA_t, 1))
+    #print("rank of PA_t is: \n")
+    #print(matrix_rank(PA_t))
+    #print("sizes of PA_t are: \n")
+    #print(np.size(PA_t, 0))
+    #print(np.size(PA_t, 1))
 
     # AP_t
     AP_t = np.transpose(PA_t)
 
     Q_ = np.dot(np.dot(PA_t, inv_S), AP_t)
-    # Q = adj_PSD(Q_)  # Ensure Q to be PSD
+    # Q = adj_PSD(Q_).real  # Ensure Q to be PSD
     Q = Q_
 
-    print("rank of Q is: \n")
-    print(matrix_rank(Q))
-    print("sizes of Q are: \n")
-    print(np.size(Q, 0))
-    print(np.size(Q, 1))
+    #print("rank of Q is: \n")
+    #print(matrix_rank(Q))
+    #print("sizes of Q are: \n")
+    #print(np.size(Q, 0))
+    #print(np.size(Q, 1))
 
     b = sum([np.dot(np.dot(PA_t, inv_S), x[:, k]) for k in range(K)])
+    # print(b[0])
+    # assert(1==2)
 
     model = Model("OD_matrix_estimation")
 

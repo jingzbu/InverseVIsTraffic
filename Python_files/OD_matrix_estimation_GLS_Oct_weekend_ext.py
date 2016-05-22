@@ -22,13 +22,13 @@ P = np.matrix(P)
 A = zload('../temp_files/path-link_incidence_matrix_ext.pkz')
 
 # load link counts data
-with open('../temp_files/link_day_minute_Oct_dict_ext_JSON.json', 'r') as json_file:
+with open('../temp_files/link_day_minute_Oct_dict_ext_JSON_insert_links_adjusted.json', 'r') as json_file:
     link_day_minute_Oct_dict_ext_JSON = json.load(json_file)
 
 weekend_Oct_list = [6, 7, 13, 14, 20, 21, 27, 28]
 
 link_day_minute_Oct_list = []
-for link_idx in range(64):
+for link_idx in range(74):
     for day in weekend_Oct_list: 
         for minute_idx in range(120):
             key = 'link_' + str(link_idx) + '_' + str(day)
@@ -37,7 +37,7 @@ for link_idx in range(64):
 # print(len(link_day_minute_Oct_list))
 
 x = np.matrix(link_day_minute_Oct_list)
-x = np.matrix.reshape(x, 64, 960)
+x = np.matrix.reshape(x, 74, 960)
 
 x = np.nan_to_num(x)
 y = np.array(np.transpose(x))
@@ -49,12 +49,12 @@ x = np.matrix(x)
 # print(x[:,:2])
 # print(np.size(A,0), np.size(A,1))
 
-L = 17 * (17 - 1)  # dimension of lam
+L = 22 * (22 - 1)  # dimension of lam
 
 lam_list = GLS(x, A, P, L)
 
 # write estimation result to file
-n = 17  # number of nodes
+n = 22  # number of nodes
 with open('../temp_files/OD_demand_matrix_Oct_weekend_ext.txt', 'w') as the_file:
     idx = 0
     for i in range(n + 1)[1:]:

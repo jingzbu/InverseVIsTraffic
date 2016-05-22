@@ -7,33 +7,29 @@ __status__ = "Development"
 
 
 from util import *
+
 import numpy as np
-from numpy.linalg import inv, matrix_rank
+from numpy.linalg import inv
 import json
 
 # load logit_route_choice_probability_matrix
 P = zload('../temp_files/logit_route_choice_probability_matrix_ext.pkz')
 P = np.matrix(P)
 
-# print(matrix_rank(P))
-
-
 # print(np.size(P,0), np.size(P,1))
 
 # load path-link incidence matrix
 A = zload('../temp_files/path-link_incidence_matrix_ext.pkz')
 
-# assert(1 == 2)
-
 # load link counts data
-with open('../temp_files/link_day_minute_Jan_dict_ext_JSON.json', 'r') as json_file:
+with open('../temp_files/link_day_minute_Jan_dict_ext_JSON_insert_links_adjusted.json', 'r') as json_file:
     link_day_minute_Jan_dict_ext_JSON = json.load(json_file)
 
 # week_day_Jan_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30, 31]
-week_day_Jan_list = [2, 3, 4, 5, 6]
+week_day_Jan_list = [12, 13, 16, 17, 18, 19, 20]
 
 link_day_minute_Jan_list = []
-for link_idx in range(64):
+for link_idx in range(74):
     for day in week_day_Jan_list: 
         for minute_idx in range(120):
             key = 'link_' + str(link_idx) + '_' + str(day)
@@ -42,7 +38,7 @@ for link_idx in range(64):
 # print(len(link_day_minute_Jan_list))
 
 x = np.matrix(link_day_minute_Jan_list)
-x = np.matrix.reshape(x, 64, 600)
+x = np.matrix.reshape(x, 74, 840)
 
 x = np.nan_to_num(x)
 y = np.array(np.transpose(x))
@@ -54,12 +50,12 @@ x = np.matrix(x)
 # print(x[:,:2])
 # print(np.size(A,0), np.size(A,1))
 
-L = 17 * (17 - 1)  # dimension of lam
+L = 22 * (22 - 1)  # dimension of lam
 
 lam_list = GLS(x, A, P, L)
 
 # write estimation result to file
-n = 17  # number of nodes
+n = 22  # number of nodes
 with open('../temp_files/OD_demand_matrix_Jan_weekday_NT_ext.txt', 'w') as the_file:
     idx = 0
     for i in range(n + 1)[1:]:

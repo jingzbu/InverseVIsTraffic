@@ -10,25 +10,29 @@ from util import *
 import numpy as np
 from math import exp
 
+import json
+
 
 link_label_dict = zload('../temp_files/link_label_dict_ext.pkz')
 link_label_dict_ = zload('../temp_files/link_label_dict_ext_.pkz')
-link_length_dict = zload('../temp_files/link_length_dict_ext.pkz')
+
+with open('../temp_files/link_length_dict_ext_insert_links.json', 'r') as json_file:
+    link_length_dict = json.load(json_file)
 
 # number of links
-m = 64
+m = 74
 # number of routes (obtained by counting the rows with '->' in 'path-link_incidence.txt')
-r = 888
+r = 16028
 
 # number of O-D pairs
-s = 17 * (17 - 1)
+s = 22 * (22 - 1)
 
 # initialize the path-link incidence matrix
 A = np.zeros((m, r))
 
 # read in the manually created path-link incidence file 
 # create path-link incidence matrix A
-with open('../temp_files/path-link_incidence_ext.txt', 'r') as the_file:
+with open('../temp_files/path-link_incidence_ext_insert_links.txt', 'r') as the_file:
     # path counts
     i = 0  
     for row in the_file:
@@ -48,7 +52,7 @@ zdump(A, '../temp_files/path-link_incidence_matrix_ext.pkz')
 # calculate length of each route
 
 length_of_route_list = []
-with open('../temp_files/path-link_incidence_ext.txt', 'r') as the_file:
+with open('../temp_files/path-link_incidence_ext_insert_links.txt', 'r') as the_file:
     for row in the_file:
         if '->' in row:
             link_list = []
@@ -57,7 +61,7 @@ with open('../temp_files/path-link_incidence_ext.txt', 'r') as the_file:
                 node_list.append(int(i))
             for i in range(len(node_list))[:-1]:
                 link_list.append('%d->%d' %(node_list[i], node_list[i+1]))
-            length_of_route = sum([link_length_dict[str(link_label_dict_[link])].length \
+            length_of_route = sum([link_length_dict[str(link_label_dict_[link])] \
                                   for link in link_list])
             length_of_route_list.append(length_of_route)
 zdump(length_of_route_list, '../temp_files/length_of_route_list_ext.pkz')
@@ -73,7 +77,7 @@ OD_pair_label_dict = zload('../temp_files/OD_pair_label_dict_ext.pkz')
 OD_pair_route_label_list = []
 OD_pair_idx_list = []
 route_idx_list = []
-with open('../temp_files/path-link_incidence_ext.txt', 'r') as the_file:
+with open('../temp_files/path-link_incidence_ext_insert_links.txt', 'r') as the_file:
     route_idx = 0
     for row in the_file:
         if '->' in row:
