@@ -1,6 +1,6 @@
 from util_data_storage_and_load import *
 import numpy as np
-from numpy.linalg import inv
+from numpy.linalg import inv, matrix_rank
 from numpy import linalg as LA
 from gurobipy import *
 
@@ -43,6 +43,20 @@ def month_to_str(month):
     else:
         raise IOError("Invalid input; please input another month.")
 
+def adj_PSD(Sigma):
+    # Ensure Sigma to be symmetric
+    Sigma = (1.0 / 2) * (Sigma + np.transpose(Sigma))
+
+    # Ensure Sigma to be positive semi-definite
+    D, V = LA.eig(Sigma)
+    D = np.diag(D)
+    Q, R = LA.qr(V)
+    for i in range(0, np.size(Sigma,0)):
+        if D[i, i] < 1e-3:
+            D[i, i] = 1e-3
+    Sigma = np.dot(np.dot(Q, D), LA.inv(Q))
+    return Sigma
+
 # compute sample covariance matrix S for estimating OD demand matrix
 def samp_cov(x):
     """
@@ -57,21 +71,8 @@ def samp_cov(x):
     K = np.size(x, 1)
     x_mean = sum(x[:,k] for k in range(K)) / K
     S = sum(np.dot(x[:,k] - x_mean, np.transpose(x[:,k] - x_mean)) for k in range(K)) / (K - 1)
+    S = adj_PSD(S)
     return S
-
-def adj_PSD(Sigma):
-    # Ensure Sigma to be symmetric
-    Sigma = (1.0 / 2) * (Sigma + np.transpose(Sigma))
-
-    # Ensure Sigma to be positive semi-definite
-    D, V = LA.eig(Sigma)
-    D = np.diag(D)
-    Q, R = LA.qr(V)
-    for i in range(0, np.size(Sigma,0)):
-        if D[i, i] < 1e-5:
-            D[i, i] = 1e-5
-    Sigma = np.dot(np.dot(Q, D), LA.inv(Q))
-    return Sigma
 
 # implement GLS method to estimate OD demand matrix
 def GLS(x, A, P, L):
@@ -86,18 +87,38 @@ def GLS(x, A, P, L):
     """
     K = np.size(x, 1)
     S = samp_cov(x)
+
+    print("rank of S is: \n")
+    print(matrix_rank(S))
+    print("sizes of S are: \n")
+    print(np.size(S, 0))
+    print(np.size(S, 1))
+
     inv_S = inv(S)
 
     A_t = np.transpose(A)
     P_t = np.transpose(P)
     # PA'
     PA_t = np.dot(P, A_t)
+
+    print("rank of PA_t is: \n")
+    print(matrix_rank(PA_t))
+    print("sizes of PA_t are: \n")
+    print(np.size(PA_t, 0))
+    print(np.size(PA_t, 1))
+
     # AP_t
     AP_t = np.transpose(PA_t)
 
     Q_ = np.dot(np.dot(PA_t, inv_S), AP_t)
     # Q = adj_PSD(Q_)  # Ensure Q to be PSD
     Q = Q_
+
+    print("rank of Q is: \n")
+    print(matrix_rank(Q))
+    print("sizes of Q are: \n")
+    print(np.size(Q, 0))
+    print(np.size(Q, 1))
 
     b = sum([np.dot(np.dot(PA_t, inv_S), x[:, k]) for k in range(K)])
 
@@ -184,7 +205,7 @@ def flow_conservation_adjustment(y_0):
 # for the extended network
 def flow_conservation_adjustment_ext(y_0):
     L = len(y_0)  # dimension of flow vector x
-    assert(L == 64)
+    assert(L == 74)
 
     # y_0 = x[:,1]  # initial flow vector
 
@@ -209,20 +230,25 @@ def flow_conservation_adjustment_ext(y_0):
     model.addConstr(y[1] + y[3] == y[0] + y[2])  # node 1
     model.addConstr(y[0] + y[5] + y[7] == y[1] + y[4] + y[6])  # node 2
     model.addConstr(y[2] + y[4] + y[9] == y[3] + y[5] + y[8])  # node 3
-    model.addConstr(y[6] + y[11] + y[15] + y[17] == y[7] + y[10] + y[12] + y[16])  # node 4
-    model.addConstr(y[16] + y[21] + y[23] == y[17] + y[20] + y[22])  # node 5
-    model.addConstr(y[8] + y[10] + y[19] == y[9] + y[11] + y[18])  # node 6
-    model.addConstr(y[12] + y[14] + y[18] + y[25] + y[27] == y[13] + y[15] + y[19] + y[24] + y[26])  # node 7
-    model.addConstr(y[20] + y[31] + y[35] == y[21] + y[30] + y[34])  # node 8
-    model.addConstr(y[22] + y[24] + y[29] == y[23] + y[25] + y[28])  # node 9
-    model.addConstr(y[28] + y[30] + y[33] + y[37] == y[29] + y[31] + y[32] + y[36])  # node 10
-    model.addConstr(y[26] + y[32] + y[39] == y[27] + y[33] + y[38])  # node 11
-    model.addConstr(y[34] + y[41] + y[43] + y[45] + y[51] == y[35] + y[40] + y[42] + y[44] + y[50])  # node 12
-    model.addConstr(y[36] + y[40] + y[42] + y[44] + y[47] + y[49] + y[53] + y[55] == y[37] + y[41] + y[43] + y[45] + y[46] + y[48] + y[52] + y[54])  # node 13
-    model.addConstr(y[38] + y[46] + y[48] + y[57] + y[59] == y[39] + y[47] + y[49] + y[56] + y[58])  # node 14
-    model.addConstr(y[50] + y[52] + y[61] == y[51] + y[53] + y[60])  # node 15
-    model.addConstr(y[54] + y[56] + y[58] + y[63] == y[55] + y[57] + y[59] + y[62])  # node 16
-    model.addConstr(y[60] + y[62] == y[61] + y[63])  # node 17
+    model.addConstr(y[6] + y[11] + y[13] + y[16] + y[19] == y[7] + y[10] + y[12] + y[14] + y[18])  # node 4
+    model.addConstr(y[18] + y[23] + y[25] == y[19] + y[22] + y[24])  # node 5
+    model.addConstr(y[8] + y[10] + y[21] == y[9] + y[11] + y[20])  # node 6
+    model.addConstr(y[12] + y[15] + y[20] + y[27] + y[29] == y[13] + y[17] + y[21] + y[26] + y[28])  # node 7
+    model.addConstr(y[22] + y[33] + y[37] == y[23] + y[32] + y[36])  # node 8
+    model.addConstr(y[24] + y[26] + y[31] == y[25] + y[27] + y[30])  # node 9
+    model.addConstr(y[30] + y[32] + y[35] + y[39] == y[31] + y[33] + y[34] + y[38])  # node 10
+    model.addConstr(y[28] + y[34] + y[41] == y[29] + y[35] + y[40])  # node 11
+    model.addConstr(y[36] + y[43] + y[46] + y[45] + y[50] == y[37] + y[42] + y[44] + y[47] + y[48])  # node 12
+    model.addConstr(y[38] + y[42] + y[45] + y[49] + y[53] + y[56] + y[61] + y[63] == y[39] + y[43] + y[47] + y[51] + y[52] + y[54] + y[60] + y[62])  # node 13
+    model.addConstr(y[40] + y[52] + y[55] + y[65] + y[68] == y[41] + y[53] + y[57] + y[64] + y[66])  # node 14
+    model.addConstr(y[58] + y[60] + y[71] == y[59] + y[61] + y[70])  # node 15
+    model.addConstr(y[62] + y[64] + y[67] + y[73] == y[63] + y[65] + y[69] + y[72])  # node 16
+    model.addConstr(y[70] + y[72] == y[71] + y[73])  # node 17
+    model.addConstr(y[14] + y[17] == y[15] + y[16])  # node 18
+    model.addConstr(y[44] + y[47] == y[45] + y[46])  # node 19
+    model.addConstr(y[48] + y[51] == y[49] + y[50])  # node 20
+    model.addConstr(y[54] + y[57] == y[55] + y[56])  # node 21
+    model.addConstr(y[66] + y[69] == y[67] + y[68])  # node 22
 
     model.update() 
 

@@ -26,6 +26,7 @@ with open('../temp_files/link_day_minute_Jan_dict_ext_JSON.json', 'r') as json_f
     link_day_minute_Jan_dict_ext_JSON = json.load(json_file)
 
 week_day_Jan_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30, 31]
+# week_day_Jan_list = [2, 3, 4, 5, 6]
 
 link_day_minute_Jan_list = []
 for link_idx in range(64):
