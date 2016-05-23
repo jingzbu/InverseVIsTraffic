@@ -26,7 +26,7 @@ with open('../temp_files/link_day_minute_Oct_dict_ext_JSON_insert_links_adjusted
     link_day_minute_Oct_dict_ext_JSON = json.load(json_file)
 
 # week_day_Oct_list = [1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 15, 16, 22, 18, 19, 23, 24, 25, 26, 29, 30, 31]
-week_day_Oct_list = [1, 2, 3, 4, 5]
+week_day_Oct_list = [16, 22, 18, 19, 23, 24, 25, 26, 29, 30]
 
 link_day_minute_Oct_list = []
 for link_idx in range(74):
@@ -38,7 +38,7 @@ for link_idx in range(74):
 # print(len(link_day_minute_Oct_list))
 
 x = np.matrix(link_day_minute_Oct_list)
-x = np.matrix.reshape(x, 74, 600)
+x = np.matrix.reshape(x, 74, 1200)
 
 x = np.nan_to_num(x)
 y = np.array(np.transpose(x))
