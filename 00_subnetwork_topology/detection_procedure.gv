@@ -1,8 +1,8 @@
 digraph G {
-	graph [bb="0,0,583.39,445"];
+	graph [bb="0,0,622.29,448.6"];
 	node [label="\N"];
 	subgraph cluster_0 {
-		graph [bb="131.39,298,297.39,437",
+		graph [bb="134.29,299.8,314.29,440.6",
 			color=lightgrey,
 			style=filled
 		];
@@ -11,68 +11,68 @@ digraph G {
 		];
 		"historical data"		 [color=white,
 			height=0.5,
-			pos="199.39,411",
+			pos="207.29,414.6",
 			style=filled,
-			width=1.679];
+			width=1.8187];
 		"Probability Law &pi;"		 [color=white,
 			height=0.5,
-			pos="214.39,324",
+			pos="224.29,325.8",
 			style=filled,
-			width=2.0943];
+			width=2.2658];
 		"historical data" -> "Probability Law &pi;"		 [label="statistical inference",
-			lp="248.39,367.5",
-			pos="e,202.92,342.1 195.26,392.64 193.62,382.91 192.69,370.63 195.39,360 196.15,357.01 197.22,354.01 198.47,351.08"];
+			lp="264.52,370.2",
+			pos="e,215.88,343.86 206.68,396.13 206.69,386 207.33,373.05 209.84,361.8 210.48,358.97 211.32,356.08 212.28,353.23"];
 	}
 	subgraph cluster_1 {
-		graph [bb="305.39,298,575.39,437",
+		graph [bb="322.29,299.8,614.29,440.6",
 			color=blue
 		];
 		node [style=filled];
 		"data in current detection window"		 [height=0.5,
-			pos="440.39,411",
+			pos="468.29,414.6",
 			style=filled,
-			width=3.5386];
+			width=3.8373];
 		"empirical Probability Law &nu;"		 [height=0.5,
-			pos="427.39,324",
+			pos="460.29,325.8",
 			style=filled,
-			width=3.0692];
+			width=3.547];
 		"data in current detection window" -> "empirical Probability Law &nu;"		 [label=estimation,
-			lp="463.39,367.5",
-			pos="e,430.02,342.18 437.76,392.8 435.98,381.16 433.59,365.55 431.56,352.24"];
+			lp="493.46,370.2",
+			pos="e,461.87,343.91 466.71,396.45 465.59,384.32 464.07,367.82 462.79,353.92"];
 	}
 	"Divergence between &nu; and &pi;, i.e., D(&nu;||&pi;)"	 [height=0.5,
-		pos="344.39,251",
-		width=4.4052];
-	"Probability Law &pi;" -> "Divergence between &nu; and &pi;, i.e., D(&nu;||&pi;)"	 [pos="e,313.81,268.7 243.24,307.24 261.41,297.32 285.09,284.39 304.98,273.53"];
-	"empirical Probability Law &nu;" -> "Divergence between &nu; and &pi;, i.e., D(&nu;||&pi;)"	 [pos="e,364.21,268.95 407.72,306.17 397.05,297.04 383.69,285.61 371.99,275.61"];
+		pos="368.29,252.8",
+		width=5.1953];
+	"Probability Law &pi;" -> "Divergence between &nu; and &pi;, i.e., D(&nu;||&pi;)"	 [pos="e,334.42,270.5 256.25,309.04 276.55,299.03 303.08,285.95 325.22,275.03"];
+	"empirical Probability Law &nu;" -> "Divergence between &nu; and &pi;, i.e., D(&nu;||&pi;)"	 [pos="e,390.26,270.75 438.49,307.97 426.55,298.76 411.56,287.19 398.51,277.12"];
 	"D(&nu;||&pi;) > &eta;?"	 [height=0.5,
-		pos="257.39,178",
+		pos="276.29,179.8",
 		shape=box,
-		width=1.1806];
-	"Divergence between &nu; and &pi;, i.e., D(&nu;||&pi;)" -> "D(&nu;||&pi;) > &eta;?"	 [pos="e,278.26,196.03 323.33,232.81 312.22,223.74 298.41,212.48 286.31,202.6"];
+		width=1.3683];
+	"Divergence between &nu; and &pi;, i.e., D(&nu;||&pi;)" -> "D(&nu;||&pi;) > &eta;?"	 [pos="e,298.36,197.83 346.02,234.61 334.16,225.46 319.39,214.06 306.5,204.12"];
 	"report an anomaly"	 [color=red,
 		fontcolor=red,
 		height=0.5,
-		pos="75.393,91",
-		width=2.0943];
+		pos="81.292,91",
+		width=2.2581];
 	"D(&nu;||&pi;) > &eta;?" -> "report an anomaly"	 [fontcolor=red,
 		label=YES,
-		lp="190.39,134.5",
-		pos="e,108.2,107.32 220.56,159.8 190.72,145.86 148.67,126.22 117.5,111.66"];
+		lp="209.51,135.4",
+		pos="e,115.82,107.37 237.77,161.65 205.3,147.2 158.86,126.53 125.01,111.46"];
 	"NO anomaly reported"	 [color=green,
 		fontcolor=green,
 		height=0.5,
-		pos="257.39,91",
-		width=2.4553];
+		pos="276.29,91",
+		width=2.6454];
 	"D(&nu;||&pi;) > &eta;?" -> "NO anomaly reported"	 [fontcolor=green,
 		label=NO,
-		lp="267.39,134.5",
-		pos="e,257.39,109.18 257.39,159.8 257.39,148.16 257.39,132.55 257.39,119.24"];
+		lp="286.4,135.4",
+		pos="e,276.29,109.11 276.29,161.65 276.29,149.52 276.29,133.02 276.29,119.12"];
 	"go onto the next detection window"	 [height=0.5,
-		pos="257.39,18",
+		pos="276.29,18",
 		shape=box,
-		width=2.8611];
-	"report an anomaly" -> "go onto the next detection window"	 [pos="e,213.65,36.065 113.1,75.289 139.39,65.034 174.84,51.207 204.02,39.823"];
-	"NO anomaly reported" -> "go onto the next detection window"	 [pos="e,257.39,36.029 257.39,72.813 257.39,64.789 257.39,55.047 257.39,46.069"];
-	"go onto the next detection window" -> "Divergence between &nu; and &pi;, i.e., D(&nu;||&pi;)"	 [pos="e,351.19,232.94 310.42,36.083 327.52,44.391 344.58,56.301 354.39,73 382.05,120.05 366.59,186.85 354.48,223.46"];
+		width=2.917];
+	"report an anomaly" -> "go onto the next detection window"	 [pos="e,229.42,36.065 121.7,75.289 150.1,64.945 188.5,50.966 219.92,39.527"];
+	"NO anomaly reported" -> "go onto the next detection window"	 [pos="e,276.29,36.029 276.29,72.813 276.29,64.789 276.29,55.047 276.29,46.069"];
+	"go onto the next detection window" -> "Divergence between &nu; and &pi;, i.e., D(&nu;||&pi;)"	 [pos="e,375.48,234.75 334.96,36.099 352.63,44.297 370.05,56.135 380.29,73 409.01,120.27 392.05,188.12 379.01,225.17"];
 }
