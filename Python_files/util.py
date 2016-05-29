@@ -144,9 +144,10 @@ def GLS(x, A, P, L):
     # Add constraint: lam >= 0
     for l in range(L):
         model.addConstr(lam[l] >= 0)
-    fictitious_OD_list = zload('../temp_files/fictitious_OD_list')
-    for l in fictitious_OD_list:
-	model.addConstr(lam[l] == 0)
+	model.addConstr(lam[l] <= 5000)
+    #fictitious_OD_list = zload('../temp_files/fictitious_OD_list')
+    #for l in fictitious_OD_list:
+	#model.addConstr(lam[l] == 0)
     model.update() 
 
     model.setParam('OutputFlag', False)
