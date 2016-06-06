@@ -774,3 +774,6 @@ Iteration    Objective       Primal Inf.    Dual Inf.      Time
 Solved with barrier
 Solved in 32284 iterations and 0.75 seconds
 Optimal objective  0.000000000e+00
+
+Gurobi 6.5.0 (linux64) logging started Mon Jun  6 13:03:16 2016
+
