@@ -1,0 +1,90 @@
+O-D pair (1, 2) ---> label 0    
+O-D pair (1, 3) ---> label 1    
+O-D pair (1, 4) ---> label 2    
+O-D pair (1, 5) ---> label 3    
+
+O-D pair (1, 6) ---> label 4    
+O-D pair (1, 7) ---> label 5    
+O-D pair (1, 8) ---> label 6    
+O-D pair (1, 9) ---> label 7    
+
+O-D pair (2, 1) ---> label 8    
+O-D pair (2, 3) ---> label 9    
+O-D pair (2, 4) ---> label 10    
+O-D pair (2, 5) ---> label 11    
+
+O-D pair (2, 6) ---> label 12    
+O-D pair (2, 7) ---> label 13    
+O-D pair (2, 8) ---> label 14    
+O-D pair (2, 9) ---> label 15    
+
+O-D pair (3, 1) ---> label 16    
+O-D pair (3, 2) ---> label 17    
+O-D pair (3, 4) ---> label 18    
+O-D pair (3, 5) ---> label 19    
+
+O-D pair (3, 6) ---> label 20    
+O-D pair (3, 7) ---> label 21    
+O-D pair (3, 8) ---> label 22    
+O-D pair (3, 9) ---> label 23    
+
+O-D pair (4, 1) ---> label 24    
+O-D pair (4, 2) ---> label 25    
+O-D pair (4, 3) ---> label 26    
+O-D pair (4, 5) ---> label 27    
+
+O-D pair (4, 6) ---> label 28    
+O-D pair (4, 7) ---> label 29    
+O-D pair (4, 8) ---> label 30    
+O-D pair (4, 9) ---> label 31    
+
+O-D pair (5, 1) ---> label 32    
+O-D pair (5, 2) ---> label 33    
+O-D pair (5, 3) ---> label 34    
+O-D pair (5, 4) ---> label 35    
+
+O-D pair (5, 6) ---> label 36    
+O-D pair (5, 7) ---> label 37    
+O-D pair (5, 8) ---> label 38    
+O-D pair (5, 9) ---> label 39    
+
+O-D pair (6, 1) ---> label 40    
+O-D pair (6, 2) ---> label 41    
+O-D pair (6, 3) ---> label 42    
+O-D pair (6, 4) ---> label 43    
+
+O-D pair (6, 5) ---> label 44    
+O-D pair (6, 7) ---> label 45    
+O-D pair (6, 8) ---> label 46    
+O-D pair (6, 9) ---> label 47    
+
+O-D pair (7, 1) ---> label 48    
+O-D pair (7, 2) ---> label 49    
+O-D pair (7, 3) ---> label 50    
+O-D pair (7, 4) ---> label 51    
+
+O-D pair (7, 5) ---> label 52    
+O-D pair (7, 6) ---> label 53    
+O-D pair (7, 8) ---> label 54    
+O-D pair (7, 9) ---> label 55    
+
+O-D pair (8, 1) ---> label 56    
+O-D pair (8, 2) ---> label 57    
+O-D pair (8, 3) ---> label 58    
+O-D pair (8, 4) ---> label 59    
+
+O-D pair (8, 5) ---> label 60    
+O-D pair (8, 6) ---> label 61    
+O-D pair (8, 7) ---> label 62    
+O-D pair (8, 9) ---> label 63    
+
+O-D pair (9, 1) ---> label 64    
+O-D pair (9, 2) ---> label 65    
+O-D pair (9, 3) ---> label 66    
+O-D pair (9, 4) ---> label 67    
+
+O-D pair (9, 5) ---> label 68    
+O-D pair (9, 6) ---> label 69    
+O-D pair (9, 7) ---> label 70    
+O-D pair (9, 8) ---> label 71    
+
