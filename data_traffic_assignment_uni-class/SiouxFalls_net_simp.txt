@@ -1,7 +1,7 @@
-<NUMBER OF ZONES> 9											
-<NUMBER OF NODES> 9											
+<NUMBER OF ZONES> 10											
+<NUMBER OF NODES> 10											
 <FIRST THRU NODE> 1											
-<NUMBER OF LINKS> 20											
+<NUMBER OF LINKS> 22											
 <END OF METADATA>											
 
 
@@ -26,3 +26,5 @@
 	8	9	5050.193156	10	10	0.15	4	0	0	1	;
 	9	5	10000	5	5	0.15	4	0	0	1	;
 	9	8	5050.193156	10	10	0.15	4	0	0	1	;
+	9	10	13915.78842	3	3	0.15	4	0	0	1	;
+	10	9	13915.78842	3	3	0.15	4	0	0	1	;
