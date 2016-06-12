@@ -20,12 +20,12 @@ with open('../temp_files/link_length_dict_Sioux_simp.json', 'r') as json_file:
     link_length_dict = json.load(json_file)
 
 # number of links
-m = 22
+m = 26
 # number of routes (obtained by counting the rows with '->' in 'path-link_incidence.txt')
-r = 294
+r = 622
 
 # number of O-D pairs
-s = 10 * (10 - 1)
+s = 11 * (11 - 1)
 
 # initialize the path-link incidence matrix
 A = np.zeros((m, r))
