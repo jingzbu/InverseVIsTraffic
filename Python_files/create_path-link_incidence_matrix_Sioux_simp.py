@@ -20,12 +20,12 @@ with open('../temp_files/link_length_dict_Sioux_simp.json', 'r') as json_file:
     link_length_dict = json.load(json_file)
 
 # number of links
-m = 26
+m = 30
 # number of routes (obtained by counting the rows with '->' in 'path-link_incidence.txt')
-r = 622
+r = 1232
 
 # number of O-D pairs
-s = 11 * (11 - 1)
+s = 12 * (12 - 1)
 
 # initialize the path-link incidence matrix
 A = np.zeros((m, r))
@@ -110,10 +110,10 @@ theta = 0.5
 P = np.zeros((s, r))
 for i in range(s):
     for r in OD_pair_route_dict[str(i)]:
-        P[i, r] = 1
-        # P[i, r] = exp(- theta * length_of_route_list[r]) / \
-        #             sum([exp(- theta * length_of_route_list[j]) \
-        #                  for j in OD_pair_route_dict[str(i)]])
+        # P[i, r] = 1
+        P[i, r] = exp(- theta * length_of_route_list[r]) / \
+                    sum([exp(- theta * length_of_route_list[j]) \
+                         for j in OD_pair_route_dict[str(i)]])
 zdump(P, '../temp_files/OD_pair_route_incidence_Sioux_simp.pkz')
 # zdump(P, '../temp_files/logit_route_choice_probability_matrix_Sioux.pkz')
 

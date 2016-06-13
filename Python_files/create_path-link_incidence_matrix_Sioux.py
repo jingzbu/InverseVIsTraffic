@@ -22,7 +22,7 @@ with open('../temp_files/link_length_dict_Sioux.json', 'r') as json_file:
 # number of links
 m = 76
 # number of routes (obtained by counting the rows with '->' in 'path-link_incidence.txt')
-r = 7124
+r = 97442
 
 # number of O-D pairs
 s = 24 * (24 - 1)

@@ -8,7 +8,7 @@ __status__ = "Development"
 from util_data_storage_and_load import *
 
 # number of nodes
-n = 11
+n = 12
 
 # create O-D pair labels
 # create a dictionary mapping O-D pairs to labels
@@ -35,15 +35,17 @@ from collections import defaultdict
 
 
 # number of links
-m = 26
+m = 30
 
 # create link labels
 # create a dictionary mapping directed links to labels
 link_label_dict = {}
 link_label_dict_ = {}
 
-link_list = ['1->2','1->3','2->1','2->6','3->1','3->4','4->3','4->5','4->11','5->4','5->6',
-	     '5->9','6->2','6->5','6->8','7->8','8->6','8->7','8->9','9->5','9->8','9->10','10->9','10->11','11->4','11->10']
+link_list = ['1->2','1->3','2->1','2->6','3->1','3->4','3->12','4->3','4->5', 
+'4->11','5->4','5->6','5->9','6->2','6->5','6->8','7->8','8->6','8->7',
+'8->9','9->5','9->8','9->10','10->9','10->11','11->4',
+'11->10','11->12','12->3','12->11']
 
 for i in range(m):
     link_label_dict[str(i)] = link_list[i]
