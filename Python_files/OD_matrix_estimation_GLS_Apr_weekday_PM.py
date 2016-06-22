@@ -51,6 +51,7 @@ x = np.matrix(x)
 L = 56  # dimension of lam
 
 lam_list = GLS(x, A, P, L)
+lam_dict = {}
 
 # write estimation result to file
 n = 8  # number of nodes
@@ -59,5 +60,10 @@ with open('../temp_files/OD_demand_matrix_Apr_weekday_PM.txt', 'w') as the_file:
     for i in range(n + 1)[1:]:
         for j in range(n + 1)[1:]:
             if i != j: 
+		key = str(idx)
+		lam_dict[key] = lam_list[idx]
                 the_file.write("%d,%d,%f\n" %(i, j, lam_list[idx]))
                 idx += 1
+
+with open('../temp_files/OD_demand_matrix_Apr_weekday_PM.json', 'w') as json_file:
+    json.dump(lam_dict, json_file)

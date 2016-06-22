@@ -111,7 +111,7 @@ def GLS(x, A, P, L):
     AP_t = np.transpose(PA_t)
 
     Q_ = np.dot(np.dot(PA_t, inv_S), AP_t)
-    # Q = adj_PSD(Q_).real  # Ensure Q to be PSD
+    #Q = adj_PSD(Q_).real  # Ensure Q to be PSD
     Q = Q_
 
     #print("rank of Q is: \n")

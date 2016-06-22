@@ -56,7 +56,93 @@ x = np.matrix(x)
 
 L = 22 * (22 - 1)  # dimension of lam
 
-lam_list = GLS(x, A, P, L)
+# implement GLS method to estimate OD demand matrix
+def GLS_Apr(x, A, P, L):
+    """
+    x: sample matrix, each column is a link flow vector sample; 24 * K
+    A: path-link incidence matrix
+    P: logit route choice probability matrix
+    L: dimension of lam
+    ----------------
+    return: lam
+    ----------------
+    """
+    K = np.size(x, 1)
+    S = samp_cov(x)
+
+    #print("rank of S is: \n")
+    #print(matrix_rank(S))
+    #print("sizes of S are: \n")
+    #print(np.size(S, 0))
+    #print(np.size(S, 1))
+
+    inv_S = inv(S).real
+
+    A_t = np.transpose(A)
+    P_t = np.transpose(P)
+    # PA'
+    PA_t = np.dot(P, A_t)
+
+    #print("rank of PA_t is: \n")
+    #print(matrix_rank(PA_t))
+    #print("sizes of PA_t are: \n")
+    #print(np.size(PA_t, 0))
+    #print(np.size(PA_t, 1))
+
+    # AP_t
+    AP_t = np.transpose(PA_t)
+
+    Q_ = np.dot(np.dot(PA_t, inv_S), AP_t)
+    # Q = adj_PSD(Q_).real  # Ensure Q to be PSD
+    Q = Q_
+
+    #print("rank of Q is: \n")
+    #print(matrix_rank(Q))
+    #print("sizes of Q are: \n")
+    #print(np.size(Q, 0))
+    #print(np.size(Q, 1))
+
+    b = sum([np.dot(np.dot(PA_t, inv_S), x[:, k]) for k in range(K)])
+    # print(b[0])
+    # assert(1==2)
+
+    model = Model("OD_matrix_estimation")
+
+    lam = []
+    for l in range(L):
+        lam.append(model.addVar(name='lam_' + str(l)))
+
+    model.update() 
+
+    # Set objective: (K/2) lam' * Q * lam - b' * lam
+    obj = 0
+    for i in range(L):
+        for j in range(L):
+            obj += (1.0 / 2) * K * lam[i] * Q[i, j] * lam[j]
+    for l in range(L):
+        obj += - b[l] * lam[l]
+    model.setObjective(obj)
+
+    # Add constraint: lam >= 0
+    for l in range(L):
+        model.addConstr(lam[l] >= 0)
+	model.addConstr(lam[l] <= 5000)
+    #fictitious_OD_list = zload('../temp_files/fictitious_OD_list')
+    #for l in fictitious_OD_list:
+	#model.addConstr(lam[l] == 0)
+    model.update() 
+
+    model.setParam('OutputFlag', False)
+    model.optimize()
+
+    lam_list = []
+    for v in model.getVars():
+        # print('%s %g' % (v.varName, v.x))
+        lam_list.append(v.x)
+    # print('Obj: %g' % obj.getValue())
+    return lam_list
+
+lam_list = GLS_Apr(x, A, P, L)
 
 # write estimation result to file
 n = 22  # number of nodes
