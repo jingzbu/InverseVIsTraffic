@@ -4,6 +4,7 @@ from numpy.linalg import inv, matrix_rank
 from numpy import linalg as LA
 from gurobipy import *
 import json
+import scipy.misc as sc
 
 try:
     from load_dicts import tmc_length_dict, tmc_ref_speed_dict, tmc_length_dict_ext, tmc_ref_speed_dict_ext
