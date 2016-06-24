@@ -10,7 +10,12 @@ INRIX real data processing
 ====
 
 Due to confidentiality of the data, currently the whole INRIX dataset can not be made publicly available. When dealing with this dataset, 
-both Python and Julia are used.
+both Python and Julia have been used.
+
+
+Related publications
+====
+Jing Zhang, Sepideh Pourazarm, Christos G. Cassandras, and Ioannis Ch. Paschalidis, "***The Price of Anarchy in Transportation Networks by Estimating User Cost Functions from Actual Traffic Data,***" Proceedings of the 55th IEEE Conference on Decision and Control, December 12-14, 2016, Las Vegas, NV, USA, submitted.
 
 
 Author
