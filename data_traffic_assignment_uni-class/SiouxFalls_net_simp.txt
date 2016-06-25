@@ -1,4 +1,4 @@
-<NUMBER OF ZONES> 12										
+<NUMBER OF ZONES> 12											
 <NUMBER OF NODES> 12											
 <FIRST THRU NODE> 1											
 <NUMBER OF LINKS> 30											

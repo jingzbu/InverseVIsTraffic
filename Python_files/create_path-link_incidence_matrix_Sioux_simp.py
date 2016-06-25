@@ -30,7 +30,7 @@ s = 12 * (12 - 1)
 # initialize the path-link incidence matrix
 A = np.zeros((m, r))
 
-# read in the manually created path-link incidence file 
+# read in the path-link incidence file 
 # create path-link incidence matrix A
 with open('../temp_files/path-link_incidence_Sioux_simp.txt', 'r') as the_file:
     # path counts
