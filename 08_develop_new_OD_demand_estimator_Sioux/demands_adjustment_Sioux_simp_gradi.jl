@@ -27,7 +27,8 @@ for line in eachline(file)
             if !contains(pair, "\n")
                 pair_vals = split(pair, ":")
                 t, demand = int(pair_vals[1]), float(pair_vals[2])
-                demands[(s,t)] = demand 
+		#perturb the ground truth demands slightly
+                demands[(s,t)] = demand * 0.9
             end
         end
     end
@@ -94,7 +95,8 @@ for a in vArcs
     flows[(a.initNode, a.termNode)] = a.flow
 end
 
-tapFlows = flows
+tapFlows = readall("tapFlows.json");
+tapFlows = JSON.parse(tapFlows);
 
 include("load_network_uni-class.jl")
 
@@ -121,6 +123,12 @@ linkRoute = JSON.parse(linkRoute);
 link_label_dict = readall("link_label_dict_Sioux_simp.json");
 link_label_dict = JSON.parse(link_label_dict);
 
+x_0 = zeros(size(start_node))
+for k = 1:length(x_0)
+    key = (int(split(link_label_dict["$(k-1)"], ',')[1]), int(split(link_label_dict["$(k-1)"], ',')[2]))
+    x_0[k] = flows[key]
+end
+
 fcoeffs = [1, 0, 0, 0, .15]
 
 using JuMP
@@ -141,7 +149,7 @@ end
 
 x = zeros(size(start_node))
 for k = 1:length(x)
-    key = (int(split(link_label_dict["$(k-1)"], ',')[1]), int(split(link_label_dict["$(k-1)"], ',')[2]))
+    key = string((int(split(link_label_dict["$(k-1)"], ',')[1]), int(split(link_label_dict["$(k-1)"], ',')[2])))
     x[k] = tapFlows[key]
 end
 
