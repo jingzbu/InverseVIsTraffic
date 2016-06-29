@@ -199,5 +199,3 @@ function solveJacob(i_th)
 
     return getValue(d)
 end
-
-numRoutes
