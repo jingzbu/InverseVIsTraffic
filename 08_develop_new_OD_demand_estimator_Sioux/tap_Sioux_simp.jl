@@ -1,16 +1,6 @@
-include("load_network_uni-class.jl")
-ta_data = load_ta_network("Sioux_simp")
-
 using JuMP
 
 function TAP(demands)
-    #load OD pair-route incidence
-    odPairRoute = readall("od_pair_route_incidence_Sioux_simp.json")
-    odPairRoute = JSON.parse(odPairRoute)
-
-    #load link-route incidence
-    linkRoute = readall("link_route_incidence_Sioux_simp.json")
-    linkRoute = JSON.parse(linkRoute)
 
     #load OD pair labels
     odPairLabel = readall("od_pair_label_dict_Sioux_simp_refined.json")
@@ -31,10 +21,6 @@ function TAP(demands)
     nodeLink = JSON.parse(nodeLink)
 
     start_node = ta_data.start_node
-    capacity = ta_data.capacity
-    free_flow_time = ta_data.free_flow_time
-
-    numNodes = maximum(map(pair->pair[1], keys(demands)))
 
     demandsVec = zeros(length(odPairLabel_))
 
@@ -44,9 +30,6 @@ function TAP(demands)
 
     # m = Model(solver=GurobiSolver(OutputFlag=false))
     m = Model()
-
-    numLinks = size(start_node)[1]
-    numODpairs = numNodes * (numNodes - 1)
 
     @defVar(m, linkFlow[1:numLinks])
 
@@ -89,20 +72,16 @@ function TAP(demands)
     solve(m)
     redirect_stdout(TT) # restore STDOUT
 
-    getValue(linkFlow)
+    tapFlowVect = getValue(linkFlow)
 
-    getObjectiveValue(m)
-
-    outfile = open("flows_converge_simp.txt", "w")
-
-    write(outfile, join(("From", "to", "Volume Capacity"), "        "), "\n")
+    tapFlows = Dict{(Int64,Int64),Float64}()
 
     for i = 1:length(ta_data.start_node)
-         n1, n2, n3 = ta_data.start_node[i], ta_data.end_node[i], getValue(linkFlow)[i]
-         write(outfile, join((n1, n2, n3), "        "), "\n")
+        key = (ta_data.start_node[i], ta_data.end_node[i])
+        tapFlows[key] = tapFlowVect[i]
     end
 
-    close(outfile)
-    
-    return getValue(linkFlow), numNodes, numLinks, numODpairs
+#    getObjectiveValue(m)
+
+    return tapFlows, tapFlowVect
 end

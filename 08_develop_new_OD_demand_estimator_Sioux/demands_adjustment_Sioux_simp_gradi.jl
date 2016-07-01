@@ -1,142 +1,26 @@
-using JSON
+# load flows (output by TAP)
 
-type Arc
-    initNode::Int 
-    termNode::Int 
-    capacity::Float64
-    freeflowtime::Float64
-    flow::Float64
-end
+tapFlows = readall("tapFlows.json")
+tapFlows = JSON.parse(tapFlows)
 
-Arc(initNode::Int, termNode::Int, capacity::Float64, freeflowtime::Float64) = 
-    Arc(initNode, termNode, capacity, freeflowtime, 0.)
+# save observed flows to a vector
 
-### Prepare data
-
-############
-#Read in the demand file
-file = open("../data_original/SiouxFalls_trips_simp.txt")
-demands = Dict{(Int64,Int64), Float64}()
-s = 0
-for line in eachline(file)
-    if contains(line, "Origin")
-        s = int(split(line)[2])
-    else
-        pairs = split(line, ";")
-        for pair in pairs
-            if !contains(pair, "\n")
-                pair_vals = split(pair, ":")
-                t, demand = int(pair_vals[1]), float(pair_vals[2])
-		#perturb the ground truth demands slightly
-                demands[(s,t)] = demand * 0.9
-            end
-        end
+function observFlowVec(flows, numLinks, link_label_dict)
+    x_0 = zeros(numLinks)
+    for k = 1:length(x_0)
+        key = (int(split(link_label_dict["$(k-1)"], ',')[1]), int(split(link_label_dict["$(k-1)"], ',')[2]))
+        x_0[k] = flows[key]
     end
-end                
-close(file)
-
-############
-#read in the arc files
-arcs = Dict{(Int, Int), Arc}()
-file = open("../data_original/SiouxFalls_net_simp.txt")
-inHeader=true
-for line in eachline(file)
-    if inHeader
-        inHeader = !contains(line, "Init node")
-        continue
-    end
-    vals = split(line, )
-    arcs[(int(vals[1]), int(vals[2]))] = Arc(int(vals[1]), int(vals[2]), float(vals[3]), float(vals[5]))
-end
-close(file)
-
-###########
-#read in the initial flows
-file = open("../data_original/flows_converge_simp.txt")
-ix = 0; 
-for line in eachline(file)
-    ix +=1
-    if ix ==1
-        continue
-    end
-    vals = split(line)
-    arcs[(int(vals[1]), int(vals[2]))].flow = float(vals[3])
-end
-close(file)
-
-##########
-# Set up demand data and flow data
-##########
-using Graphs
-
-flow_data = Array(Float64, length(arcs))
-flows = Dict{(Int64,Int64), Float64}()
-demand_data = Dict{(Int, Int), Array{Float64, 1}}()
-
-numNodes = maximum(map(pair->pair[1], keys(demands)))
-g = simple_inclist(numNodes, is_directed=true)
-vArcs = Arc[]
-for arc in values(arcs)
-    add_edge!(g, arc.initNode, arc.termNode) 
-    push!(vArcs, arc)
+    return x_0
 end
 
-for odpair in keys(demands)
-    if ! haskey(demand_data, odpair)
-        demand_data[odpair] = [demands[odpair], ]
-    else
-        push!(demand_data[odpair], demands[odpair])
-    end
-end
+x_0 = observFlowVec(flows, numLinks, link_label_dict)
 
-flow_data = [a.flow::Float64 for a in vArcs]
+## Obtain $\left( {\frac{{\partial {c_a}\left( {{{\boldsymbol{\lambda}}^l}} \right)}}{{\partial {x_a}}}a \in \mathcal{A}} \right)$ 
 
-for a in vArcs
-    flows[(a.initNode, a.termNode)] = a.flow
-end
+fcoeffs = [1, 0, 0, 0.15]
 
-tapFlows = readall("tapFlows.json");
-tapFlows = JSON.parse(tapFlows);
-
-include("load_network_uni-class.jl")
-
-ta_data = load_ta_network("Sioux_simp");
-
-start_node = ta_data.start_node;
-capacity = ta_data.capacity
-free_flow_time = ta_data.free_flow_time
-
-numLinks = size(start_node)[1];
-numODpairs = numNodes * (numNodes - 1);
-
-numRoutes = readall("numRoutes.json");
-numRoutes = JSON.parse(numRoutes);
-
-#load OD pair-route incidence
-odPairRoute = readall("od_pair_route_incidence_Sioux_simp.json");
-odPairRoute = JSON.parse(odPairRoute);
-
-#load link-route incidence
-linkRoute = readall("link_route_incidence_Sioux_simp.json");
-linkRoute = JSON.parse(linkRoute);
-
-link_label_dict = readall("link_label_dict_Sioux_simp.json");
-link_label_dict = JSON.parse(link_label_dict);
-
-x_0 = zeros(size(start_node))
-for k = 1:length(x_0)
-    key = (int(split(link_label_dict["$(k-1)"], ',')[1]), int(split(link_label_dict["$(k-1)"], ',')[2]))
-    x_0[k] = flows[key]
-end
-
-fcoeffs = [1, 0, 0, 0, .15]
-
-using JuMP
-using Gurobi
-
-## Obtain $\left( {\frac{{\partial {c_a}\left( {{g^l}} \right)}}{{\partial {v_a}}};a \in \mathcal{A}} \right)$ 
-
-function sa(x, a)  # calculate the partial derivatives of c_a w.r.t. x_a
+function sa(x, a, fcoeffs, capacity, free_flow_time)  # calculate the partial derivatives of c_a w.r.t. x_a
     assert(a <= length(x) && a >= 1)
     n = length(fcoeffs)
     dcdx = 0
@@ -147,21 +31,37 @@ function sa(x, a)  # calculate the partial derivatives of c_a w.r.t. x_a
     return dcdx
 end
 
-x = zeros(size(start_node))
-for k = 1:length(x)
-    key = string((int(split(link_label_dict["$(k-1)"], ',')[1]), int(split(link_label_dict["$(k-1)"], ',')[2])))
-    x[k] = tapFlows[key]
+# save TAP output flows to a vector
+
+function tapFlowVec(tapFlows, numLinks, link_label_dict)
+    x = zeros(numLinks)
+    for k = 1:length(x)
+        key = string((int(split(link_label_dict["$(k-1)"], ',')[1]), int(split(link_label_dict["$(k-1)"], ',')[2])))
+        x[k] = tapFlows[key]
+    end
+    return x
 end
 
-x
+# x is TAP output flow vector
 
-saVec = similar(x)
-for a = 1:length(x)
-    saVec[a] = sa(x, a)
+x = tapFlowVec(tapFlows, numLinks, link_label_dict)
+
+function saVect(x, fcoeffs, capacity, free_flow_time) 
+    saVec = similar(x)
+    for a = 1:length(x)
+        saVec[a] = sa(x, a, fcoeffs, capacity, free_flow_time) 
+    end
+    return saVec
 end
+
+saVec = saVect(x, fcoeffs, capacity, free_flow_time)
 
 # solve [P2]
-function solveJacob(i_th)
+
+using JuMP
+using Gurobi
+
+function solveJacob(i_th, saVec, numLinks, numODpairs, numRoutes, linkRoute, odPairRoute)
     assert(i_th >= 1 && i_th <= numODpairs)
     
     jacobi = Model(solver=GurobiSolver(OutputFlag=false))
