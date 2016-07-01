@@ -1,6 +1,5 @@
 using JuMP
 using Gurobi
-# using Roots
 
 polyEval(coeffs, pt) = sum([coeffs[i] * pt^(i-1) for i = 1:length(coeffs)])  
 
@@ -111,5 +110,3 @@ function train(lam::Float64, deg::Int, c::Float64, demands, arcs; fcoeffs=nothin
     
     return [getValue(coeffs[i]) for i =1:length(coeffs)], getValue(ys), getValue(resids)
 end
-
-#nodeLink["0-75"]

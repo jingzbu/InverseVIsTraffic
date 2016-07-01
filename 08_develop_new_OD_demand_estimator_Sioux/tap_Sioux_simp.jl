@@ -1,6 +1,6 @@
 using JuMP
 
-function TAP(demands)
+function TAP(demands, fcoeffs)
 
     #load OD pair labels
     odPairLabel = readall("od_pair_label_dict_Sioux_simp_refined.json")
@@ -60,8 +60,13 @@ function TAP(demands)
         end
     end
 
-    @defNLExpr(f, sum{free_flow_time[a]*linkFlow[a] + .03*free_flow_time[a]*((linkFlow[a])^5)/((capacity[a])^4), 
-        a = 1:numLinks})
+    @defNLExpr(g[a=1:numLinks], sum{fcoeffs[i] * (linkFlow[a]^i) / (capacity[a]^(i-1)) / i, 
+        i = 1:length(fcoeffs)})
+    
+    @defNLExpr(f, sum{free_flow_time[a] * g[a], a = 1:numLinks})
+
+#    @defNLExpr(f, sum{free_flow_time[a]*linkFlow[a] + .03*free_flow_time[a]*((linkFlow[a])^5)/((capacity[a])^4), 
+#        a = 1:numLinks})
 #     @defNLExpr(f, sum{free_flow_time[a]*linkFlow[a] + .15*free_flow_time[a]*((linkFlow[a])^2)/(capacity[a]), 
 #         a = 1:numLinks})
 

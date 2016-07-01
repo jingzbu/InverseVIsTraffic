@@ -67,12 +67,6 @@ function iniDemand(trip_file, flag=0)
     return demands
 end
 
-demandsDict = Dict{Int64, Dict{(Int64,Int64), Float64}}()
-
-# get ground trueth demands, indexed by 0
-demandsDict[0] = iniDemand("../data_original/SiouxFalls_trips_simp.txt")
-
-# demand_data, flow_data, flows, vArcs = setUpInvVIData(demands, arcs)
 
 # obtain important parameters of the network
 
@@ -88,8 +82,6 @@ function paraNetwork(nameNetwork)
     numODpairs = numNodes * (numNodes - 1)
     return numNodes, numLinks, numODpairs, capacity, free_flow_time, ta_data
 end
-
-numNodes, numLinks, numODpairs, capacity, free_flow_time, ta_data = paraNetwork("Sioux_simp")
 
 # obtain further info of the network
 
@@ -114,5 +106,3 @@ function furInfo()
     
     return numRoutes, odPairRoute, linkRoute, link_label_dict
 end
-
-numRoutes, odPairRoute, linkRoute, link_label_dict = furInfo()

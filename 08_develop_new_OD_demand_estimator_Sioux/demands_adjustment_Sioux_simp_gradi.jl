@@ -1,24 +1,5 @@
-# load flows (output by TAP)
-
-tapFlows = readall("tapFlows.json")
-tapFlows = JSON.parse(tapFlows)
-
-# save observed flows to a vector
-
-function observFlowVec(flows, numLinks, link_label_dict)
-    x_0 = zeros(numLinks)
-    for k = 1:length(x_0)
-        key = (int(split(link_label_dict["$(k-1)"], ',')[1]), int(split(link_label_dict["$(k-1)"], ',')[2]))
-        x_0[k] = flows[key]
-    end
-    return x_0
-end
-
-x_0 = observFlowVec(flows, numLinks, link_label_dict)
-
-## Obtain $\left( {\frac{{\partial {c_a}\left( {{{\boldsymbol{\lambda}}^l}} \right)}}{{\partial {x_a}}}a \in \mathcal{A}} \right)$ 
-
-fcoeffs = [1, 0, 0, 0.15]
+using JuMP
+using Gurobi
 
 function sa(x, a, fcoeffs, capacity, free_flow_time)  # calculate the partial derivatives of c_a w.r.t. x_a
     assert(a <= length(x) && a >= 1)
@@ -31,21 +12,6 @@ function sa(x, a, fcoeffs, capacity, free_flow_time)  # calculate the partial de
     return dcdx
 end
 
-# save TAP output flows to a vector
-
-function tapFlowVec(tapFlows, numLinks, link_label_dict)
-    x = zeros(numLinks)
-    for k = 1:length(x)
-        key = string((int(split(link_label_dict["$(k-1)"], ',')[1]), int(split(link_label_dict["$(k-1)"], ',')[2])))
-        x[k] = tapFlows[key]
-    end
-    return x
-end
-
-# x is TAP output flow vector
-
-x = tapFlowVec(tapFlows, numLinks, link_label_dict)
-
 function saVect(x, fcoeffs, capacity, free_flow_time) 
     saVec = similar(x)
     for a = 1:length(x)
@@ -53,13 +19,6 @@ function saVect(x, fcoeffs, capacity, free_flow_time)
     end
     return saVec
 end
-
-saVec = saVect(x, fcoeffs, capacity, free_flow_time)
-
-# solve [P2]
-
-using JuMP
-using Gurobi
 
 function solveJacob(i_th, saVec, numLinks, numODpairs, numRoutes, linkRoute, odPairRoute)
     assert(i_th >= 1 && i_th <= numODpairs)
