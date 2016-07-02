@@ -38,7 +38,7 @@ function observFlow(arc_file, tapFlowDic)
 end
 
 # read in initial demand data
-
+srand(1234)
 function iniDemand(trip_file, flag=0)
     file = open(trip_file)
     demands = Dict{(Int64,Int64), Float64}()
@@ -67,6 +67,24 @@ function iniDemand(trip_file, flag=0)
     return demands
 end
 
+function demandsDicToVec(demandsDic)
+    demandsVec = zeros(length(odPairLabel_))
+    for i = 1:length(demandsVec)
+        demandsVec[i] = demandsDic[(odPairLabel_["$i"][1], odPairLabel_["$i"][2])]
+    end
+    return demandsVec
+end
+
+function demandsVecToDic(demandsVec)
+    demandsDic = Dict{(Int64,Int64), Float64}()
+    for i = 1:numNodes
+        demandsDic[(i, i)] = 0
+    end
+    for i = 1:length(demandsVec)
+        demandsDic[(odPairLabel_["$i"][1], odPairLabel_["$i"][2])] = demandsVec[i]
+    end
+    return demandsDic
+end
 
 # obtain important parameters of the network
 

@@ -20,9 +20,11 @@ function saVect(x, fcoeffs, capacity, free_flow_time)
     return saVec
 end
 
-function solveJacob(i_th, saVec, numLinks, numODpairs, numRoutes, linkRoute, odPairRoute)
+function solveJacob(i_th, tapFlowVec, fcoeffs, capacity, free_flow_time, numLinks, numODpairs, numRoutes, linkRoute, odPairRoute)
     assert(i_th >= 1 && i_th <= numODpairs)
     
+    saVec = saVect(tapFlowVec, fcoeffs, capacity, free_flow_time)
+
     jacobi = Model(solver=GurobiSolver(OutputFlag=false))
 
     @defVar(jacobi, d[1:numLinks])
@@ -57,4 +59,60 @@ function solveJacob(i_th, saVec, numLinks, numODpairs, numRoutes, linkRoute, odP
     solve(jacobi)
 
     return getValue(d)
+end
+
+function jacobian(tapFlowVec, fcoeffs, capacity, free_flow_time, numLinks, numODpairs, 
+    numRoutes, linkRoute, odPairRoute)
+    jacob = @parallel vcat for i=1:numODpairs
+        solveJacob(i, tapFlowVec, fcoeffs, capacity, free_flow_time, numLinks, 
+        numODpairs, numRoutes, linkRoute, odPairRoute)
+    end
+    jacob = reshape(jacob, numODpairs, numLinks)
+    return jacob
+end
+
+# compute the gradient
+function gradient(tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
+    gradi = zeros(numODpairs)
+    for i = 1:numODpairs
+        gradi[i] = sum([2 * (tapFlowVec[j] - observFlowVec[j]) * jacob[i, j] for j = 1:numLinks])
+    end
+    return gradi
+end
+
+# compute a descent direction
+function descDirec(tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
+    gradi = gradient(tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
+    h = similar(gradi)
+    for i = 1:length(gradi)
+        h[i] = -1 * gradi[i]
+    end
+    return h
+end
+
+# compute a search direction
+function searchDirec(demandsVec, descDirect, epsilon_1)
+    h = descDirect
+    h_ = similar(h)
+    for i = 1:length(h)
+            if (demandsVec[i] > epsilon_1) || (demandsVec[i] <= epsilon_1 && h[i] > 0)
+            h_[i] = h[i]
+        else
+            h_[i] = 0
+        end
+    end
+    return h_
+end
+
+# line search
+function thetaMax(demandsVec, searchDirect)
+    h_ = searchDirect
+    thetaList = Float64[]
+    for i = 1:length(h_)
+        if h_[i] < 0
+            push!(thetaList, - demandsVec[i]/h_[i])
+        end
+    end
+    theta_max = minimum(thetaList)
+    return theta_max
 end
