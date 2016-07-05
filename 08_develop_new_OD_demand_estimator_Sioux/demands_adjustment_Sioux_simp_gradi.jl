@@ -116,3 +116,29 @@ function thetaMax(demandsVec, searchDirect)
     theta_max = minimum(thetaList)
     return theta_max
 end
+
+# Armijo line search and update
+function objF(demandsVec)
+    demandsDic = demandsVecToDic(demandsVec)
+    tapFlowVec = tapMSA(demandsDic, fcoeffs)[2]
+    return sum([(tapFlowVec[a] - tapFlowVecDict[0][a])^2 for a = 1:length(tapFlowVec)])
+end     
+
+function armijo(demandsVecOld, searchDirec, thetaMax, Theta, N)
+    demandsVecList = Array{Float64}[]
+    objFunList = Float64[]
+    for n = 0:N
+        demandsVecNew = similar(demandsVecOld)
+        for i = 1:length(demandsVecOld)
+            demandsVecNew[i] = demandsVecOld[i] + (thetaMax/(Theta^n)) * searchDirec[i] 
+        end
+	push!(demandsVecList, demandsVecOld)
+	push!(objFunList, objF(demandsVecOld))
+	if objF(demandsVecNew) < objF(demandsVecOld)
+	    push!(demandsVecList, demandsVecNew)
+	    push!(objFunList, objF(demandsVecNew))
+	end
+    end
+    idx = indmin(objFunList)
+    return demandsVecList[idx], objFunList[idx]
+end

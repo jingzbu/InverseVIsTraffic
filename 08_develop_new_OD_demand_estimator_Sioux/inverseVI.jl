@@ -108,5 +108,5 @@ function train(lam::Float64, deg::Int, c::Float64, demands, arcs; fcoeffs=nothin
                             + lam * sum{coeffs[i] * coeffs[i] / normCoeffs[i], i=1:deg + 1})
     solve(m)
     
-    return [getValue(coeffs[i]) for i =1:length(coeffs)], getValue(ys), getValue(resids)
+    return [getValue(coeffs[i]) for i =1:length(coeffs)], getObjectiveValue(m)
 end

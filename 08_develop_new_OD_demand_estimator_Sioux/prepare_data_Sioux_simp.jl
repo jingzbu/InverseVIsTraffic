@@ -38,7 +38,7 @@ function observFlow(arc_file, tapFlowDic)
 end
 
 # read in initial demand data
-srand(1234)
+srand(123)
 function iniDemand(trip_file, flag=0)
     file = open(trip_file)
     demands = Dict{(Int64,Int64), Float64}()
@@ -55,7 +55,7 @@ function iniDemand(trip_file, flag=0)
                     demands[(s,t)] = demand
                     if flag == 1
                         # perturb the ground truth demands slightly 
-                        # with perturbation factor uniformly distributed on [.9, 1.1)
+                        # with perturbation factor uniformly distributed on [.8, 1.2)
                         pert_fac = 1 + 0.1 * (1 - 2 * rand())
                         demands[(s,t)] = demand * pert_fac
                     end
