@@ -32,13 +32,14 @@ function setUpFitting(deg::Int64, c::Float64)
 end
 
 function addResid(m, coeffs, ys, demands, arcs, scaling)
-    @defVar(m, resid)
+    	@defVar(m, resid)
 	@defVar(m, dual_cost)
 	@defVar(m, primal_cost)
 
 	@addConstraint(m, dual_cost == sum{demands[(s,t)] * (ys[(s,t), t] - ys[(s,t), s]), (s,t)=keys(demands)})  
 	@addConstraint(m, primal_cost == sum{a.flow * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
 	@addConstraint(m, resid >= (primal_cost - dual_cost) / scaling )
+	@addConstraint(m, resid >= 0)
 
 	return resid
 end

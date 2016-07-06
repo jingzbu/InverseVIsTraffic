@@ -18,3 +18,7 @@ odPairLabel = JSON.parse(odPairLabel)
 
 odPairLabel_ = readall("od_pair_label_dict__Sioux_simp_refined.json")
 odPairLabel_ = JSON.parse(odPairLabel_)
+
+#load node-link incidence
+nodeLink = readall("node_link_incidence_Sioux_simp.json");
+nodeLink = JSON.parse(nodeLink);
