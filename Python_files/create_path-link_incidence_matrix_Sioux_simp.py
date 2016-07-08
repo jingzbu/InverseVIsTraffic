@@ -23,7 +23,7 @@ with open('../temp_files/link_length_dict_Sioux_simp.json', 'r') as json_file:
 m = 30
 
 # number of routes (obtained by counting the rows with '->' in 'path-link_incidence.txt')
-with open('../temp_files/number_routes.json', 'r') as json_file:
+with open('../temp_files/numRoutes_Sioux_simp.json', 'r') as json_file:
     r = json.load(json_file)
 
 # number of O-D pairs

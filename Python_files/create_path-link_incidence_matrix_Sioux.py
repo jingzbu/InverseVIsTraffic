@@ -21,8 +21,10 @@ with open('../temp_files/link_length_dict_Sioux.json', 'r') as json_file:
 
 # number of links
 m = 76
+
 # number of routes (obtained by counting the rows with '->' in 'path-link_incidence.txt')
-r = 97442
+with open('../temp_files/numRoutes_Sioux.json', 'r') as json_file:
+    r = json.load(json_file)
 
 # number of O-D pairs
 s = 24 * (24 - 1)
@@ -100,6 +102,9 @@ for i in range(s):
     OD_pair_route_dict[str(i)] = route_list
 zdump(OD_pair_route_dict, '../temp_files/OD_pair_route_dict_Sioux.pkz')
 
+with open('../temp_files/OD_pair_route_dict_Sioux.json', 'w') as json_file:
+    json.dump(OD_pair_route_dict, json_file)
+
 # OD_pair_route_dict['6']
 
 
@@ -110,10 +115,10 @@ theta = 0.5
 P = np.zeros((s, r))
 for i in range(s):
     for r in OD_pair_route_dict[str(i)]:
-        P[i, r] = 1
-        # P[i, r] = exp(- theta * length_of_route_list[r]) / \
-        #             sum([exp(- theta * length_of_route_list[j]) \
-        #                  for j in OD_pair_route_dict[str(i)]])
+        # P[i, r] = 1
+        P[i, r] = exp(- theta * length_of_route_list[r]) / \
+                    sum([exp(- theta * length_of_route_list[j]) \
+                         for j in OD_pair_route_dict[str(i)]])
 zdump(P, '../temp_files/OD_pair_route_incidence_Sioux.pkz')
 # zdump(P, '../temp_files/logit_route_choice_probability_matrix_Sioux.pkz')
 
