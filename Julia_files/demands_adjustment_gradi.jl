@@ -165,10 +165,8 @@ function armijo(demandsVecOld, searchDirec, thetaMax, Theta, N)
         end
 	push!(demandsVecList, demandsVecOld)
 	push!(objFunList, objF(demandsVecOld))
-	if objF(demandsVecNew) < objF(demandsVecOld)
-	    push!(demandsVecList, demandsVecNew)
-	    push!(objFunList, objF(demandsVecNew))
-	end
+    	push!(demandsVecList, demandsVecNew)
+    	push!(objFunList, objF(demandsVecNew))
     end
     idx = indmin(objFunList)
     return demandsVecList[idx], objFunList[idx]
