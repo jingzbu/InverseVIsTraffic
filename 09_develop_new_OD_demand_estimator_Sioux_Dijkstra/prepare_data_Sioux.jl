@@ -38,7 +38,7 @@ function observFlow(arc_file, tapFlowDic)
 end
 
 # read in initial demand data
-srand(99999)
+srand(8579988625)
 function iniDemand(trip_file, flag=0)
     file = open(trip_file)
     demands = Dict{(Int64,Int64), Float64}()
