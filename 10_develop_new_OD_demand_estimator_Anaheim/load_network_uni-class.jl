@@ -48,6 +48,10 @@ function load_ta_network(network_name="Sioux Falls")
         network_data_file = "SiouxFalls_net_simp.txt"
         trip_table_file = "SiouxFalls_trips_simp.txt"
         best_objective = 0
+    elseif network_name == "Anaheim"
+        network_data_file = "Anaheim_net.txt"
+        trip_table_file = "Anaheim_trips.txt"
+        best_objective = 0
     elseif network_name == "East_Massachusetts_Jan_AM"
         network_data_file = "East_Massachusetts_net_Jan_AM.txt"
         trip_table_file = "East_Massachusetts_trips_Jan_AM.txt"
@@ -128,10 +132,6 @@ function load_ta_network(network_name="Sioux Falls")
         network_data_file = "East_Massachusetts_net_Oct_weekend.txt"
         trip_table_file = "East_Massachusetts_trips_Oct_weekend.txt"
 	best_objective = 0
-    elseif network_name == "Sioux Falls simplified"
-        network_data_file = "SiouxFalls_net_simplified.txt"
-        trip_table_file = "SiouxFalls_trips_simplified.txt"
-        best_objective = 0
     end
 
 

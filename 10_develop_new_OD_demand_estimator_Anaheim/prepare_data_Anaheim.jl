@@ -141,7 +141,7 @@ end
 function lengthRouteVec(linkCostDic)
     routeCostVec = Float64[]
 
-    the_file = open("../temp_files/path-link_incidence_Sioux-Falls.txt", "r")
+    the_file = open("../temp_files/path-link_incidence_Anaheim.txt", "r")
 
     while (line=readline(the_file)) != ""
         if contains(line, "->")
@@ -175,27 +175,27 @@ using JSON
 function furInfo()
     
     #get number of routes
-    numRoutes = readall("../temp_files/numRoutes_Sioux.json")
+    numRoutes = readall("../temp_files/numRoutes_Anaheim.json")
     numRoutes = JSON.parse(numRoutes)
 
     #load OD pair-route incidence
-    odPairRoute = readall("../temp_files/od_pair_route_incidence_Sioux.json")
+    odPairRoute = readall("../temp_files/od_pair_route_incidence_Anaheim.json")
     odPairRoute = JSON.parse(odPairRoute)
 
     #load link-route incidence
-    linkRoute = readall("../temp_files/link_route_incidence_Sioux.json")
+    linkRoute = readall("../temp_files/link_route_incidence_Anaheim.json")
     linkRoute = JSON.parse(linkRoute)
 
-    link_label_dict = readall("../temp_files/link_label_dict_Sioux.json")
+    link_label_dict = readall("../temp_files/link_label_dict_Anaheim.json")
     link_label_dict = JSON.parse(link_label_dict)
 
-    link_label_dict_ = readall("../temp_files/link_label_dict_Sioux_.json")
+    link_label_dict_ = readall("../temp_files/link_label_dict_Anaheim_.json")
     link_label_dict_ = JSON.parse(link_label_dict_)
 
-    link_length_dict = readall("../temp_files/link_length_dict_Sioux.json")
+    link_length_dict = readall("../temp_files/link_length_dict_Anaheim.json")
     link_length_dict = JSON.parse(link_length_dict)
 
-    OD_pair_route_dict = readall("../temp_files/OD_pair_route_dict_Sioux.json")
+    OD_pair_route_dict = readall("../temp_files/OD_pair_route_dict_Anaheim.json")
     OD_pair_route_dict = JSON.parse(OD_pair_route_dict)
     
     return numRoutes, odPairRoute, linkRoute, link_label_dict, link_label_dict_, link_length_dict, OD_pair_route_dict
