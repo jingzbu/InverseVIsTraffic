@@ -46,11 +46,11 @@ function all_or_nothing(travel_time, demands)
     path = []
     x = zeros(size(start_node))
 
-    for r=1:numZones
+    for r=1:numNodes
         # for each origin node r, find shortest paths to all destination nodes
         state = dijkstra_shortest_paths(graph, travel_time, r)
 
-        for s=1:numZones
+        for s=1:numNodes
             # for each destination node s, find the shortest-path vector
             # load travel demand
             x = x + demands[(r,s)] * get_vector(state, r, s, link_dic)

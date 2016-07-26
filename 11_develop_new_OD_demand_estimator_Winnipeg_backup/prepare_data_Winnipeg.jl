@@ -17,7 +17,7 @@ function arcData(arc_file)
     inHeader=true
     for line in eachline(file)
         if inHeader
-            inHeader = !contains(line, "Tail")
+            inHeader = !contains(line, "Init node")
             continue
         end
         vals = split(line, )
@@ -38,7 +38,7 @@ function observFlow(arc_file, tapFlowDic)
 end
 
 # read in initial demand data
-srand(8579988625)
+srand(2212)
 function iniDemand(trip_file, flag=0)
     file = open(trip_file)
     demands = Dict{(Int64,Int64), Float64}()
@@ -62,10 +62,7 @@ function iniDemand(trip_file, flag=0)
                 end
             end
         end
-    end
-    for s=1:numZones
-	demands[(s,s)] = 0
-    end	                
+    end                
     close(file)
     return demands
 end
@@ -144,7 +141,7 @@ end
 function lengthRouteVec(linkCostDic)
     routeCostVec = Float64[]
 
-    the_file = open("../temp_files/path-link_incidence_Anaheim.txt", "r")
+    the_file = open("../temp_files/path-link_incidence_Sioux-Falls.txt", "r")
 
     while (line=readline(the_file)) != ""
         if contains(line, "->")
@@ -178,27 +175,27 @@ using JSON
 function furInfo()
     
     #get number of routes
-    numRoutes = readall("../temp_files/numRoutes_Anaheim.json")
+    numRoutes = readall("../temp_files/numRoutes_Sioux.json")
     numRoutes = JSON.parse(numRoutes)
 
     #load OD pair-route incidence
-    odPairRoute = readall("../temp_files/od_pair_route_incidence_Anaheim.json")
+    odPairRoute = readall("../temp_files/od_pair_route_incidence_Sioux.json")
     odPairRoute = JSON.parse(odPairRoute)
 
     #load link-route incidence
-    linkRoute = readall("../temp_files/link_route_incidence_Anaheim.json")
+    linkRoute = readall("../temp_files/link_route_incidence_Sioux.json")
     linkRoute = JSON.parse(linkRoute)
 
-    link_label_dict = readall("../temp_files/link_label_dict_Anaheim.json")
+    link_label_dict = readall("../temp_files/link_label_dict_Sioux.json")
     link_label_dict = JSON.parse(link_label_dict)
 
-    link_label_dict_ = readall("../temp_files/link_label_dict_Anaheim_.json")
+    link_label_dict_ = readall("../temp_files/link_label_dict_Sioux_.json")
     link_label_dict_ = JSON.parse(link_label_dict_)
 
-    link_length_dict = readall("../temp_files/link_length_dict_Anaheim.json")
+    link_length_dict = readall("../temp_files/link_length_dict_Sioux.json")
     link_length_dict = JSON.parse(link_length_dict)
 
-    OD_pair_route_dict = readall("../temp_files/OD_pair_route_dict_Anaheim.json")
+    OD_pair_route_dict = readall("../temp_files/OD_pair_route_dict_Sioux.json")
     OD_pair_route_dict = JSON.parse(OD_pair_route_dict)
     
     return numRoutes, odPairRoute, linkRoute, link_label_dict, link_label_dict_, link_length_dict, OD_pair_route_dict

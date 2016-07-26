@@ -17,7 +17,7 @@ function arcData(arc_file)
     inHeader=true
     for line in eachline(file)
         if inHeader
-            inHeader = !contains(line, "Tail")
+            inHeader = !contains(line, "Init node")
             continue
         end
         vals = split(line, )
@@ -38,7 +38,7 @@ function observFlow(arc_file, tapFlowDic)
 end
 
 # read in initial demand data
-srand(8579988625)
+srand(2212)
 function iniDemand(trip_file, flag=0)
     file = open(trip_file)
     demands = Dict{(Int64,Int64), Float64}()
@@ -62,10 +62,7 @@ function iniDemand(trip_file, flag=0)
                 end
             end
         end
-    end
-    for s=1:numZones
-	demands[(s,s)] = 0
-    end	                
+    end                
     close(file)
     return demands
 end
