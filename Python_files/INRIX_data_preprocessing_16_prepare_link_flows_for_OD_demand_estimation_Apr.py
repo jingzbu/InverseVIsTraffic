@@ -11,16 +11,16 @@ from util import *
 road_seg_inr_capac = zload('../temp_files/road_seg_inr_capac.pkz')
 
 # load tmc-day-ave_speed data for AM peak of April
-tmc_day_speed_dict_Apr_AM = zload('../temp_files/Jan_AM/tmc_day_speed_dict.pkz')
+tmc_day_speed_dict_Apr_AM = zload('../temp_files/Apr_AM/tmc_day_speed_dict.pkz')
 
 # load tmc-day-ave_speed data for MD of April
-tmc_day_speed_dict_Apr_MD = zload('../temp_files/Jan_MD/tmc_day_speed_dict.pkz')
+tmc_day_speed_dict_Apr_MD = zload('../temp_files/Apr_MD/tmc_day_speed_dict.pkz')
 
 # load tmc-day-ave_speed data for PM peak of April
-tmc_day_speed_dict_Apr_PM = zload('../temp_files/Jan_PM/tmc_day_speed_dict.pkz')
+tmc_day_speed_dict_Apr_PM = zload('../temp_files/Apr_PM/tmc_day_speed_dict.pkz')
 
 # load tmc-day-ave_speed data for NT of April
-tmc_day_speed_dict_Apr_NT = zload('../temp_files/Jan_NT/tmc_day_speed_dict.pkz')
+tmc_day_speed_dict_Apr_NT = zload('../temp_files/Apr_NT/tmc_day_speed_dict.pkz')
 
 
 tmc_day_capac_flow_minute_dict = {}

@@ -21,8 +21,15 @@ with open('../temp_files/link_length_dict_MA.json', 'r') as json_file:
 
 # number of links
 m = 24
+
 # number of routes (obtained by counting the rows with '->' in 'path-link_incidence.txt')
-r = 724
+with open('../temp_files/path-link_incidence_MA.txt', 'r') as the_file:
+    # path counts
+    i = 0  
+    for row in the_file:
+        if '->' in row:
+            i = i + 1
+r = i
 
 # number of O-D pairs
 s = 8 * (8 - 1)
@@ -105,15 +112,15 @@ zdump(OD_pair_route_dict, '../temp_files/OD_pair_route_dict_MA.pkz')
 
 # calculate route choice probability matrix P
 # logit choice parameter
-theta = 0.5
+theta = 0.8
 
 P = np.zeros((s, r))
 for i in range(s):
     for r in OD_pair_route_dict[str(i)]:
         P[i, r] = 1
-        # P[i, r] = exp(- theta * length_of_route_list[r]) / \
-        #             sum([exp(- theta * length_of_route_list[j]) \
-        #                  for j in OD_pair_route_dict[str(i)]])
+        #P[i, r] = exp(- theta * length_of_route_list[r]) / \
+        #            sum([exp(- theta * length_of_route_list[j]) \
+        #                 for j in OD_pair_route_dict[str(i)]])
 zdump(P, '../temp_files/OD_pair_route_incidence_MA.pkz')
 # zdump(P, '../temp_files/logit_route_choice_probability_matrix_Sioux.pkz')
 
