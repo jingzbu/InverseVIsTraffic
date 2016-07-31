@@ -64,7 +64,7 @@ def GLS(x, A, L):
         #model.addConstr(xi[l] == 0)
     model.update() 
 
-    model.setParam('OutputFlag', False)
+    #model.setParam('OutputFlag', False)
     model.optimize()
 
     xi_list = []
@@ -116,6 +116,25 @@ x = np.matrix(x)
 # print(np.size(A,0), np.size(A,1))
 
 L = np.size(P,1)  # dimension of xi
+
+K = np.size(x, 1)
+S = samp_cov(x)
+
+#print("rank of S is: \n")
+#print(matrix_rank(S))
+#print("sizes of S are: \n")
+#print(np.size(S, 0))
+#print(np.size(S, 1))
+
+inv_S = inv(S).real
+
+A_t = np.transpose(A)
+
+Q_ = np.dot(np.dot(A_t, inv_S), A)
+#Q = adj_PSD(Q_).real  # Ensure Q to be PSD
+Q = Q_
+
+b = sum([np.dot(np.dot(A_t, inv_S), x[:, k]) for k in range(K)])
 
 xi_list = GLS(x, A, L)
 
