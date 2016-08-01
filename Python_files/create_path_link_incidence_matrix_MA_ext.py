@@ -110,8 +110,9 @@ theta = 0.5
 P = np.zeros((s, r))
 for i in range(s):
     for r in OD_pair_route_dict[str(i)]:
+	# P[i, r] = 1
         P[i, r] = exp(- theta * length_of_route_list[r]) / \
-                    sum([exp(- theta * length_of_route_list[j]) \
+                     sum([exp(- theta * length_of_route_list[j]) \
                          for j in OD_pair_route_dict[str(i)]])
 zdump(P, '../temp_files/logit_route_choice_probability_matrix_ext.pkz')
 
