@@ -10,26 +10,6 @@ from util_data_storage_and_load import *
 # number of nodes
 n = 22
 
-# create O-D pair labels
-# create a dictionary mapping O-D pairs to labels
-OD_pair_label_dict = {}
-OD_pair_label_dict_ = {}
-with open('../temp_files/O-D_pair_labels_ext.txt', 'w') as the_file:
-    label = 0
-    for i in range(n + 1)[1:]:
-        for j in range(n + 1)[1:]:
-            if i != j: 
-                key = (i, j)
-                OD_pair_label_dict[str(key)] = label
-		OD_pair_label_dict_[str(label)] = key
-                the_file.write("O-D pair (%d, %d) ---> label %d    \n" %(i, j, label))
-                label = label + 1
-                if label % 21 == 0:
-                    the_file.write('\n')
-
-zdump(OD_pair_label_dict, '../temp_files/OD_pair_label_dict_ext.pkz')
-zdump(OD_pair_label_dict_, '../temp_files/OD_pair_label_dict__ext.pkz')
-
 
 from collections import defaultdict
 
