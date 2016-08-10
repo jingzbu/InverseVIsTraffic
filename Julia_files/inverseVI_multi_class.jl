@@ -36,34 +36,34 @@ function setUpFitting(deg::Int64, c::Float64)
         normCoeffs[i] = comb(deg, i-1) * c^(deg-i+1)
     end
 
-	m = Model(solver=GurobiSolver(OutputFlag=false))
+    m = Model(solver=GurobiSolver(OutputFlag=false))
     
-	@defVar(m, coeffs[1:deg+1])
+    @defVar(m, coeffs[1:deg+1])
 
-	return m, coeffs, normCoeffs
+    return m, coeffs, normCoeffs
 
 end
 
 function addResid(m, coeffs, ys_car, ys_truck, demands_car, demands_truck, arcs, scaling)
-	@defVar(m, resid)
+    @defVar(m, resid)
     @defVar(m, dual_cost)
-	@defVar(m, dual_cost_car)
+    @defVar(m, dual_cost_car)
     @defVar(m, dual_cost_truck)
-	@defVar(m, primal_cost)
+    @defVar(m, primal_cost)
     @defVar(m, primal_cost_car)
     @defVar(m, primal_cost_truck)
 
-	@addConstraint(m, dual_cost_car == sum{demands_car[(s,t)] * (ys_car[(s,t), t] - ys_car[(s,t), s]), (s,t)=keys(demands_car)})  
+    @addConstraint(m, dual_cost_car == sum{demands_car[(s,t)] * (ys_car[(s,t), t] - ys_car[(s,t), s]), (s,t)=keys(demands_car)})  
     @addConstraint(m, dual_cost_truck == sum{demands_truck[(s,t)] * (ys_truck[(s,t), t] - ys_truck[(s,t), s]), (s,t)=keys(demands_truck)})  
     @addConstraint(m, dual_cost == dual_cost_car + dual_cost_truck)
     
-	@addConstraint(m, primal_cost_car == sum{a.flow_car * 1.0 * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
-	@addConstraint(m, primal_cost_truck == sum{a.flow_truck * 1.1 * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
+    @addConstraint(m, primal_cost_car == sum{a.flow_car * 1.0 * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
+    @addConstraint(m, primal_cost_truck == sum{a.flow_truck * 1.1 * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
     @addConstraint(m, primal_cost == primal_cost_car + primal_cost_truck)
                    
-	@addConstraint(m, resid >= (primal_cost - dual_cost) / scaling)
+    @addConstraint(m, resid >= (primal_cost - dual_cost) / scaling)
     @addConstraint(m, resid >= 0)
-	return resid
+    return resid
 end
 
 function addIncreasingCnsts(m, coeffs, arcs)
@@ -78,19 +78,19 @@ function normalize(m, coeffs)
 end
 
 function addNetworkCnsts(m, coeffs, demands_car, demands_truck, arcs, numNodes)
-	@defVar(m, ys_car[keys(demands_car), 1:numNodes])
+    @defVar(m, ys_car[keys(demands_car), 1:numNodes])
     @defVar(m, ys_truck[keys(demands_truck), 1:numNodes])
-	for k = keys(arcs)
-		a = arcs[k]
-		rhs = a.freeflowtime * polyEval(coeffs, a.flow/a.capacity)
-		for od in keys(demands_car)
-			@addConstraint(m, ys_car[od, k[2]] - ys_car[od, k[1]] <= 1.0 * rhs)
-		end
-		for od in keys(demands_truck)
-			@addConstraint(m, ys_truck[od, k[2]] - ys_truck[od, k[1]] <= 1.1 * rhs)
-		end
+    for k = keys(arcs)
+	a = arcs[k]
+	rhs = a.freeflowtime * polyEval(coeffs, a.flow/a.capacity)
+	for od in keys(demands_car)
+	    @addConstraint(m, ys_car[od, k[2]] - ys_car[od, k[1]] <= 1.0 * rhs)
 	end
-	return ys_car, ys_truck
+	for od in keys(demands_truck)
+	    @addConstraint(m, ys_truck[od, k[2]] - ys_truck[od, k[1]] <= 1.1 * rhs)
+	end
+    end
+return ys_car, ys_truck
 end
 
 ##########
