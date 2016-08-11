@@ -35,7 +35,7 @@ end
 
 # preparing a graph
 graph = create_graph(start_node, end_node);
-link_dic = sparse(start_node, end_node, 1:number_of_links);
+link_dic = sparse(start_node, end_node, 1:numLinks);
 
 function BPR(flowVec, fcoeffs)
     bpr = similar(flowVec)
@@ -50,11 +50,11 @@ function all_or_nothing(travel_time, travel_demand_dict)
     path = []
     x = zeros(size(start_node))
 
-    for r=1:number_of_nodes
+    for r=1:numNodes
         # for each origin node r, find shortest paths to all destination nodes
         state = dijkstra_shortest_paths(graph, travel_time, r)
 
-        for s=1:number_of_nodes
+        for s=1:numNodes
             # for each destination node s, find the shortest-path vector
             # load travel demand
             x = x + travel_demand_dict[(r,s)] * get_vector(state, r, s, link_dic)
@@ -67,10 +67,10 @@ end
 function tapMSA_Multi(travel_demand_car, travel_demand_truck, fcoeffs, numIter=1000, tol=1e-6)
     
     # Finding a starting feasible solution
-    travel_time = BPR(zeros(number_of_links), fcoeffs);
+    travel_time = BPR(zeros(numLinks), fcoeffs);
 
-    travel_time_car = 1.0 * BPR(zeros(number_of_links), fcoeffs);
-    travel_time_truck = 1.1 * BPR(zeros(number_of_links), fcoeffs);
+    travel_time_car = 1.0 * BPR(zeros(numLinks), fcoeffs);
+    travel_time_truck = 1.1 * BPR(zeros(numLinks), fcoeffs);
 
     xl_car = all_or_nothing(travel_time_car, travel_demand_car);
     xl_truck = all_or_nothing(travel_time_truck, travel_demand_truck);
@@ -103,18 +103,24 @@ function tapMSA_Multi(travel_demand_car, travel_demand_truck, fcoeffs, numIter=1
         end
     end
         
+    tapFlows = Dict{}()
     tapFlowsCar = Dict{(Int64,Int64),Float64}()
     tapFlowsTruck = Dict{(Int64,Int64),Float64}()
+    tapFlowVect = zeros(2,length(xl_car))
 
     for i = 1:length(ta_data.start_node)
-        key = (ta_data.start_node[i], ta_data.end_node[i])
-        tapFlowsCar[key] = xl_car[i]
-        tapFlowsTruck[key] = xl_truck[i]
+	key = (ta_data.start_node[i], ta_data.end_node[i])
+	tapFlowsCar[key] = xl_car[i]
+	tapFlowsTruck[key] = xl_truck[i]
+    end
+    tapFlows["car"] = tapFlowsCar
+    tapFlows["truck"] = tapFlowsTruck
+
+    for j = 1:length(xl_car)
+	tapFlowVect[1,j] = xl_car[j]
+	tapFlowVect[2,j] = xl_truck[j]
     end
 
-    tapFlowVectCar = xl_car
-    tapFlowVectTruck = xl_truck
-
-    return tapFlowsCar, tapFlowsTruck, tapFlowVectCar, tapFlowVectTruck
+    return tapFlows, tapFlowVect
 
 end

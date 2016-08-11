@@ -1,19 +1,6 @@
 using JuMP
 using Gurobi
 
-type Arc
-    initNode::Int 
-    termNode::Int 
-    capacity::Float64
-    freeflowtime::Float64
-    flow::Float64
-    flow_car::Float64
-    flow_truck::Float64
-end
-
-Arc(initNode::Int, termNode::Int, capacity::Float64,freeflowtime::Float64) = 
-    Arc(initNode, termNode, capacity, freeflowtime, 0., 0., 0.)
-
 polyEval(coeffs, pt) = sum([coeffs[i] * pt^(i-1) for i = 1:length(coeffs)])  
 
 function facto(m::Int64)

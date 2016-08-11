@@ -1,7 +1,7 @@
 using JSON
 
-demandsDict = Dict{Int64, Dict{(Int64,Int64), Float64}}()
-# get ground trueth demands, indexed by 0
+demandsDict = Dict{}()
+# get ground truth demands, indexed by 0
 demandsDict[0] = iniDemand("../data_original/SiouxFalls_trips.txt")
 # get initial demands, indexed by 1
 demandsDict[1] = iniDemand("../data_original/SiouxFalls_trips.txt", 1)

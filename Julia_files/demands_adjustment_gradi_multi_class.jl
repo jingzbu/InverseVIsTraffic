@@ -88,7 +88,7 @@ end
 function gradient(tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
     gradi = zeros(numODpairs)
     for i = 1:numODpairs
-        gradi[i] = sum([2 * (tapFlowVec[j] - observFlowVec[j]) * jacob[i, j, k] for j = 1:numLinks])
+        gradi[i] = sum([sum([2 * (tapFlowVec[k, j] - observFlowVec[k, j]) * jacob[i, j, k-1] for j = 1:numLinks]) for k = 1:2])
     end
     return gradi
 end

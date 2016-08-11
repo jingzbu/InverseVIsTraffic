@@ -6,10 +6,12 @@ type Arc
     capacity::Float64
     freeflowtime::Float64
     flow::Float64
+    flow_car::Float64
+    flow_truck::Float64
 end
 
-Arc(initNode::Int, termNode::Int, capacity::Float64, freeflowtime::Float64) = 
-    Arc(initNode, termNode, capacity, freeflowtime, 0.)
+Arc(initNode::Int, termNode::Int, capacity::Float64,freeflowtime::Float64) = 
+    Arc(initNode, termNode, capacity, freeflowtime, 0., 0., 0.)
 
 function arcData(arc_file)
     arcs = Dict{(Int, Int), Arc}()
@@ -32,16 +34,20 @@ function observFlow(arc_file, tapFlowDic)
     arcs = arcData(arc_file)
     ix = 0 
     for key in keys(arcs)
-        arcs[key].flow = tapFlowDic[key]
+        arcs[key].flow = 1.0 * tapFlowDic["car"][key] + 2.0 * tapFlowDic["truck"][key]
+        arcs[key].flow_car = tapFlowDic["car"][key]
+        arcs[key].flow_truck = tapFlowDic["truck"][key]
     end
     return arcs
 end
 
 # read in initial demand data
-srand(8579988625)
+srand(2016)
 function iniDemand(trip_file, flag=0)
     file = open(trip_file)
-    demands = Dict{(Int64,Int64), Float64}()
+    demands = Dict{}()
+    demandsCar = Dict{}()
+    demandsTruck = Dict{}()
     s = 0
     for line in eachline(file)
         if contains(line, "Origin")
@@ -52,13 +58,17 @@ function iniDemand(trip_file, flag=0)
                 if !contains(pair, "\n")
                     pair_vals = split(pair, ":")
                     t, demand = int(pair_vals[1]), float(pair_vals[2])
-                    demands[(s,t)] = demand
+                    demandsCar[(s,t)] = demand * 0.8  # demands for cars
+		    demandsTruck[(s,t)] = demand * 0.2  # demands for trucks
                     if flag == 1
                         # perturb the ground truth demands slightly 
                         # with perturbation factor uniformly distributed on [.8, 1.2)
                         pert_fac = 1 + 0.2 * (1 - 2 * rand())
-                        demands[(s,t)] = demand * pert_fac
+                        demandsCar[(s,t)] = demand * pert_fac * 0.8  # demands for cars
+			demandsTruck[(s,t)] = demand * pert_fac * 0.2  # demands for trucks
                     end
+		    demands["car"] = demandsCar
+  		    demands["truck"] = demandsTruck
                 end
             end
         end
@@ -71,6 +81,7 @@ function demandsDicToVec(demandsDic)
     demandsVec = zeros(length(odPairLabel_))
     for i = 1:length(demandsVec)
         demandsVec[i] = demandsDic[(odPairLabel_["$i"][1], odPairLabel_["$i"][2])]
+	demandsVec[i] = demandsDic[(odPairLabel_["$i"][1], odPairLabel_["$i"][2])]
     end
     return demandsVec
 end
@@ -92,7 +103,7 @@ include("load_network_uni-class.jl")
 
 function paraNetwork(nameNetwork)
     ta_data = load_ta_network(nameNetwork)
-    numNodes = maximum(map(pair->pair[1], keys(demandsDict[0])))
+    numNodes = maximum(map(pair->pair[1], keys(demandsDict[0]["car"])))
     start_node = ta_data.start_node
     capacity = ta_data.capacity
     free_flow_time = ta_data.free_flow_time
@@ -102,12 +113,21 @@ function paraNetwork(nameNetwork)
 end
 
 function tapFlowVecToLinkCostDict(tapFlowVec, fcoeffsInvVI)
-    linkCostVec = BPR(tapFlowVec, fcoeffsInvVI)
-    temp_dict = Dict{}()
-    for i in 1:length(linkCostVec)
-        temp_dict["$(i-1)"] = linkCostVec[i]
+    linkCostVecCar = 1.0 * BPR(1.0 * tapFlowVec[1,:] + 2.0 * tapFlowVec[2,:], fcoeffsInvVI)
+    linkCostVecTruck = 1.1 * BPR(1.0 * tapFlowVec[1,:] + 2.0 * tapFlowVec[2,:], fcoeffsInvVI)
+
+    temp_dict_car = Dict{}()
+    temp_dict_truck = Dict{}()
+    for i = 1:length(linkCostVecCar)
+        temp_dict_car["$(i-1)"] = linkCostVecCar[i]
+	temp_dict_truck["$(i-1)"] = linkCostVecTruck[i]
     end
-    return temp_dict
+
+    linkCostDict = Dict{}()
+    linkCostDict["car"] = temp_dict_car
+    linkCostDict["truck"] = temp_dict_truck
+
+    return linkCostDict
 end
 
 # calculate od Pair - route choice probability matrix P
