@@ -16,3 +16,7 @@ demandsDiffDictTruck = Dict{}();
 odPairRouteDict = Dict{}();
 jacobiSpiessDict = Dict{}();
 linkCostDicDict = Dict{}();
+link_length_list_dict = Dict{}();
+link_length_list_dict_dict = Dict{}();
+demandsDictCar = Dict{}();
+demandsDictTruck = Dict{}();

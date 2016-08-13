@@ -41,6 +41,9 @@ function BPR(flowVec, fcoeffs)
     bpr = similar(flowVec)
     for a = 1:length(bpr)
         bpr[a] = free_flow_time[a] * sum([fcoeffs[i] * (flowVec[a]/capacity[a])^(i-1) for i = 1:length(fcoeffs)])
+	if bpr[a] < free_flow_time[a]
+	    bpr[a] = free_flow_time[a]
+	end
     end
     return bpr
 end

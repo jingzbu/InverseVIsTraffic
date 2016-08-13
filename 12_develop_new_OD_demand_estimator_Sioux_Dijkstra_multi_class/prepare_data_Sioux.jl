@@ -77,16 +77,15 @@ function iniDemand(trip_file, flag=0)
     return demands
 end
 
-function demandsDicToVec(demandsDic)
+function demandsDicToVec(demandsDic)  
     demandsVec = zeros(length(odPairLabel_))
     for i = 1:length(demandsVec)
         demandsVec[i] = demandsDic[(odPairLabel_["$i"][1], odPairLabel_["$i"][2])]
-	demandsVec[i] = demandsDic[(odPairLabel_["$i"][1], odPairLabel_["$i"][2])]
     end
     return demandsVec
 end
 
-function demandsVecToDic(demandsVec)
+function demandsVecToDic(demandsVec)  
     demandsDic = Dict{(Int64,Int64), Float64}()
     for i = 1:numNodes
         demandsDic[(i, i)] = 0
