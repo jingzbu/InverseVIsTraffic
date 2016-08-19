@@ -60,7 +60,7 @@ function all_or_nothing(travel_time, demands)
     return x
 end
 
-function tapMSA(demands, fcoeffs, numIter=500, tol=1e-6)
+function tapMSA(demands, fcoeffs, numIter=1000, tol=1e-6)
     # Finding a starting feasible solution
     travel_time = BPR(zeros(numLinks), fcoeffs)
     xl = all_or_nothing(travel_time, demands)

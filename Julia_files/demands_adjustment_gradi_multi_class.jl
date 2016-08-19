@@ -67,10 +67,13 @@ function objF(demandsVecCar, demandsVecTruck, fcoeffs)
     return sum([(tapFlowVec[1, j] - tapFlowVecDict[0][1, j])^2 for j = 1:numLinks]) + sum([(tapFlowVec[2, j] - tapFlowVecDict[0][2, j])^2 for j = 1:numLinks])
 end     
 
-function armijo(demandsVecCarOld, demandsVecTruckOld, fcoeffs, searchDirec, thetaMax, Theta, N)
+function armijo(objFunOld, demandsVecCarOld, demandsVecTruckOld, fcoeffs, searchDirec, thetaMax, Theta, N)
     demandsVecCarList = Array{Float64}[]
     demandsVecTruckList = Array{Float64}[]
     objFunList = Float64[]
+    push!(demandsVecCarList, demandsVecCarOld)
+    push!(demandsVecTruckList, demandsVecTruckOld)
+    push!(objFunList, objFunOld)
     for n = 0:N
         demandsVecCarNew = similar(demandsVecCarOld)
         demandsVecTruckNew = similar(demandsVecTruckOld)
@@ -80,13 +83,12 @@ function armijo(demandsVecCarOld, demandsVecTruckOld, fcoeffs, searchDirec, thet
         for i = 1:length(demandsVecTruckOld)
             demandsVecTruckNew[i] = demandsVecTruckOld[i] + (thetaMax/(Theta^n)) * searchDirec[2, i] 
         end
-	push!(demandsVecCarList, demandsVecCarOld)
-	push!(demandsVecTruckList, demandsVecTruckOld)
-	push!(objFunList, objF(demandsVecCarOld, demandsVecTruckOld, fcoeffs))
     	push!(demandsVecCarList, demandsVecCarNew)
     	push!(demandsVecTruckList, demandsVecTruckNew)
     	push!(objFunList, objF(demandsVecCarNew, demandsVecTruckNew, fcoeffs))
     end
     idx = indmin(objFunList)
-    return demandsVecCarList[idx], demandsVecTruckList[idx], objFunList[idx]
+    objFunNew = objFunList[idx]
+    assert(objFunNew <= objFunOld)
+    return demandsVecCarList[idx], demandsVecTruckList[idx], objFunNew
 end
