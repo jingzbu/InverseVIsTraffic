@@ -92,7 +92,7 @@ def GLS(x, A, L):
     A_t = np.transpose(A)
 
     Q_ = np.dot(np.dot(A_t, inv_S), A)
-    Q = adj_PSD(Q_).real  # Ensure Q to be PSD
+    # Q = adj_PSD(Q_).real  # Ensure Q to be PSD
     Q = Q_
 
     b = sum([np.dot(np.dot(A_t, inv_S), x[:, k]) for k in range(K)])
