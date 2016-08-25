@@ -97,7 +97,7 @@ for link_idx in range(74):
     for day in weekend_Apr_list: 
         for minute_idx in range(120):
             key = 'link_' + str(link_idx) + '_' + str(day)
-            link_day_minute_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['AM_flow_minute'][minute_idx])
+            link_day_minute_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['PM_flow_minute'][minute_idx])
 
 # print(len(link_day_minute_Apr_list))
 
@@ -115,7 +115,7 @@ link_day_Apr_list = []
 for link_idx in range(74):
     for day in range(31)[1:]: 
         key = 'link_' + str(link_idx) + '_' + str(day)
-        link_day_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['AM_flow'])
+        link_day_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['PM_flow'])
 
 # print(len(link_day_minute_Apr_list))
 
