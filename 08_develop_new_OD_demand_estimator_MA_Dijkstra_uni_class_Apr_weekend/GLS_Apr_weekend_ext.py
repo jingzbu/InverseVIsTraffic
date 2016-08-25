@@ -90,6 +90,7 @@ A = zload('../temp_files/path-link_incidence_matrix_ext.pkz')
 with open('../temp_files/link_day_minute_Apr_dict_ext_JSON_insert_links_adjusted.json', 'r') as json_file:
     link_day_minute_Apr_dict_JSON = json.load(json_file)
 
+
 weekend_Apr_list = [1, 7, 8, 14, 15, 21, 22, 28, 29]
 
 link_day_minute_Apr_list = []
@@ -141,7 +142,7 @@ L = np.size(P,1)  # dimension of xi
 def saveDemandVec(lam_list):
     lam_dict = {}
     n = 22  # number of nodes
-    with open('../temp_files/OD_demand_matrix_Apr_weekend.txt', 'w') as the_file:
+    with open('../temp_files/OD_demand_matrix_Apr_weekend_ext.txt', 'w') as the_file:
         idx = 0
         for i in range(n + 1)[1:]:
             for j in range(n + 1)[1:]:
@@ -151,5 +152,7 @@ def saveDemandVec(lam_list):
                     the_file.write("%d,%d,%f\n" %(i, j, lam_list[idx]))
                     idx += 1
 
-    with open('../temp_files/OD_demand_matrix_Apr_weekend.json', 'w') as json_file:
+    with open('../temp_files/OD_demand_matrix_Apr_weekend_ext.json', 'w') as json_file:
         json.dump(lam_dict, json_file)
+
+

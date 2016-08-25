@@ -77,7 +77,7 @@ function tapMSA(demands, fcoeffs, numIter=1000, tol=1e-6)
 
         yl = all_or_nothing(travel_time, demands)
 
-        assert(yl != xl)
+        # assert(yl != xl)
 
         xl = xl + (yl - xl)/l
 

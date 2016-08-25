@@ -6,7 +6,7 @@ import json
 # implement GLS method to estimate OD demand matrix
 def GLS(x, A, L):
     """
-    x: sample matrix, each column is a link flow vector sample; 74 * K
+    x: sample matrix, each column is a link flow vector sample; 24 * K
     A: path-link incidence matrix
     P: logit route choice probability matrix
     L: dimension of xi
@@ -90,19 +90,19 @@ A = zload('../temp_files/path-link_incidence_matrix_ext.pkz')
 with open('../temp_files/link_day_minute_Apr_dict_ext_JSON_insert_links_adjusted.json', 'r') as json_file:
     link_day_minute_Apr_dict_JSON = json.load(json_file)
 
-weekend_Apr_list = [1, 7, 8, 14, 15, 21, 22, 28, 29]
+week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
 
 link_day_minute_Apr_list = []
 for link_idx in range(74):
-    for day in weekend_Apr_list: 
+    for day in week_day_Apr_list: 
         for minute_idx in range(120):
             key = 'link_' + str(link_idx) + '_' + str(day)
-            link_day_minute_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['AM_flow_minute'][minute_idx])
+            link_day_minute_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['PM_flow_minute'][minute_idx])
 
 # print(len(link_day_minute_Apr_list))
 
 x = np.matrix(link_day_minute_Apr_list)
-x = np.matrix.reshape(x, 74, 1080)
+x = np.matrix.reshape(x, 74, 2520)
 
 x = np.nan_to_num(x)
 y = np.array(np.transpose(x))
@@ -110,12 +110,11 @@ y = y[np.all(y != 0, axis=1)]
 x = np.transpose(y)
 x = np.matrix(x)
 
-
 link_day_Apr_list = []
 for link_idx in range(74):
     for day in range(31)[1:]: 
         key = 'link_' + str(link_idx) + '_' + str(day)
-        link_day_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['AM_flow'])
+        link_day_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['PM_flow'])
 
 # print(len(link_day_minute_Apr_list))
 
@@ -128,11 +127,6 @@ y_ = y_[np.all(y_ != 0, axis=1)]
 x_ = np.transpose(y_)
 x_ = np.matrix(x_)
 
-
-# print(np.size(x,0), np.size(x,1))
-# print(x[:,:2])
-# print(np.size(A,0), np.size(A,1))
-
 L = np.size(P,1)  # dimension of xi
 
 # xi_list = GLS(x, A, L)
@@ -141,7 +135,7 @@ L = np.size(P,1)  # dimension of xi
 def saveDemandVec(lam_list):
     lam_dict = {}
     n = 22  # number of nodes
-    with open('../temp_files/OD_demand_matrix_Apr_weekend.txt', 'w') as the_file:
+    with open('../temp_files/OD_demand_matrix_Apr_weekday_PM_ext.txt', 'w') as the_file:
         idx = 0
         for i in range(n + 1)[1:]:
             for j in range(n + 1)[1:]:
@@ -151,5 +145,9 @@ def saveDemandVec(lam_list):
                     the_file.write("%d,%d,%f\n" %(i, j, lam_list[idx]))
                     idx += 1
 
-    with open('../temp_files/OD_demand_matrix_Apr_weekend.json', 'w') as json_file:
+    with open('../temp_files/OD_demand_matrix_Apr_weekday_PM_ext.json', 'w') as json_file:
         json.dump(lam_dict, json_file)
+
+
+
+

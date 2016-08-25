@@ -100,6 +100,10 @@ function load_ta_network(network_name="Sioux Falls")
         network_data_file = "East_Massachusetts_net_Apr_weekend.txt"
         trip_table_file = "East_Massachusetts_trips_Apr_weekend.txt"
 	best_objective = 0
+    elseif network_name == "MA_Apr_weekend_ext"
+        network_data_file = "East_Massachusetts_net_Apr_weekend_ext.txt"
+        trip_table_file = "East_Massachusetts_trips_Apr_weekend_ext.txt"
+	best_objective = 0
     elseif network_name == "East_Massachusetts_Jul_AM"
         network_data_file = "East_Massachusetts_net_Jul_AM.txt"
         trip_table_file = "East_Massachusetts_trips_Jul_AM.txt"
