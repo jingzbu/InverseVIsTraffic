@@ -1,4 +1,6 @@
 digraph G {
+rankdir=LR
+size="8,4"
 	16 [fontsize=24]
 	17 [fontsize=24]
 	14 [fontsize=24]
