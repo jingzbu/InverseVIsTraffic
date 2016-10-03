@@ -1,15 +1,15 @@
 digraph G {
-	graph [bb="0,0,240.9,124.8"];
+	graph [bb="0,0,222.28,123"];
 	node [label="\N"];
 	A	 [height=0.5,
 		label="historical data",
-		pos="120.45,106.8",
-		width=1.8187];
+		pos="111.14,105",
+		width=1.679];
 	B	 [height=0.5,
 		label="empirical Probability Law &pi;",
-		pos="120.45,18",
-		width=3.3459];
+		pos="111.14,18",
+		width=3.0872];
 	A -> B	 [label="statistical inference",
-		lp="174.67,62.4",
-		pos="e,120.45,36.113 120.45,88.651 120.45,76.525 120.45,60.019 120.45,46.119"];
+		lp="164.14,61.5",
+		pos="e,111.14,36.175 111.14,86.799 111.14,75.163 111.14,59.548 111.14,46.237"];
 }
