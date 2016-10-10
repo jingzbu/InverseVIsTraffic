@@ -15,7 +15,13 @@ both Python and Julia have been used.
 
 Related publications
 ====
-Jing Zhang, Sepideh Pourazarm, Christos G. Cassandras, and Ioannis Ch. Paschalidis, "***[The Price of Anarchy in Transportation Networks by Estimating User Cost Functions from Actual Traffic Data](http://arxiv.org/pdf/1606.02194v1.pdf),***" Proceedings of the 55th IEEE Conference on Decision and Control, December 12-14, 2016, Las Vegas, NV, USA, accepted as Invited Session Paper.
+Jing Zhang, Sepideh Pourazarm, Christos G. Cassandras, and Ioannis Ch. Paschalidis, "***[The Price of Anarchy in Transportation Networks by Estimating User Cost Functions from Actual Traffic Data](http://people.bu.edu/jzh/CDC16_0334_FI.pdf),***" Proceedings of the 55th IEEE Conference on Decision and Control, December 12-14, 2016, Las Vegas, NV, USA, accepted as Invited Session Paper.
+
+Licensing
+====
+
+This code is available under the MIT License.
+Copyright (c) 2016 Jing Zhang
 
 
 Author
