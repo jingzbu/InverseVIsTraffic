@@ -17,6 +17,8 @@ Related publications
 ====
 Jing Zhang, Sepideh Pourazarm, Christos G. Cassandras, and Ioannis Ch. Paschalidis, "***[The Price of Anarchy in Transportation Networks by Estimating User Cost Functions from Actual Traffic Data](http://people.bu.edu/jzh/CDC16_0334_FI.pdf),***" Proceedings of the 55th IEEE Conference on Decision and Control, December 12-14, 2016, Las Vegas, NV, USA, accepted as Invited Session Paper.
 
+Jing Zhang, Sepideh Pourazarm, Christos G. Cassandras, and Ioannis Ch. Paschalidis, "***[Data-driven Estimation of Origin-Destination Demand and User Cost Functions for the Optimization of Transportation Networks](https://arxiv.org/pdf/1610.09580v1.pdf),***" The 20th World Congress of the International Federation of Automatic Control, July 9-14, 2017, Toulouse, France, Invited Session Paper, submitted.
+
 Licensing
 ====
 
