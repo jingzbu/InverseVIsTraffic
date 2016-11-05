@@ -135,12 +135,8 @@ function load_ta_network(network_name="Sioux Falls")
     end
 
 
-    network_data_file = joinpath("/home/jzh/Dropbox/Research/", 
-			"Data-driven_estimation_inverse_optimization/Experiments/InverseVIsTraffic/", 
-			"data_traffic_assignment_uni-class", network_data_file)
-    trip_table_file = joinpath("/home/jzh/Dropbox/Research/", 
-			"Data-driven_estimation_inverse_optimization/Experiments/InverseVIsTraffic/", 
-			"data_traffic_assignment_uni-class", trip_table_file)
+    network_data_file = joinpath("../data_traffic_assignment_uni-class", network_data_file)
+    trip_table_file = joinpath("../data_traffic_assignment_uni-class", trip_table_file)
 
 
 
