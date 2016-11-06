@@ -91,7 +91,7 @@ function tapMSA(demands, fcoeffs, numIter=1000, tol=1e-6)
 
     end
 
-    tapFlows = Dict{(Int64,Int64),Float64}()
+    tapFlows = Dict()
 
     for i = 1:length(ta_data.start_node)
         key = (ta_data.start_node[i], ta_data.end_node[i])

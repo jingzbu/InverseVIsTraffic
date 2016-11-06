@@ -1,6 +1,6 @@
 using JSON
 
-demandsDict = Dict{Int64, Dict{(Int64,Int64), Float64}}()
+demandsDict = Dict()
 # get ground trueth demands, indexed by 0
 demandsDict[0] = iniDemand("../data_original/SiouxFalls_trips.txt")
 # get initial demands, indexed by 1
@@ -13,12 +13,12 @@ start_node = ta_data.start_node
 end_node = ta_data.end_node
 
 #load OD pair labels
-odPairLabel = readall("../temp_files/od_pair_label_dict_Sioux_refined.json")
+odPairLabel = readstring("../temp_files/od_pair_label_dict_Sioux_refined.json")
 odPairLabel = JSON.parse(odPairLabel)
 
-odPairLabel_ = readall("../temp_files/od_pair_label_dict__Sioux_refined.json")
+odPairLabel_ = readstring("../temp_files/od_pair_label_dict__Sioux_refined.json")
 odPairLabel_ = JSON.parse(odPairLabel_)
 
 #load node-link incidence
-nodeLink = readall("../temp_files/node_link_incidence_Sioux.json");
+nodeLink = readstring("../temp_files/node_link_incidence_Sioux.json");
 nodeLink = JSON.parse(nodeLink);

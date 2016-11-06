@@ -25,21 +25,21 @@ function setUpFitting(deg::Int64, c::Float64)
 
 	m = Model(solver=GurobiSolver(OutputFlag=false))
     
-	@defVar(m, coeffs[1:deg+1])
+	@variable(m, coeffs[1:deg+1])
 
 	return m, coeffs, normCoeffs
 
 end
 
 function addResid(m, coeffs, ys, demands, arcs, scaling)
-    	@defVar(m, resid)
-	@defVar(m, dual_cost)
-	@defVar(m, primal_cost)
+    	@variable(m, resid)
+	@variable(m, dual_cost)
+	@variable(m, primal_cost)
 
-	@addConstraint(m, dual_cost == sum{demands[(s,t)] * (ys[(s,t), t] - ys[(s,t), s]), (s,t)=keys(demands)})  
-	@addConstraint(m, primal_cost == sum{a.flow * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
-	@addConstraint(m, resid >= (primal_cost - dual_cost) / scaling )
-	@addConstraint(m, resid >= 0)
+	@constraint(m, dual_cost == sum{demands[(s,t)] * (ys[(s,t), t] - ys[(s,t), s]), (s,t)=keys(demands)})  
+	@constraint(m, primal_cost == sum{a.flow * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
+	@constraint(m, resid >= (primal_cost - dual_cost) / scaling )
+	@constraint(m, resid >= 0)
 
 	return resid
 end
@@ -47,21 +47,21 @@ end
 function addIncreasingCnsts(m, coeffs, arcs)
 	sorted_flows = sort([a.flow / a.capacity for a in values(arcs)])
 	for i = 2:length(sorted_flows)
-		@addConstraint(m, polyEval(coeffs, sorted_flows[i-1]) <= polyEval(coeffs, sorted_flows[i]))
+		@constraint(m, polyEval(coeffs, sorted_flows[i-1]) <= polyEval(coeffs, sorted_flows[i]))
 	end
 end
 
 function normalize(m, coeffs)
-    @addConstraint(m, coeffs[1] == 1)
+    @constraint(m, coeffs[1] == 1)
 end
 
 function addNetworkCnsts(m, coeffs, demands, arcs, numNodes)
-	@defVar(m, ys[keys(demands), 1:numNodes])
+	@variable(m, ys[keys(demands), 1:numNodes])
 	for k = keys(arcs)
 		a = arcs[k]
 		rhs = a.freeflowtime * polyEval(coeffs, a.flow/a.capacity)
 		for od in keys(demands)
-			@addConstraint(m, ys[od, k[2]] - ys[od, k[1]] <= rhs)
+			@constraint(m, ys[od, k[2]] - ys[od, k[1]] <= rhs)
 		end
 	end
 	return ys
@@ -105,9 +105,9 @@ function train(lam::Float64, deg::Int, c::Float64, demands, arcs; fcoeffs=nothin
         fixCoeffs(m, fcoeffs, coeffs)
     end
     
-    @setObjective(m, Min, sum{resids[i], i = 1:length(resids)} 
+    @objective(m, Min, sum{resids[i], i = 1:length(resids)} 
                             + lam * sum{coeffs[i] * coeffs[i] / normCoeffs[i], i=1:deg + 1})
     solve(m)
     
-    return [getValue(coeffs[i]) for i =1:length(coeffs)], getObjectiveValue(m)
+    return [getvalue(coeffs[i]) for i =1:length(coeffs)], getObjectiveValue(m)
 end

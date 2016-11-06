@@ -27,8 +27,8 @@ function solveJacob(i_th, tapFlowVec, fcoeffs, capacity, free_flow_time, numLink
 
     jacobi = Model(solver=GurobiSolver(OutputFlag=false))
 
-    @defVar(jacobi, d[1:numLinks])
-    @defVar(jacobi, x[1:numRoutes])
+    @variable(jacobi, d[1:numLinks])
+    @variable(jacobi, x[1:numRoutes])
 
     for i=1:numODpairs
         sumLamX = 0
@@ -38,9 +38,9 @@ function solveJacob(i_th, tapFlowVec, fcoeffs, capacity, free_flow_time, numLink
             end
         end
         if i == i_th
-            @addConstraint(jacobi, sumLamX == 1)
+            @constraint(jacobi, sumLamX == 1)
         else
-            @addConstraint(jacobi, sumLamX == 0)
+            @constraint(jacobi, sumLamX == 0)
         end
     end
 
@@ -51,14 +51,14 @@ function solveJacob(i_th, tapFlowVec, fcoeffs, capacity, free_flow_time, numLink
                 sumDeltaX += x[j]
             end
         end
-        @addConstraint(jacobi, sumDeltaX == d[i])
+        @constraint(jacobi, sumDeltaX == d[i])
     end
 
-    @setObjective(jacobi, Min, sum{saVec[i] * (d[i])^2, i = 1:length(numLinks)})
+    @objective(jacobi, Min, sum{saVec[i] * (d[i])^2, i = 1:length(numLinks)})
 
     solve(jacobi)
 
-    return getValue(d)
+    return getvalue(d)
 end
 
 # by [Spiess(1990)]
