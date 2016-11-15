@@ -268,6 +268,69 @@ def flow_conservation_adjustment_ext(y_0):
     # print('Obj: %g' % obj.getValue())
     return y
 
+from collections import defaultdict
+import csv
+
+ini_node_dict = {}
+ter_node_dict = {}
+
+origi_dict = defaultdict(set)
+desti_dict = defaultdict(set)
+
+input_file = '../00_subnetwork_topology/MA_journal_topology.csv'
+
+i = 0
+with open(input_file, 'rb') as inp:
+    for row in csv.reader(inp):
+        if 'origin' not in row:
+            ini_node_dict[i] = int(row[0])
+            ter_node_dict[i] = int(row[1])
+            origi_dict[int(row[0])].add(i)
+            desti_dict[int(row[1])].add(i)
+            i += 1
+
+# for the journal network
+def flow_conservation_adjustment_journal(y_0):
+    L = len(y_0)  # dimension of flow vector x
+    assert(L == 258)
+
+    # y_0 = x[:,1]  # initial flow vector
+
+    model = Model("Flow_conservation_adjustment_journal")
+
+    y = []
+    for l in range(L):
+        y.append(model.addVar(name='y_' + str(l)))
+
+    model.update() 
+
+    # Set objective: ||y-y_0||^2
+    obj = 0
+    for l in range(L):
+        obj += (y[l] - y_0[l]) * (y[l] - y_0[l])
+    model.setObjective(obj)
+
+    # Add nonnegative constraint: y >= 0
+    for l in range(L):
+        model.addConstr(y[l] >= 0)
+    # Add flow conservation constraints
+    for node in range(75)[1:]:
+        model.addConstr(sum([y[link] for link in origi_dict[node]]) == \
+                        sum([y[link] for link in desti_dict[node]])) 
+
+    model.update() 
+
+    model.setParam('OutputFlag', False)
+    model.optimize()
+
+    y = []
+    for v in model.getVars():
+        # print('%s %g' % (v.varName, v.x))
+        y.append(v.x)
+    # print('Obj: %g' % obj.getValue())
+    return y
+
+
 ##### define classes
 
 # define a road segment class corresponding to the original filtered shape file
