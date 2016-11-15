@@ -35,26 +35,23 @@ tmc_day_capac_flow_dict = {}
 for i in range(len(road_seg_inr_capac.tmc)):
     for day in range(32)[1:]:
         tmc = road_seg_inr_capac.tmc[i]
-        if tmc not in ['129P05793', '129+14189', '129-14188']:
-            road_num = road_seg_inr_capac.road_num[i]
-            shape_length = road_seg_inr_capac.shape_length[i]
-            day = day
-            AB_AM_capac = road_seg_inr_capac.AB_AM_capac[i]
-            AB_MD_capac = road_seg_inr_capac.AB_MD_capac[i]
-            AB_PM_capac = road_seg_inr_capac.AB_PM_capac[i]
-            AB_NT_capac = road_seg_inr_capac.AB_NT_capac[i]
-            AM_ave_speed = tmc_day_speed_dict_Jul_AM[tmc + str(day)].ave_speed()
-            MD_ave_speed = tmc_day_speed_dict_Jul_MD[tmc + str(day)].ave_speed()
-            PM_ave_speed = tmc_day_speed_dict_Jul_PM[tmc + str(day)].ave_speed()
-            NT_ave_speed = tmc_day_speed_dict_Jul_NT[tmc + str(day)].ave_speed()
-            tmc_day_capac_flow = RoadSegInrCapacFlowJournal(tmc, road_num, shape_length, day, \
-                                                      AB_AM_capac, AB_MD_capac, \
-                                                      AB_PM_capac, AB_NT_capac, \
-                                                      AM_ave_speed, MD_ave_speed, \
-                                                      PM_ave_speed, NT_ave_speed)
-            tmc_day_capac_flow_dict[tmc + str(day)] = tmc_day_capac_flow
-	else:
-	    tmc_day_capac_flow_dict[tmc + str(day)] = tmc_day_capac_flow_dict['129-04190' + str(day)]
+        road_num = road_seg_inr_capac.road_num[i]
+        shape_length = road_seg_inr_capac.shape_length[i]
+        day = day
+        AB_AM_capac = road_seg_inr_capac.AB_AM_capac[i]
+        AB_MD_capac = road_seg_inr_capac.AB_MD_capac[i]
+        AB_PM_capac = road_seg_inr_capac.AB_PM_capac[i]
+        AB_NT_capac = road_seg_inr_capac.AB_NT_capac[i]
+        AM_ave_speed = tmc_day_speed_dict_Jul_AM[tmc + str(day)].ave_speed()
+        MD_ave_speed = tmc_day_speed_dict_Jul_MD[tmc + str(day)].ave_speed()
+        PM_ave_speed = tmc_day_speed_dict_Jul_PM[tmc + str(day)].ave_speed()
+        NT_ave_speed = tmc_day_speed_dict_Jul_NT[tmc + str(day)].ave_speed()
+        tmc_day_capac_flow = RoadSegInrCapacFlowJournal(tmc, road_num, shape_length, day, \
+                                                  AB_AM_capac, AB_MD_capac, \
+                                                  AB_PM_capac, AB_NT_capac, \
+                                                  AM_ave_speed, MD_ave_speed, \
+                                                  PM_ave_speed, NT_ave_speed)
+        tmc_day_capac_flow_dict[tmc + str(day)] = tmc_day_capac_flow
 
 # print(len(tmc_day_capac_flow_dict))
 
