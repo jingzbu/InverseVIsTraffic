@@ -9,8 +9,6 @@ tmc_capac_dict_AM, tmc_capac_dict_MD, tmc_capac_dict_PM, \
 
 tmc_ref_speed_dict = zload('../temp_files/tmc_ref_speed_dict.pkz')
 
-tmc_ref_speed_dict_journal = zload('../temp_files/tmc_ref_speed_dict_journal.pkz')
-
 ##### for extended sup-map
 tmc_list_ext_link_dict = zload('../temp_files/tmc_list_ext_links_dict.pkz')
 
@@ -18,3 +16,15 @@ tmc_ref_speed_dict_ext = zload('../temp_files/tmc_ref_speed_dict_ext.pkz')
 
 tmc_capac_dict_AM_ext, tmc_capac_dict_MD_ext, tmc_capac_dict_PM_ext, \
     tmc_capac_dict_NT_ext, tmc_length_dict_ext = zload('../temp_files/link_dicts_ext.pkz')
+
+##### for journal sup-map
+tmc_list_journal_link_dict = zload('../temp_files/tmc_list_journal_links_dict.pkz')
+
+tmc_ref_speed_dict_journal = zload('../temp_files/tmc_ref_speed_dict_journal.pkz')
+# dealing with missing data
+tmc_ref_speed_dict_journal['129P05793'] = 60.0
+tmc_ref_speed_dict_journal['129+14189'] = 60.0
+tmc_ref_speed_dict_journal['129-14188'] = 60.0
+
+tmc_capac_dict_AM_journal, tmc_capac_dict_MD_journal, tmc_capac_dict_PM_journal, \
+    tmc_capac_dict_NT_journal, tmc_length_dict_journal = zload('../temp_files/link_dicts_journal.pkz')
