@@ -314,11 +314,12 @@ def flow_conservation_adjustment_journal(y_0):
     for l in range(L):
         model.addConstr(y[l] >= 0)
         
-    set1 = set(range(75)[1:])
-    set2 = set([1, 2, 4, 5, 12, 15, 22, 48, 49, 50, 54, 55, 56, 60, 61, 62, 64, 66, 68, 70])
-    node_set = set1 - set2
+    # set1 = set(range(75)[1:])
+    # set2 = set([1, 2, 4, 5, 12, 15, 22, 48, 49, 50, 54, 55, 56, 60, 61, 62, 64, 66, 68, 70])
+    # node_set = set1 - set2
+    
     # Add flow conservation constraints
-    for node in node_set:
+    for node in range(75)[1:]:
         model.addConstr(sum([y[link] for link in origi_dict[node]]) == \
                         sum([y[link] for link in desti_dict[node]])) 
 
