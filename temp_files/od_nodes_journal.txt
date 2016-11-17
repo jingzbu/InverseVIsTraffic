@@ -1,0 +1,34 @@
+{1}: Seabrook (NH)
+{2,4,5}: NH
+{3}: Haverhill
+{6,8}: Lawrence
+{7,9}: Georgetown
+{10,11}: Lowell
+{12,15}: Salem
+{13,14}: Peabody
+{16,17,18,19}: Burlington
+{20}: Littleton
+{21}: Lexington
+{22}: Boston
+{23,24,25,26,27,28}: Waltham
+{29}: Quincy
+{30,31,32,33,34}: Marlborough & Framingham
+{35,71}: Milford
+{36}: Franklin
+{37,38,39,40,41}: Westwood & Quincy
+{42}: Dedham
+{43,44,45,46,47}: Foxborough
+{48,74}: Taunton
+{49,73}: Plymouth
+{50,51}: Cape Cod
+{52}: Dartmouth
+{53}: Fall River
+{54,68,70}: RI
+{55,56}: VT
+{57}: Westminster
+{58}: Leominster
+{59,60,72}: Worcester
+{61}: Amherst
+{62,63,64,65,66}: CT
+{67}: Webster
+{69}: Uxbridge
