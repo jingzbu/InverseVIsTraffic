@@ -79,16 +79,16 @@ from numpy.linalg import inv
 import json
 
 # load logit_route_choice_probability_matrix
-P = zload('../temp_files/OD_pair_route_incidence_MA.pkz')
+P = zload('../temp_files/OD_pair_route_incidence_journal.pkz')
 P = np.matrix(P)
 
 # print(np.size(P,0), np.size(P,1))
 
-# load path-link incidence matrix
-A = zload('../temp_files/path-link_incidence_matrix_MA.pkz')
+# load link_route incidence matrix
+A = zload('../temp_files/link_route_incidence_matrix_journal.pkz')
 
 # load link counts data
-with open('../temp_files/link_day_minute_Apr_dict_JSON.json', 'r') as json_file:
+with open('../temp_files/link_day_minute_Apr_dict_journal_JSON_adjusted.json', 'r') as json_file:
     link_day_minute_Apr_dict_JSON = json.load(json_file)
 
 week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
@@ -137,20 +137,3 @@ Q = Q_
 b = sum([np.dot(np.dot(A_t, inv_S), x[:, k]) for k in range(K)])
 
 xi_list = GLS(x, A, L)
-
-# write estimation result to file
-def saveDemandVec(lam_list):
-    lam_dict = {}
-    n = 8  # number of nodes
-    with open('../temp_files/OD_demand_matrix_Apr_weekday_PM.txt', 'w') as the_file:
-        idx = 0
-        for i in range(n + 1)[1:]:
-            for j in range(n + 1)[1:]:
-                if i != j: 
-                    key = str(idx)
-                    lam_dict[key] = lam_list[idx]
-                    the_file.write("%d,%d,%f\n" %(i, j, lam_list[idx]))
-                    idx += 1
-
-    with open('../temp_files/OD_demand_matrix_Apr_weekday_PM.json', 'w') as json_file:
-        json.dump(lam_dict, json_file)
