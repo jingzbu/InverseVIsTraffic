@@ -1,3 +1,4 @@
+from __future__ import division
 from util_data_storage_and_load import *
 import numpy as np
 from numpy.linalg import inv, matrix_rank
@@ -7,7 +8,7 @@ import json
 import scipy.misc as sc
 
 try:
-    from load_dicts import tmc_length_dict, tmc_ref_speed_dict, tmc_length_dict_ext, tmc_ref_speed_dict_ext
+    from load_dicts import tmc_length_dict, tmc_ref_speed_dict, tmc_length_dict_ext, tmc_ref_speed_dict_ext, tmc_length_dict_journal, tmc_ref_speed_dict_journal
 except ImportError:
     print "No dicts found; please check load_dicts..."
 
@@ -72,8 +73,94 @@ def samp_cov(x):
     K = np.size(x, 1)
     x_mean = sum(x[:,k] for k in range(K)) / K
     S = sum(np.dot(x[:,k] - x_mean, np.transpose(x[:,k] - x_mean)) for k in range(K)) / (K - 1)
-    #S = adj_PSD(S)
+    S = adj_PSD(S)
     return S
+
+# implement GLS method to estimate OD demand matrix
+def GLS(x, A, P, L):
+    """
+    x: sample matrix, each column is a link flow vector sample; 24 * K
+    A: path-link incidence matrix
+    P: logit route choice probability matrix
+    L: dimension of lam
+    ----------------
+    return: lam
+    ----------------
+    """
+    K = np.size(x, 1)
+    S = samp_cov(x)
+
+    #print("rank of S is: \n")
+    #print(matrix_rank(S))
+    #print("sizes of S are: \n")
+    #print(np.size(S, 0))
+    #print(np.size(S, 1))
+
+    inv_S = inv(S).real
+
+    A_t = np.transpose(A)
+    P_t = np.transpose(P)
+    # PA'
+    PA_t = np.dot(P, A_t)
+
+    #print("rank of PA_t is: \n")
+    #print(matrix_rank(PA_t))
+    #print("sizes of PA_t are: \n")
+    #print(np.size(PA_t, 0))
+    #print(np.size(PA_t, 1))
+
+    # AP_t
+    AP_t = np.transpose(PA_t)
+
+    Q_ = np.dot(np.dot(PA_t, inv_S), AP_t)
+    #Q = adj_PSD(Q_).real  # Ensure Q to be PSD
+    Q = Q_
+
+    #print("rank of Q is: \n")
+    #print(matrix_rank(Q))
+    #print("sizes of Q are: \n")
+    #print(np.size(Q, 0))
+    #print(np.size(Q, 1))
+
+    b = sum([np.dot(np.dot(PA_t, inv_S), x[:, k]) for k in range(K)])
+    # print(b[0])
+    # assert(1==2)
+
+    model = Model("OD_matrix_estimation")
+
+    lam = []
+    for l in range(L):
+        lam.append(model.addVar(name='lam_' + str(l)))
+
+    model.update() 
+
+    # Set objective: (K/2) lam' * Q * lam - b' * lam
+    obj = 0
+    for i in range(L):
+        for j in range(L):
+            obj += (1.0 / 2) * K * lam[i] * Q[i, j] * lam[j]
+    for l in range(L):
+        obj += - b[l] * lam[l]
+    model.setObjective(obj)
+
+    # Add constraint: lam >= 0
+    for l in range(L):
+        model.addConstr(lam[l] >= 0)
+	model.addConstr(lam[l] <= 5000)
+    #fictitious_OD_list = zload('../temp_files/fictitious_OD_list')
+    #for l in fictitious_OD_list:
+	#model.addConstr(lam[l] == 0)
+    model.update() 
+
+    model.setParam('OutputFlag', False)
+    model.optimize()
+
+    lam_list = []
+    for v in model.getVars():
+        # print('%s %g' % (v.varName, v.x))
+        lam_list.append(v.x)
+    # print('Obj: %g' % obj.getValue())
+    return lam_list
 
 # define a function converting rough flow vector to feasible flow vector 
 # (satisfying flow conservation law)
@@ -182,6 +269,74 @@ def flow_conservation_adjustment_ext(y_0):
     # print('Obj: %g' % obj.getValue())
     return y
 
+from collections import defaultdict
+import csv
+
+ini_node_dict = {}
+ter_node_dict = {}
+
+origi_dict = defaultdict(set)
+desti_dict = defaultdict(set)
+
+input_file = '../00_subnetwork_topology/MA_journal_topology.csv'
+
+i = 0
+with open(input_file, 'rb') as inp:
+    for row in csv.reader(inp):
+        if 'origin' not in row:
+            ini_node_dict[i] = int(row[0])
+            ter_node_dict[i] = int(row[1])
+            origi_dict[int(row[0])].add(i)
+            desti_dict[int(row[1])].add(i)
+            i += 1
+
+# for the journal network
+def flow_conservation_adjustment_journal(y_0):
+    L = len(y_0)  # dimension of flow vector x
+    assert(L == 258)
+
+    # y_0 = x[:,1]  # initial flow vector
+
+    model = Model("Flow_conservation_adjustment_journal")
+
+    y = []
+    for l in range(L):
+        y.append(model.addVar(name='y_' + str(l)))
+
+    model.update() 
+
+    # Set objective: ||y-y_0||^2
+    obj = 0
+    for l in range(L):
+        obj += (y[l] - y_0[l]) * (y[l] - y_0[l])
+    model.setObjective(obj)
+
+    # Add nonnegative constraint: y >= 0
+    for l in range(L):
+        model.addConstr(y[l] >= 0)
+        
+    # set1 = set(range(75)[1:])
+    # set2 = set([1, 2, 4, 5, 12, 15, 22, 48, 49, 50, 54, 55, 56, 60, 61, 62, 64, 66, 68, 70])
+    # node_set = set1 - set2
+    
+    # Add flow conservation constraints
+    for node in range(75)[1:]:
+        model.addConstr(sum([y[link] for link in origi_dict[node]]) == \
+                        sum([y[link] for link in desti_dict[node]])) 
+
+    model.update() 
+
+    model.setParam('OutputFlag', False)
+    model.optimize()
+
+    y = []
+    for v in model.getVars():
+        # print('%s %g' % (v.varName, v.x))
+        y.append(v.x)
+    # print('Obj: %g' % obj.getValue())
+    return y
+
+
 ##### define classes
 
 # define a road segment class corresponding to the original filtered shape file
@@ -285,6 +440,27 @@ class RoadSegInrCapacFlowExt(RoadSegInrCapac):
     def NT_flow(self):
 	return speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_ext[self.tmc], self.NT_ave_speed)
 
+# define a derived road segment class containing the average flow info, for the journal map
+class RoadSegInrCapacFlowJournal(RoadSegInrCapac):
+    def __init__(self, tmc, road_num, shape_length, day,
+		 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+		 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed):
+        RoadSegInrCapac.__init__(self, tmc, road_num, shape_length, \
+				 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac)
+        self.day = day
+        self.AM_ave_speed = AM_ave_speed
+        self.MD_ave_speed = MD_ave_speed
+        self.PM_ave_speed = PM_ave_speed
+	self.NT_ave_speed = NT_ave_speed
+    def AM_flow(self):
+	return speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict_journal[self.tmc], self.AM_ave_speed)
+    def MD_flow(self):
+	return speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict_journal[self.tmc], self.MD_ave_speed)
+    def PM_flow(self):
+	return speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict_journal[self.tmc], self.PM_ave_speed)
+    def NT_flow(self):
+	return speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_journal[self.tmc], self.NT_ave_speed)
+
 ## define a derived road segment class containing the "instaneous" flow (for each minute) info 
 ## for purpose of estimating the O-D demand matrix 
 class RoadSegInrCapacFlowMinute(RoadSegInrCapacFlow):
@@ -356,6 +532,42 @@ class RoadSegInrCapacFlowMinuteExt(RoadSegInrCapacFlow):
 	    NT_flow_minute_list.append(speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_ext[self.tmc], self.NT_speed_minute[i]))
 	return NT_flow_minute_list
 
+## define a derived road segment class containing the "instaneous" flow (for each minute) info 
+## for purpose of estimating the O-D demand matrix 
+## for the journal map
+class RoadSegInrCapacFlowMinuteJournal(RoadSegInrCapacFlow):
+    def __init__(self, tmc, road_num, shape_length, day,
+		 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+		 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed, \
+		 AM_speed_minute, MD_speed_minute, PM_speed_minute, NT_speed_minute):
+        RoadSegInrCapacFlow.__init__(self, tmc, road_num, shape_length, day, \
+				 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+				 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed)
+	self.AM_speed_minute = AM_speed_minute
+	self.MD_speed_minute = MD_speed_minute
+	self.PM_speed_minute = PM_speed_minute
+	self.NT_speed_minute = NT_speed_minute
+    def AM_flow_minute(self):
+	AM_flow_minute_list = []
+	for i in range(len(self.AM_speed_minute)):
+	    AM_flow_minute_list.append(speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict_journal[self.tmc], self.AM_speed_minute[i]))
+	return AM_flow_minute_list
+    def MD_flow_minute(self):
+	MD_flow_minute_list = []
+	for i in range(len(self.MD_speed_minute)):
+	    MD_flow_minute_list.append(speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict_journal[self.tmc], self.MD_speed_minute[i]))
+	return MD_flow_minute_list
+    def PM_flow_minute(self):
+	PM_flow_minute_list = []
+	for i in range(len(self.PM_speed_minute)):
+	    PM_flow_minute_list.append(speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict_journal[self.tmc], self.PM_speed_minute[i]))
+	return PM_flow_minute_list
+    def NT_flow_minute(self):
+	NT_flow_minute_list = []
+	for i in range(len(self.NT_speed_minute)):
+	    NT_flow_minute_list.append(speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_journal[self.tmc], self.NT_speed_minute[i]))
+	return NT_flow_minute_list
+
 # define a road link class
 class Link(object):
     def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
@@ -399,6 +611,18 @@ class Link_with_Free_Flow_Time_Ext(Link):
         self.free_flow_time = sum([0.000621371 * tmc_length_dict_ext[i] / tmc_ref_speed_dict_ext[i] for i in self.tmc_set])
 	self.length = 0.000621371 * sum([tmc_length_dict_ext[i] for i in self.tmc_set])  # in miles
 
+# define a road link class that is a derived class of Link, for the journal map
+class Link_with_Free_Flow_Time_Journal(Link):
+    def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+			PM_capac, NT_capac, free_flow_time, length, \
+			AM_flow, MD_flow, PM_flow, NT_flow):
+	Link.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+                      PM_capac, NT_capac, free_flow_time, length, \
+                      AM_flow, MD_flow, PM_flow, NT_flow)
+	# notice that the original length is in meters, and the speed is in mph; we calculate the time in hours
+        self.free_flow_time = sum([0.000621371 * tmc_length_dict_journal[i] / tmc_ref_speed_dict_journal[i] for i in self.tmc_set])
+	self.length = 0.000621371 * sum([tmc_length_dict_journal[i] for i in self.tmc_set])  # in miles
+
 # define a road link class that is a derived class of Link, containing "instaneous" flow (for each minute) info 
 class Link_with_Free_Flow_Time_Minute(Link_with_Free_Flow_Time):
     def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
@@ -423,6 +647,22 @@ class Link_with_Free_Flow_Time_Minute_Ext(Link_with_Free_Flow_Time_Ext):
 			AM_flow_minute, MD_flow_minute, \
 			PM_flow_minute, NT_flow_minute):
 	Link_with_Free_Flow_Time_Ext.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+                      PM_capac, NT_capac, free_flow_time, length, \
+                      AM_flow, MD_flow, PM_flow, NT_flow)
+	self.AM_flow_minute = AM_flow_minute
+	self.MD_flow_minute = MD_flow_minute
+	self.PM_flow_minute = PM_flow_minute
+	self.NT_flow_minute = NT_flow_minute
+
+# define a road link class that is a derived class of Link, containing "instaneous" flow (for each minute) info,
+# for the journal map 
+class Link_with_Free_Flow_Time_Minute_Journal(Link_with_Free_Flow_Time_Journal):
+    def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+			PM_capac, NT_capac, free_flow_time, length, \
+			AM_flow, MD_flow, PM_flow, NT_flow, \
+			AM_flow_minute, MD_flow_minute, \
+			PM_flow_minute, NT_flow_minute):
+	Link_with_Free_Flow_Time_Journal.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
                       PM_capac, NT_capac, free_flow_time, length, \
                       AM_flow, MD_flow, PM_flow, NT_flow)
 	self.AM_flow_minute = AM_flow_minute

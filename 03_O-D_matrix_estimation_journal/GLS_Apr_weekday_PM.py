@@ -1,9 +1,14 @@
 from util import *
+from util_data_storage_and_load import *
+
+link_label_dict = zload('../temp_files/link_label_dict_journal.pkz')
+
+number_of_links = len(link_label_dict)
 
 # implement GLS method to estimate OD demand matrix
 def GLS(x, A, L):
     """
-    x: sample matrix, each column is a link flow vector sample; 24 * K
+    x: sample matrix, each column is a link flow vector sample; number_of_links * K
     A: path-link incidence matrix
     P: logit route choice probability matrix
     L: dimension of xi
@@ -91,21 +96,26 @@ A = zload('../temp_files/link_route_incidence_matrix_journal.pkz')
 with open('../temp_files/link_day_minute_Apr_dict_journal_JSON_adjusted.json', 'r') as json_file:
     link_day_minute_Apr_dict_JSON = json.load(json_file)
 
-week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
+# week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
+week_day_Apr_list = [2, 3, 4, 5, 6, 9]
+
 
 link_day_minute_Apr_list = []
-for link_idx in range(24):
+for link_idx in range(number_of_links):
     for day in week_day_Apr_list: 
         for minute_idx in range(120):
             key = 'link_' + str(link_idx) + '_' + str(day)
             link_day_minute_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['PM_flow_minute'][minute_idx])
 
-# print(len(link_day_minute_Apr_list))
-
 x = np.matrix(link_day_minute_Apr_list)
-x = np.matrix.reshape(x, 24, 2520)
+# x = np.matrix.reshape(x, number_of_links, 2520)
+x = np.matrix.reshape(x, number_of_links, 720)
+
+# print(np.size(x,0), np.size(x,1))
 
 x = np.nan_to_num(x)
+# print(np.size(x,0), np.size(x,1))
+
 y = np.array(np.transpose(x))
 y = y[np.all(y != 0, axis=1)]
 x = np.transpose(y)
@@ -115,9 +125,11 @@ x = np.matrix(x)
 # print(x[:,:2])
 # print(np.size(A,0), np.size(A,1))
 
-L = np.size(P,1)  # dimension of xi
+L = np.size(P, 1)  # dimension of xi
 
 K = np.size(x, 1)
+# print(K)
+
 S = samp_cov(x)
 
 #print("rank of S is: \n")
