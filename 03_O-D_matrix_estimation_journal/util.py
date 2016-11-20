@@ -16,7 +16,7 @@ except ImportError:
 def speed_to_flow(capac, ref_speed, speed):
     free_speed = ref_speed
     if speed > free_speed or capac < 0:
-	return 0
+        return 0
     return 4 * capac * speed / free_speed - 4 * capac * (speed ** 2) / (free_speed ** 2)
 
 # obtain the number of days plus 1 for each month

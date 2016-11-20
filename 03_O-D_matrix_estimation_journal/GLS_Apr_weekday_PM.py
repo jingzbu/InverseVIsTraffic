@@ -1,5 +1,14 @@
 from util import *
 from util_data_storage_and_load import *
+import numpy as np
+from numpy.linalg import inv
+from scipy.sparse import csr_matrix, csc_matrix
+import json
+
+with open('../temp_files/new_route_dict_journal.json', 'r') as json_file:
+    new_route_dict = json.load(json_file)
+    
+number_of_routes = len(new_route_dict)
 
 link_label_dict = zload('../temp_files/link_label_dict_journal.pkz')
 
@@ -27,11 +36,11 @@ def GLS(x, A, L):
 
     inv_S = inv(S).real
 
-    A_t = np.transpose(A)
+    A_t = A.transpose()
 
-    Q_ = np.dot(np.dot(A_t, inv_S), A)
-    #Q = adj_PSD(Q_).real  # Ensure Q to be PSD
-    Q = Q_
+    Q_ = A_t * inv_S * A
+    Q_ = Q_.real
+    Q = adj_PSD(Q_).real  # Ensure Q to be PSD
 
     #print("rank of Q is: \n")
     #print(matrix_rank(Q))
@@ -39,7 +48,7 @@ def GLS(x, A, L):
     #print(np.size(Q, 0))
     #print(np.size(Q, 1))
 
-    b = sum([np.dot(np.dot(A_t, inv_S), x[:, k]) for k in range(K)])
+    b = sum([A_t * inv_S * x[:, k] for k in range(K)])
     # print(b[0])
     # assert(1==2)
 
@@ -79,25 +88,18 @@ def GLS(x, A, L):
     # print('Obj: %g' % obj.getValue())
     return xi_list
 
-import numpy as np
-from numpy.linalg import inv
-import json
 
-# load logit_route_choice_probability_matrix
-P = zload('../temp_files/OD_pair_route_incidence_journal.pkz')
-P = np.matrix(P)
-
-# print(np.size(P,0), np.size(P,1))
 
 # load link_route incidence matrix
 A = zload('../temp_files/link_route_incidence_matrix_journal.pkz')
+A = A.todense()
 
 # load link counts data
 with open('../temp_files/link_day_minute_Apr_dict_journal_JSON_adjusted.json', 'r') as json_file:
     link_day_minute_Apr_dict_JSON = json.load(json_file)
 
-# week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
-week_day_Apr_list = [2, 3, 4, 5, 6, 9]
+week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
+# week_day_Apr_list = [2, 3, 4, 5, 6, 9]
 
 
 link_day_minute_Apr_list = []
@@ -108,8 +110,8 @@ for link_idx in range(number_of_links):
             link_day_minute_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['PM_flow_minute'][minute_idx])
 
 x = np.matrix(link_day_minute_Apr_list)
-# x = np.matrix.reshape(x, number_of_links, 2520)
-x = np.matrix.reshape(x, number_of_links, 720)
+x = np.matrix.reshape(x, number_of_links, 2520)
+# x = np.matrix.reshape(x, number_of_links, 720)
 
 # print(np.size(x,0), np.size(x,1))
 
@@ -121,31 +123,29 @@ y = y[np.all(y != 0, axis=1)]
 x = np.transpose(y)
 x = np.matrix(x)
 
+# sample covariance matrix
+# S = samp_cov(x).real
+
+# inv_S = inv(S).real
+
+# A_t = A.transpose()
+
+# Q_ = A_t * inv_S * A
+# Q = adj_PSD(Q_).real  # Ensure Q to be PSD
+# Q = Q_
+
 # print(np.size(x,0), np.size(x,1))
 # print(x[:,:2])
 # print(np.size(A,0), np.size(A,1))
 
+xi_list = GLS(x, A, number_of_routes)
+
+
+# load logit_route_choice_probability_matrix
+P = zload('../temp_files/OD_pair_route_incidence_journal.pkz')
+P = P.todense()
+
 L = np.size(P, 1)  # dimension of xi
+assert(L == number_of_routes)
 
-K = np.size(x, 1)
-# print(K)
-
-S = samp_cov(x)
-
-#print("rank of S is: \n")
-#print(matrix_rank(S))
-#print("sizes of S are: \n")
-#print(np.size(S, 0))
-#print(np.size(S, 1))
-
-inv_S = inv(S).real
-
-A_t = np.transpose(A)
-
-Q_ = np.dot(np.dot(A_t, inv_S), A)
-#Q = adj_PSD(Q_).real  # Ensure Q to be PSD
-Q = Q_
-
-b = sum([np.dot(np.dot(A_t, inv_S), x[:, k]) for k in range(K)])
-
-xi_list = GLS(x, A, L)
+# print(np.size(P,0), np.size(P,1))
