@@ -41,6 +41,7 @@ def GLS(x, A, L):
     Q_ = A_t * inv_S * A
     Q_ = Q_.real
     Q = adj_PSD(Q_).real  # Ensure Q to be PSD
+    #Q = Q_
 
     #print("rank of Q is: \n")
     #print(matrix_rank(Q))
@@ -98,41 +99,31 @@ A = A.todense()
 with open('../temp_files/link_day_minute_Apr_dict_journal_JSON_adjusted.json', 'r') as json_file:
     link_day_minute_Apr_dict_JSON = json.load(json_file)
 
-week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
-# week_day_Apr_list = [2, 3, 4, 5, 6, 9]
+# week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
+week_day_Apr_list = [9, 10, 11, 12, 13]
 
+feasible_link_dict = zload('../temp_files/feasible_link_dict_journal.pkz')
 
 link_day_minute_Apr_list = []
-for link_idx in range(number_of_links):
+for link_idx in [feasible_link_dict[idx] for idx in range(len(feasible_link_dict))]:
     for day in week_day_Apr_list: 
         for minute_idx in range(120):
             key = 'link_' + str(link_idx) + '_' + str(day)
             link_day_minute_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['PM_flow_minute'][minute_idx])
 
 x = np.matrix(link_day_minute_Apr_list)
-x = np.matrix.reshape(x, number_of_links, 2520)
-# x = np.matrix.reshape(x, number_of_links, 720)
+# x = np.matrix.reshape(x, len(feasible_link_dict), 2520)
+x = np.matrix.reshape(x, len(feasible_link_dict), 600)
 
 # print(np.size(x,0), np.size(x,1))
 
 x = np.nan_to_num(x)
 # print(np.size(x,0), np.size(x,1))
 
-y = np.array(np.transpose(x))
-y = y[np.all(y != 0, axis=1)]
-x = np.transpose(y)
-x = np.matrix(x)
-
-# sample covariance matrix
-# S = samp_cov(x).real
-
-# inv_S = inv(S).real
-
-# A_t = A.transpose()
-
-# Q_ = A_t * inv_S * A
-# Q = adj_PSD(Q_).real  # Ensure Q to be PSD
-# Q = Q_
+# y = np.array(np.transpose(x))
+# y = y[np.all(y != 0, axis=1)]
+# x = np.transpose(y)
+# x = np.matrix(x)
 
 # print(np.size(x,0), np.size(x,1))
 # print(x[:,:2])

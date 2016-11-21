@@ -12,8 +12,10 @@ L = GLS_Apr_weekday_PM.L; # dimension of xi
 number_of_routes = GLS_Apr_weekday_PM.number_of_routes;
 number_of_links = GLS_Apr_weekday_PM.number_of_links;
 
+P
+
 # A = sparse(A);
-P = sparse(P);
+# P = sparse(P);
 # Q = sparse(Q);
 
 # K = size(x, 2)
@@ -49,6 +51,16 @@ using JuMP
 
 xi_list = GLS_Apr_weekday_PM.xi_list
 
+for idx = 1:L
+    if xi_list[idx] < 1e-1
+        xi_list[idx] = 0
+    end
+end
+
+# for idx = 1:L
+#     println(xi_list[idx])
+# end
+
 mGLSJulia = Model()
 
 @variable(mGLSJulia, lam[1:size(P,1)] >= 0)
@@ -76,5 +88,11 @@ end
 solve(mGLSJulia)
 
 getvalue(lam)
+
+outfile = open("../temp_files/od_demand_vector_simplified_journal_Apr_PM.json", "w")
+
+JSON.print(outfile, getvalue(lam))
+
+close(outfile)
 
 getobjectivevalue(mGLSJulia)
