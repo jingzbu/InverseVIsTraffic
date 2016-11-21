@@ -1,4 +1,3 @@
-
 using PyCall
 unshift!(PyVector(pyimport("sys")["path"]), "");
 @pyimport GLS_Apr_weekday_PM
@@ -12,7 +11,7 @@ L = GLS_Apr_weekday_PM.L; # dimension of xi
 number_of_routes = GLS_Apr_weekday_PM.number_of_routes;
 number_of_links = GLS_Apr_weekday_PM.number_of_links;
 
-P
+# P
 
 # A = sparse(A);
 # P = sparse(P);
@@ -87,7 +86,8 @@ end
 
 solve(mGLSJulia)
 
-getvalue(lam)
+print("The demand vector lam is:\n")
+print(getvalue(lam))
 
 outfile = open("../temp_files/od_demand_vector_simplified_journal_Apr_PM.json", "w")
 
@@ -95,4 +95,5 @@ JSON.print(outfile, getvalue(lam))
 
 close(outfile)
 
-getobjectivevalue(mGLSJulia)
+print("The optimal objective function value of (P2) is:\n")
+print(getobjectivevalue(mGLSJulia))
