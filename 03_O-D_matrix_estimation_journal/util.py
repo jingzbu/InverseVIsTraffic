@@ -1,4 +1,3 @@
-from __future__ import division
 from util_data_storage_and_load import *
 import numpy as np
 from numpy.linalg import inv, matrix_rank
@@ -146,10 +145,10 @@ def GLS(x, A, P, L):
     # Add constraint: lam >= 0
     for l in range(L):
         model.addConstr(lam[l] >= 0)
-	model.addConstr(lam[l] <= 5000)
+        model.addConstr(lam[l] <= 5000)
     #fictitious_OD_list = zload('../temp_files/fictitious_OD_list')
     #for l in fictitious_OD_list:
-	#model.addConstr(lam[l] == 0)
+        #model.addConstr(lam[l] == 0)
     model.update() 
 
     model.setParam('OutputFlag', False)
@@ -246,7 +245,8 @@ def flow_conservation_adjustment_ext(y_0):
     model.addConstr(y[30] + y[32] + y[35] + y[39] == y[31] + y[33] + y[34] + y[38])  # node 10
     model.addConstr(y[28] + y[34] + y[41] == y[29] + y[35] + y[40])  # node 11
     model.addConstr(y[36] + y[43] + y[46] + y[45] + y[50] == y[37] + y[42] + y[44] + y[47] + y[48])  # node 12
-    model.addConstr(y[38] + y[42] + y[45] + y[49] + y[53] + y[56] + y[61] + y[63] == y[39] + y[43] + y[47] + y[51] + y[52] + y[54] + y[60] + y[62])  # node 13
+    model.addConstr(y[38] + y[42] + y[45] + y[49] + y[53] + y[56] + y[61] + y[63] == \
+                    y[39] + y[43] + y[47] + y[51] + y[52] + y[54] + y[60] + y[62])  # node 13
     model.addConstr(y[40] + y[52] + y[55] + y[65] + y[68] == y[41] + y[53] + y[57] + y[64] + y[66])  # node 14
     model.addConstr(y[58] + y[60] + y[71] == y[59] + y[61] + y[70])  # node 15
     model.addConstr(y[62] + y[64] + y[67] + y[73] == y[63] + y[65] + y[69] + y[72])  # node 16
@@ -364,8 +364,8 @@ class RoadSegCapac(object):
 class RoadSegCapacLane(RoadSegCapac):
     def __init__(self, road_invent, length, route_num, AB_AM_capac, \
                  AB_MD_capac, AB_PM_capac, AB_NT_capac, AB_AM_lane, \
-		 AB_MD_lane, AB_PM_lane, AB_NT_lane):
-	RoadSegCapac.__init__(self, road_invent, length, route_num, AB_AM_capac, \
+                 AB_MD_lane, AB_PM_lane, AB_NT_lane):
+        RoadSegCapac.__init__(self, road_invent, length, route_num, AB_AM_capac, \
                  AB_MD_capac, AB_PM_capac, AB_NT_capac)
         self.AB_AM_lane = AB_AM_lane
         self.AB_MD_lane = AB_MD_lane
@@ -400,180 +400,184 @@ class TMC_Day_Speed(object):
 
 # define a derived road segment class containing the average flow info
 class RoadSegInrCapacFlow(RoadSegInrCapac):
-    def __init__(self, tmc, road_num, shape_length, day,
-		 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
-		 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed):
+    def __init__(self, tmc, road_num, shape_length, day, \
+                 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+                 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed):
         RoadSegInrCapac.__init__(self, tmc, road_num, shape_length, \
-				 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac)
+                                 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac)
         self.day = day
         self.AM_ave_speed = AM_ave_speed
         self.MD_ave_speed = MD_ave_speed
         self.PM_ave_speed = PM_ave_speed
-	self.NT_ave_speed = NT_ave_speed
+        self.NT_ave_speed = NT_ave_speed
     def AM_flow(self):
-	return speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict[self.tmc], self.AM_ave_speed)
+        return speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict[self.tmc], self.AM_ave_speed)
     def MD_flow(self):
-	return speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict[self.tmc], self.MD_ave_speed)
+        return speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict[self.tmc], self.MD_ave_speed)
     def PM_flow(self):
-	return speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict[self.tmc], self.PM_ave_speed)
+        return speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict[self.tmc], self.PM_ave_speed)
     def NT_flow(self):
-	return speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict[self.tmc], self.NT_ave_speed)
+        return speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict[self.tmc], self.NT_ave_speed)
 
 # define a derived road segment class containing the average flow info, for the extended map
 class RoadSegInrCapacFlowExt(RoadSegInrCapac):
-    def __init__(self, tmc, road_num, shape_length, day,
-		 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
-		 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed):
+    def __init__(self, tmc, road_num, shape_length, day, \
+                 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+                 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed):
         RoadSegInrCapac.__init__(self, tmc, road_num, shape_length, \
-				 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac)
+                                 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac)
         self.day = day
         self.AM_ave_speed = AM_ave_speed
         self.MD_ave_speed = MD_ave_speed
         self.PM_ave_speed = PM_ave_speed
-	self.NT_ave_speed = NT_ave_speed
+        self.NT_ave_speed = NT_ave_speed
     def AM_flow(self):
-	return speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict_ext[self.tmc], self.AM_ave_speed)
+        return speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict_ext[self.tmc], self.AM_ave_speed)
     def MD_flow(self):
-	return speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict_ext[self.tmc], self.MD_ave_speed)
+        return speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict_ext[self.tmc], self.MD_ave_speed)
     def PM_flow(self):
-	return speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict_ext[self.tmc], self.PM_ave_speed)
+        return speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict_ext[self.tmc], self.PM_ave_speed)
     def NT_flow(self):
-	return speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_ext[self.tmc], self.NT_ave_speed)
+        return speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_ext[self.tmc], self.NT_ave_speed)
 
 # define a derived road segment class containing the average flow info, for the journal map
 class RoadSegInrCapacFlowJournal(RoadSegInrCapac):
-    def __init__(self, tmc, road_num, shape_length, day,
-		 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
-		 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed):
+    def __init__(self, tmc, road_num, shape_length, day, AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+                 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed):
         RoadSegInrCapac.__init__(self, tmc, road_num, shape_length, \
-				 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac)
+                                 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac)
         self.day = day
         self.AM_ave_speed = AM_ave_speed
         self.MD_ave_speed = MD_ave_speed
         self.PM_ave_speed = PM_ave_speed
-	self.NT_ave_speed = NT_ave_speed
+        self.NT_ave_speed = NT_ave_speed
     def AM_flow(self):
-	return speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict_journal[self.tmc], self.AM_ave_speed)
+        return speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict_journal[self.tmc], self.AM_ave_speed)
     def MD_flow(self):
-	return speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict_journal[self.tmc], self.MD_ave_speed)
+        return speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict_journal[self.tmc], self.MD_ave_speed)
     def PM_flow(self):
-	return speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict_journal[self.tmc], self.PM_ave_speed)
+        return speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict_journal[self.tmc], self.PM_ave_speed)
     def NT_flow(self):
-	return speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_journal[self.tmc], self.NT_ave_speed)
+        return speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_journal[self.tmc], self.NT_ave_speed)
 
 ## define a derived road segment class containing the "instaneous" flow (for each minute) info 
 ## for purpose of estimating the O-D demand matrix 
 class RoadSegInrCapacFlowMinute(RoadSegInrCapacFlow):
-    def __init__(self, tmc, road_num, shape_length, day,
-		 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
-		 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed, \
-		 AM_speed_minute, MD_speed_minute, PM_speed_minute, NT_speed_minute):
+    def __init__(self, tmc, road_num, shape_length, day, AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+                 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed, \
+                 AM_speed_minute, MD_speed_minute, PM_speed_minute, NT_speed_minute):
         RoadSegInrCapacFlow.__init__(self, tmc, road_num, shape_length, day, \
-				 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
-				 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed)
-	self.AM_speed_minute = AM_speed_minute
-	self.MD_speed_minute = MD_speed_minute
-	self.PM_speed_minute = PM_speed_minute
-	self.NT_speed_minute = NT_speed_minute
+                                     AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+                                     AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed)
+        self.AM_speed_minute = AM_speed_minute
+        self.MD_speed_minute = MD_speed_minute
+        self.PM_speed_minute = PM_speed_minute
+        self.NT_speed_minute = NT_speed_minute
     def AM_flow_minute(self):
-	AM_flow_minute_list = []
-	for i in range(len(self.AM_speed_minute)):
-	    AM_flow_minute_list.append(speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict[self.tmc], self.AM_speed_minute[i]))
-	return AM_flow_minute_list
+        AM_flow_minute_list = []
+        for i in range(len(self.AM_speed_minute)):
+            AM_flow_minute_list.append(speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict[self.tmc], self.AM_speed_minute[i]))
+        return AM_flow_minute_list
     def MD_flow_minute(self):
-	MD_flow_minute_list = []
-	for i in range(len(self.MD_speed_minute)):
-	    MD_flow_minute_list.append(speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict[self.tmc], self.MD_speed_minute[i]))
-	return MD_flow_minute_list
+        MD_flow_minute_list = []
+        for i in range(len(self.MD_speed_minute)):
+            MD_flow_minute_list.append(speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict[self.tmc], self.MD_speed_minute[i]))
+        return MD_flow_minute_list
     def PM_flow_minute(self):
-	PM_flow_minute_list = []
-	for i in range(len(self.PM_speed_minute)):
-	    PM_flow_minute_list.append(speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict[self.tmc], self.PM_speed_minute[i]))
-	return PM_flow_minute_list
+        PM_flow_minute_list = []
+        for i in range(len(self.PM_speed_minute)):
+            PM_flow_minute_list.append(speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict[self.tmc], self.PM_speed_minute[i]))
+        return PM_flow_minute_list
     def NT_flow_minute(self):
-	NT_flow_minute_list = []
-	for i in range(len(self.NT_speed_minute)):
-	    NT_flow_minute_list.append(speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict[self.tmc], self.NT_speed_minute[i]))
-	return NT_flow_minute_list
+        NT_flow_minute_list = []
+        for i in range(len(self.NT_speed_minute)):
+            NT_flow_minute_list.append(speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict[self.tmc], self.NT_speed_minute[i]))
+        return NT_flow_minute_list
 
 ## define a derived road segment class containing the "instaneous" flow (for each minute) info 
 ## for purpose of estimating the O-D demand matrix 
 ## for the extended map
 class RoadSegInrCapacFlowMinuteExt(RoadSegInrCapacFlow):
-    def __init__(self, tmc, road_num, shape_length, day,
-		 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
-		 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed, \
-		 AM_speed_minute, MD_speed_minute, PM_speed_minute, NT_speed_minute):
+    def __init__(self, tmc, road_num, shape_length, day, AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+                 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed, \
+                 AM_speed_minute, MD_speed_minute, PM_speed_minute, NT_speed_minute):
         RoadSegInrCapacFlow.__init__(self, tmc, road_num, shape_length, day, \
-				 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
-				 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed)
-	self.AM_speed_minute = AM_speed_minute
-	self.MD_speed_minute = MD_speed_minute
-	self.PM_speed_minute = PM_speed_minute
-	self.NT_speed_minute = NT_speed_minute
+                                     AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+                                     AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed)
+        self.AM_speed_minute = AM_speed_minute
+        self.MD_speed_minute = MD_speed_minute
+        self.PM_speed_minute = PM_speed_minute
+        self.NT_speed_minute = NT_speed_minute
     def AM_flow_minute(self):
-	AM_flow_minute_list = []
-	for i in range(len(self.AM_speed_minute)):
-	    AM_flow_minute_list.append(speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict_ext[self.tmc], self.AM_speed_minute[i]))
-	return AM_flow_minute_list
+        AM_flow_minute_list = []
+        for i in range(len(self.AM_speed_minute)):
+            AM_flow_minute_list.append(speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict_ext[self.tmc], \
+                                                     self.AM_speed_minute[i]))
+        return AM_flow_minute_list
     def MD_flow_minute(self):
-	MD_flow_minute_list = []
-	for i in range(len(self.MD_speed_minute)):
-	    MD_flow_minute_list.append(speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict_ext[self.tmc], self.MD_speed_minute[i]))
-	return MD_flow_minute_list
+        MD_flow_minute_list = []
+        for i in range(len(self.MD_speed_minute)):
+            MD_flow_minute_list.append(speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict_ext[self.tmc], \
+                                                     self.MD_speed_minute[i]))
+        return MD_flow_minute_list
     def PM_flow_minute(self):
-	PM_flow_minute_list = []
-	for i in range(len(self.PM_speed_minute)):
-	    PM_flow_minute_list.append(speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict_ext[self.tmc], self.PM_speed_minute[i]))
-	return PM_flow_minute_list
+        PM_flow_minute_list = []
+        for i in range(len(self.PM_speed_minute)):
+            PM_flow_minute_list.append(speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict_ext[self.tmc], \
+                                                     self.PM_speed_minute[i]))
+        return PM_flow_minute_list
     def NT_flow_minute(self):
-	NT_flow_minute_list = []
-	for i in range(len(self.NT_speed_minute)):
-	    NT_flow_minute_list.append(speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_ext[self.tmc], self.NT_speed_minute[i]))
-	return NT_flow_minute_list
+        NT_flow_minute_list = []
+        for i in range(len(self.NT_speed_minute)):
+            NT_flow_minute_list.append(speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_ext[self.tmc], \
+                                                     self.NT_speed_minute[i]))
+        return NT_flow_minute_list
 
 ## define a derived road segment class containing the "instaneous" flow (for each minute) info 
 ## for purpose of estimating the O-D demand matrix 
 ## for the journal map
 class RoadSegInrCapacFlowMinuteJournal(RoadSegInrCapacFlow):
-    def __init__(self, tmc, road_num, shape_length, day,
-		 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
-		 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed, \
-		 AM_speed_minute, MD_speed_minute, PM_speed_minute, NT_speed_minute):
+    def __init__(self, tmc, road_num, shape_length, day, AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+                 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed, \
+                 AM_speed_minute, MD_speed_minute, PM_speed_minute, NT_speed_minute):
         RoadSegInrCapacFlow.__init__(self, tmc, road_num, shape_length, day, \
-				 AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
-				 AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed)
-	self.AM_speed_minute = AM_speed_minute
-	self.MD_speed_minute = MD_speed_minute
-	self.PM_speed_minute = PM_speed_minute
-	self.NT_speed_minute = NT_speed_minute
+                                     AB_AM_capac, AB_MD_capac, AB_PM_capac, AB_NT_capac, \
+                                     AM_ave_speed, MD_ave_speed, PM_ave_speed, NT_ave_speed)
+        self.AM_speed_minute = AM_speed_minute
+        self.MD_speed_minute = MD_speed_minute
+        self.PM_speed_minute = PM_speed_minute
+        self.NT_speed_minute = NT_speed_minute
     def AM_flow_minute(self):
-	AM_flow_minute_list = []
-	for i in range(len(self.AM_speed_minute)):
-	    AM_flow_minute_list.append(speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict_journal[self.tmc], self.AM_speed_minute[i]))
-	return AM_flow_minute_list
+        AM_flow_minute_list = []
+        for i in range(len(self.AM_speed_minute)):
+            AM_flow_minute_list.append(speed_to_flow(self.AB_AM_capac, tmc_ref_speed_dict_journal[self.tmc], \
+                                                     self.AM_speed_minute[i]))
+        return AM_flow_minute_list
     def MD_flow_minute(self):
-	MD_flow_minute_list = []
-	for i in range(len(self.MD_speed_minute)):
-	    MD_flow_minute_list.append(speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict_journal[self.tmc], self.MD_speed_minute[i]))
-	return MD_flow_minute_list
+        MD_flow_minute_list = []
+        for i in range(len(self.MD_speed_minute)):
+            MD_flow_minute_list.append(speed_to_flow(self.AB_MD_capac, tmc_ref_speed_dict_journal[self.tmc], \
+                                                     self.MD_speed_minute[i]))
+        return MD_flow_minute_list
     def PM_flow_minute(self):
-	PM_flow_minute_list = []
-	for i in range(len(self.PM_speed_minute)):
-	    PM_flow_minute_list.append(speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict_journal[self.tmc], self.PM_speed_minute[i]))
-	return PM_flow_minute_list
+        PM_flow_minute_list = []
+        for i in range(len(self.PM_speed_minute)):
+            PM_flow_minute_list.append(speed_to_flow(self.AB_PM_capac, tmc_ref_speed_dict_journal[self.tmc], \
+                                                     self.PM_speed_minute[i]))
+        return PM_flow_minute_list
     def NT_flow_minute(self):
-	NT_flow_minute_list = []
-	for i in range(len(self.NT_speed_minute)):
-	    NT_flow_minute_list.append(speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_journal[self.tmc], self.NT_speed_minute[i]))
-	return NT_flow_minute_list
+        NT_flow_minute_list = []
+        for i in range(len(self.NT_speed_minute)):
+            NT_flow_minute_list.append(speed_to_flow(self.AB_NT_capac, tmc_ref_speed_dict_journal[self.tmc], \
+                                                     self.NT_speed_minute[i]))
+        return NT_flow_minute_list
 
 # define a road link class
 class Link(object):
     def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-			PM_capac, NT_capac, free_flow_time, length, \
-			AM_flow, MD_flow, PM_flow, NT_flow):
-	self.init_node = init_node
+                 PM_capac, NT_capac, free_flow_time, length, \
+                 AM_flow, MD_flow, PM_flow, NT_flow):
+        self.init_node = init_node
         self.term_node = term_node
         self.tmc_set = tmc_set
         self.AM_capac = AM_capac
@@ -581,7 +585,7 @@ class Link(object):
         self.PM_capac = PM_capac
         self.NT_capac = NT_capac
         self.free_flow_time = free_flow_time
-	self.length = length
+        self.length = length
         self.AM_flow = AM_flow
         self.MD_flow = MD_flow
         self.PM_flow = PM_flow
@@ -590,107 +594,108 @@ class Link(object):
 # define a road link class that is a derived class of Link
 class Link_with_Free_Flow_Time(Link):
     def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-			PM_capac, NT_capac, free_flow_time, length, \
-			AM_flow, MD_flow, PM_flow, NT_flow):
-	Link.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+                 PM_capac, NT_capac, free_flow_time, length, \
+                 AM_flow, MD_flow, PM_flow, NT_flow):
+        Link.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
                       PM_capac, NT_capac, free_flow_time, length, \
                       AM_flow, MD_flow, PM_flow, NT_flow)
-	# notice that the original length is in meters, and the speed is in mph; we calculate the time in hours
+        # notice that the original length is in meters, and the speed is in mph; we calculate the time in hours
         self.free_flow_time = sum([0.000621371 * tmc_length_dict[i] / tmc_ref_speed_dict[i] for i in self.tmc_set])
-	self.length = 0.000621371 * sum([tmc_length_dict[i] for i in self.tmc_set])  # in miles
+        self.length = 0.000621371 * sum([tmc_length_dict[i] for i in self.tmc_set])  # in miles
 
 # define a road link class that is a derived class of Link, for the extended map
 class Link_with_Free_Flow_Time_Ext(Link):
     def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-			PM_capac, NT_capac, free_flow_time, length, \
-			AM_flow, MD_flow, PM_flow, NT_flow):
-	Link.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+                 PM_capac, NT_capac, free_flow_time, length, \
+                 AM_flow, MD_flow, PM_flow, NT_flow):
+        Link.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
                       PM_capac, NT_capac, free_flow_time, length, \
                       AM_flow, MD_flow, PM_flow, NT_flow)
-	# notice that the original length is in meters, and the speed is in mph; we calculate the time in hours
+        # notice that the original length is in meters, and the speed is in mph; we calculate the time in hours
         self.free_flow_time = sum([0.000621371 * tmc_length_dict_ext[i] / tmc_ref_speed_dict_ext[i] for i in self.tmc_set])
-	self.length = 0.000621371 * sum([tmc_length_dict_ext[i] for i in self.tmc_set])  # in miles
+        self.length = 0.000621371 * sum([tmc_length_dict_ext[i] for i in self.tmc_set])  # in miles
 
 # define a road link class that is a derived class of Link, for the journal map
 class Link_with_Free_Flow_Time_Journal(Link):
     def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-			PM_capac, NT_capac, free_flow_time, length, \
-			AM_flow, MD_flow, PM_flow, NT_flow):
-	Link.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+                 PM_capac, NT_capac, free_flow_time, length, \
+                 AM_flow, MD_flow, PM_flow, NT_flow):
+        Link.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
                       PM_capac, NT_capac, free_flow_time, length, \
                       AM_flow, MD_flow, PM_flow, NT_flow)
-	# notice that the original length is in meters, and the speed is in mph; we calculate the time in hours
-        self.free_flow_time = sum([0.000621371 * tmc_length_dict_journal[i] / tmc_ref_speed_dict_journal[i] for i in self.tmc_set])
-	self.length = 0.000621371 * sum([tmc_length_dict_journal[i] for i in self.tmc_set])  # in miles
+        # notice that the original length is in meters, and the speed is in mph; we calculate the time in hours
+        self.free_flow_time = sum([0.000621371 * tmc_length_dict_journal[i] / tmc_ref_speed_dict_journal[i] for i in \
+                                   self.tmc_set])
+        self.length = 0.000621371 * sum([tmc_length_dict_journal[i] for i in self.tmc_set])  # in miles
 
 # define a road link class that is a derived class of Link, containing "instaneous" flow (for each minute) info 
 class Link_with_Free_Flow_Time_Minute(Link_with_Free_Flow_Time):
     def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-			PM_capac, NT_capac, free_flow_time, length, \
-			AM_flow, MD_flow, PM_flow, NT_flow, \
-			AM_flow_minute, MD_flow_minute, \
-			PM_flow_minute, NT_flow_minute):
-	Link_with_Free_Flow_Time.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+                 PM_capac, NT_capac, free_flow_time, length, \
+                 AM_flow, MD_flow, PM_flow, NT_flow, \
+                 AM_flow_minute, MD_flow_minute, \
+                 PM_flow_minute, NT_flow_minute):
+        Link_with_Free_Flow_Time.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
                       PM_capac, NT_capac, free_flow_time, length, \
                       AM_flow, MD_flow, PM_flow, NT_flow)
-	self.AM_flow_minute = AM_flow_minute
-	self.MD_flow_minute = MD_flow_minute
-	self.PM_flow_minute = PM_flow_minute
-	self.NT_flow_minute = NT_flow_minute
+        self.AM_flow_minute = AM_flow_minute
+        self.MD_flow_minute = MD_flow_minute
+        self.PM_flow_minute = PM_flow_minute
+        self.NT_flow_minute = NT_flow_minute
 
 # define a road link class that is a derived class of Link, containing "instaneous" flow (for each minute) info,
 # for the extended map 
 class Link_with_Free_Flow_Time_Minute_Ext(Link_with_Free_Flow_Time_Ext):
     def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-			PM_capac, NT_capac, free_flow_time, length, \
-			AM_flow, MD_flow, PM_flow, NT_flow, \
-			AM_flow_minute, MD_flow_minute, \
-			PM_flow_minute, NT_flow_minute):
-	Link_with_Free_Flow_Time_Ext.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+                 PM_capac, NT_capac, free_flow_time, length, \
+                 AM_flow, MD_flow, PM_flow, NT_flow, \
+                 AM_flow_minute, MD_flow_minute, \
+                 PM_flow_minute, NT_flow_minute):
+        Link_with_Free_Flow_Time_Ext.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
                       PM_capac, NT_capac, free_flow_time, length, \
                       AM_flow, MD_flow, PM_flow, NT_flow)
-	self.AM_flow_minute = AM_flow_minute
-	self.MD_flow_minute = MD_flow_minute
-	self.PM_flow_minute = PM_flow_minute
-	self.NT_flow_minute = NT_flow_minute
+        self.AM_flow_minute = AM_flow_minute
+        self.MD_flow_minute = MD_flow_minute
+        self.PM_flow_minute = PM_flow_minute
+        self.NT_flow_minute = NT_flow_minute
 
 # define a road link class that is a derived class of Link, containing "instaneous" flow (for each minute) info,
 # for the journal map 
 class Link_with_Free_Flow_Time_Minute_Journal(Link_with_Free_Flow_Time_Journal):
     def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-			PM_capac, NT_capac, free_flow_time, length, \
-			AM_flow, MD_flow, PM_flow, NT_flow, \
-			AM_flow_minute, MD_flow_minute, \
-			PM_flow_minute, NT_flow_minute):
-	Link_with_Free_Flow_Time_Journal.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+                 PM_capac, NT_capac, free_flow_time, length, \
+                 AM_flow, MD_flow, PM_flow, NT_flow, \
+                 AM_flow_minute, MD_flow_minute, \
+                 PM_flow_minute, NT_flow_minute):
+        Link_with_Free_Flow_Time_Journal.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
                       PM_capac, NT_capac, free_flow_time, length, \
                       AM_flow, MD_flow, PM_flow, NT_flow)
-	self.AM_flow_minute = AM_flow_minute
-	self.MD_flow_minute = MD_flow_minute
-	self.PM_flow_minute = PM_flow_minute
-	self.NT_flow_minute = NT_flow_minute
+        self.AM_flow_minute = AM_flow_minute
+        self.MD_flow_minute = MD_flow_minute
+        self.PM_flow_minute = PM_flow_minute
+        self.NT_flow_minute = NT_flow_minute
 
 # define a road link class that is a derived class of Link, containing sensitivity analysis info 
 class Link_with_Sensitivity(Link_with_Free_Flow_Time):
     def __init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
-			PM_capac, NT_capac, free_flow_time, length, \
-			AM_flow, MD_flow, PM_flow, NT_flow, \
-			fcoeffs):
-	Link_with_Free_Flow_Time.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
+                 PM_capac, NT_capac, free_flow_time, length, \
+                 AM_flow, MD_flow, PM_flow, NT_flow, \
+                 fcoeffs):
+        Link_with_Free_Flow_Time.__init__(self, init_node, term_node, tmc_set, AM_capac, MD_capac, \
                       PM_capac, NT_capac, free_flow_time, length, \
                       AM_flow, MD_flow, PM_flow, NT_flow)
-    	self.fcoeffs = fcoeffs  # fcoeffs is the coefficients of the polynomial function g(.)
+        self.fcoeffs = fcoeffs  # fcoeffs is the coefficients of the polynomial function g(.)
     def DV_Dc_0a(self):
-	n = len(self.fcoeffs)
-	term_list = []
-	for i in range(n):
-	    term_list.append((1.0 / (i+1)) * self.fcoeffs[i] * (self.PM_flow / self.PM_capac) ** (i+1))
-	return self.PM_capac * sum(term_list)
+        n = len(self.fcoeffs)
+        term_list = []
+        for i in range(n):
+            term_list.append((1.0 / (i+1)) * self.fcoeffs[i] * (self.PM_flow / self.PM_capac) ** (i+1))
+        return self.PM_capac * sum(term_list)
 
     def DV_Dm_a(self):
-	n = len(self.fcoeffs)
-	term_list = []
-	for i in range(n)[1:]:
-	    term_list.append((float(i) / (i+1)) * self.fcoeffs[i] * (self.PM_flow / self.PM_capac) ** (i+1))
-	# print(term_list)  # for debugging purpose only
-	return - self.free_flow_time * sum(term_list)
+        n = len(self.fcoeffs)
+        term_list = []
+        for i in range(n)[1:]:
+            term_list.append((float(i) / (i+1)) * self.fcoeffs[i] * (self.PM_flow / self.PM_capac) ** (i+1))
+        # print(term_list)  # for debugging purpose only
+        return - self.free_flow_time * sum(term_list)

@@ -1,16 +1,16 @@
 using PyCall
 unshift!(PyVector(pyimport("sys")["path"]), "")
-@pyimport GLS_Apr_weekday_PM
+@pyimport Apr_PM_02_OD_matrix_estimation_GLS
 
-# x = GLS_Apr_weekday_PM.x; # sample matrix, each column is a link flow vector
+# x = Apr_PM_02_OD_matrix_estimation_GLS.x; # sample matrix, each column is a link flow vector
 # sample; number_of_links * K
-# S = GLS_Apr_weekday_PM.S; # sample covariance matrix
-# A = GLS_Apr_weekday_PM.A; # link_route incidence matrix
-P = GLS_Apr_weekday_PM.P; # route_choice_probability_matrix
-# Q = GLS_Apr_weekday_PM.Q;
-L = GLS_Apr_weekday_PM.L; # dimension of xi
-number_of_routes = GLS_Apr_weekday_PM.number_of_routes;
-number_of_links = GLS_Apr_weekday_PM.number_of_links;
+# S = Apr_PM_02_OD_matrix_estimation_GLS.S; # sample covariance matrix
+# A = Apr_PM_02_OD_matrix_estimation_GLS.A; # link_route incidence matrix
+P = Apr_PM_02_OD_matrix_estimation_GLS.P; # route_choice_probability_matrix
+# Q = Apr_PM_02_OD_matrix_estimation_GLS.Q;
+L = Apr_PM_02_OD_matrix_estimation_GLS.L; # dimension of xi
+number_of_routes = Apr_PM_02_OD_matrix_estimation_GLS.number_of_routes;
+number_of_links = Apr_PM_02_OD_matrix_estimation_GLS.number_of_links;
 
 # P
 
@@ -49,7 +49,7 @@ using JuMP
 
 # xi_list = getvalue(xi)
 
-xi_list = GLS_Apr_weekday_PM.xi_list
+xi_list = Apr_PM_02_OD_matrix_estimation_GLS.xi_list
 
 for idx = 1:L
     if xi_list[idx] < 1e-1
