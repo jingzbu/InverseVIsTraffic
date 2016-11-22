@@ -43,10 +43,10 @@ function iniDemand(trip_file, flag=0)
     file = open(trip_file)
     demands = Dict{(Int64,Int64), Float64}()
     for s=1:numZones
-	for t=1:numZones
-	    demands[(s,t)] = 0
-	end
-    end	    
+        for t=1:numZones
+            demands[(s,t)] = 0
+        end
+    end    
     s = 0
     for line in eachline(file)
         if contains(line, "Origin")
