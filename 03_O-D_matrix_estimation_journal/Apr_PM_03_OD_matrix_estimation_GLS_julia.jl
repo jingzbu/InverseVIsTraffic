@@ -49,8 +49,20 @@ using JuMP
 
 # xi_list = getvalue(xi)
 
-xi_list = Apr_PM_02_OD_matrix_estimation_GLS.xi_list
+# xi_list = Apr_PM_02_OD_matrix_estimation_GLS.xi_list
+lam_list = Apr_PM_02_OD_matrix_estimation_GLS.lam_list
 
+println("The demand vector lam is:")
+println(lam_list)
+
+outfile = open("../temp_files/od_demand_vector_simplified_journal_Apr_PM.json",
+"w")
+
+JSON.print(outfile, lam_list)
+
+close(outfile)
+
+#=
 for idx = 1:L
     if xi_list[idx] < 1e-1
         xi_list[idx] = 0
@@ -101,3 +113,4 @@ close(outfile)
 
 println("The optimal objective function value of (P2) is:")
 println(getobjectivevalue(mGLSJulia))
+=#
