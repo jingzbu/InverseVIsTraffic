@@ -1,12 +1,13 @@
 using PyCall
-unshift!(PyVector(pyimport("sys")["path"]), "");
+unshift!(PyVector(pyimport("sys")["path"]), "")
 @pyimport GLS_Apr_weekday_PM
 
-# x = GLS_Apr_weekday_PM.x; # sample matrix, each column is a link flow vector sample; number_of_links * K
+# x = GLS_Apr_weekday_PM.x; # sample matrix, each column is a link flow vector
+# sample; number_of_links * K
 # S = GLS_Apr_weekday_PM.S; # sample covariance matrix
 # A = GLS_Apr_weekday_PM.A; # link_route incidence matrix
 P = GLS_Apr_weekday_PM.P; # route_choice_probability_matrix
-# Q = GLS_Apr_weekday_PM.Q; 
+# Q = GLS_Apr_weekday_PM.Q;
 L = GLS_Apr_weekday_PM.L; # dimension of xi
 number_of_routes = GLS_Apr_weekday_PM.number_of_routes;
 number_of_links = GLS_Apr_weekday_PM.number_of_links;
@@ -42,7 +43,7 @@ using JuMP
 #     obj += - b[l] * xi[l]
 # end
 
-# @NLobjective(model, Min, obj) 
+# @NLobjective(model, Min, obj)
 
 # solve(model)
 
@@ -73,27 +74,30 @@ for i = 1:size(P,1)
         end
     end
 end
-            
+
 for i = 1:size(P,1)
     @NLconstraint(mGLSJulia, sum{p[i,j], j = 1:size(P,2)} == 1)
 end
 
 for l = 1:L
-    @NLconstraint(mGLSJulia, sum{p[i,l] * lam[i], i = 1:size(P,1)} == xi_list[l])
+    @NLconstraint(mGLSJulia, sum{p[i,l] * lam[i], i = 1:size(P,1)}
+    == xi_list[l])
 end
-    
-@NLobjective(mGLSJulia, Min, sum{p[1,j], j = 1:size(P,2)})  # play no actual role, but could not use zero objective
+
+# play no actual role, but could not use zero objective
+@NLobjective(mGLSJulia, Min, sum{p[1,j], j = 1:size(P,2)})
 
 solve(mGLSJulia)
 
-print("The demand vector lam is:\n")
-print(getvalue(lam))
+println("The demand vector lam is:")
+println(getvalue(lam))
 
-outfile = open("../temp_files/od_demand_vector_simplified_journal_Apr_PM.json", "w")
+outfile = open("../temp_files/od_demand_vector_simplified_journal_Apr_PM.json",
+"w")
 
 JSON.print(outfile, getvalue(lam))
 
 close(outfile)
 
-print("The optimal objective function value of (P2) is:\n")
-print(getobjectivevalue(mGLSJulia))
+println("The optimal objective function value of (P2) is:")
+println(getobjectivevalue(mGLSJulia))
