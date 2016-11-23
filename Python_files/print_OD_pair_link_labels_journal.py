@@ -12,7 +12,7 @@ from util_data_storage_and_load import *
 
 import json
 
-n = 74  # number of nodes
+n = 34  # number of nodes
 
 OD_pair_label_dict = {}
 OD_pair_label_dict_ = {}
