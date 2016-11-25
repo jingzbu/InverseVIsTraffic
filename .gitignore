@@ -3,3 +3,4 @@
 *~
 *pyc
 *.json#
+.ipynb_checkpoints*
