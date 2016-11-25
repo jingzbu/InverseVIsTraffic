@@ -95,11 +95,11 @@ function demandsDictFixed(day)
 
     linkCostDicDict[1]["0"], link_length_list[1]
 
-    jacobiSpiessDict[1] = Compute_Jacobian_MA_journal.jacobianSpiess(numNodes, numLinks, numODpairs, od_pairs, 
+    jacobiSpiessDict[1] = Compute_Jacobian_MA_journal.jacobianSpiess(numNodes, numLinks, numODpairs, od_pairs,
                                                   link_list_js, [linkCostDicDict[1]["$(i)"] for i=0:numLinks-1]);
 
     # maximum number of iterations
-    N = 100;  
+    N = 100;
 
     # Armijo rule parameters
     rho = 2;
@@ -125,7 +125,7 @@ function demandsDictFixed(day)
 
         demandsVecDict[l+1] = similar(demandsVecDict[0]);
 
-        demandsVecDict[l+1], objFunDict[l+1] = armijo(objFunDict[l], demandsVecDict[l], fcoeffs, searchDirecDict[l], 
+        demandsVecDict[l+1], objFunDict[l+1] = armijo(objFunDict[l], demandsVecDict[l], fcoeffs, searchDirecDict[l],
         thetaMaxDict[l], rho, M);
 
         demandsDict[l+1] = demandsVecToDic(demandsVecDict[l+1]);
@@ -136,7 +136,7 @@ function demandsDictFixed(day)
 
         linkCostDicDict[l+1] = tapFlowVecToLinkCostDict(tapFlowVecDict[l+1], fcoeffs);
 
-        jacobiSpiessDict[l+1] = Compute_Jacobian_MA_journal.jacobianSpiess(numNodes, numLinks, numODpairs, od_pairs, 
+        jacobiSpiessDict[l+1] = Compute_Jacobian_MA_journal.jacobianSpiess(numNodes, numLinks, numODpairs, od_pairs,
                                                   link_list_js, [linkCostDicDict[l+1]["$(i)"] for i=0:numLinks-1]);
 
         demandsDiffDict[l+1] = norm(demandsVecDict[l+1] - demandsVecDict[0]) / norm(demandsVecDict[0]);
@@ -145,7 +145,7 @@ function demandsDictFixed(day)
         if (objFunDict[l] - objFunDict[l+1]) / objFunDict[1] < epsilon_2
             break
         end
-        
+
         println("iteration $(l) finished...")
 
     end
@@ -185,7 +185,7 @@ function demandsDictFixed(day)
     demandsDict_ = Dict{}()
 
     for key in keys(demandsDict[length(demandsDict)-1])
-        demandsDict_[key] = demandsDict[length(demandsDict)-1][key] 
+        demandsDict_[key] = demandsDict[length(demandsDict)-1][key]
     end
 
     outfile = open("./results/demandsDictFixed$(day)_journal.json", "w")
@@ -195,9 +195,10 @@ function demandsDictFixed(day)
     close(outfile)
 end
 
-# week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
-week_day_Apr_list = [2]
+week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
+# week_day_Apr_list = [6]
 
 for day in week_day_Apr_list
     demandsDictFixed(day)
+    println("day $(day) finished...")
 end
