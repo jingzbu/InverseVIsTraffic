@@ -13431,3 +13431,50 @@ Optimal objective -1.00821154e+06
 
 Gurobi 6.5.2 (linux64) logging started Tue 22 Nov 2016 05:00:34 PM EST
 
+
+Gurobi 6.5.2 (linux64) logging started Fri Nov 25 13:37:54 2016
+
+Optimize a model with 1122 rows, 1122 columns and 1122 nonzeros
+Model has 630003 quadratic objective terms
+Coefficient statistics:
+  Matrix range    [1e+00, 1e+00]
+  Objective range [4e-01, 6e+03]
+  Bounds range    [0e+00, 0e+00]
+  RHS range       [0e+00, 0e+00]
+Presolve removed 1122 rows and 0 columns
+Presolve time: 0.12s
+Presolved: 0 rows, 1122 columns, 0 nonzeros
+Presolved model has 630003 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 191
+ AA' NZ     : 1.814e+04
+ Factor NZ  : 1.834e+04 (roughly 1 MByte of memory)
+ Factor Ops : 2.341e+06 (less than 1 second per iteration)
+ Threads    : 4
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -9.95895740e+08 -2.60445307e+05  9.32e+04 6.14e+02  1.00e+06     0s
+   1  -1.65575276e+08 -2.63107518e+07  1.66e+04 1.63e+02  2.19e+05     0s
+   2  -4.13934362e+06 -2.04592219e+07  9.35e+02 9.20e+00  3.19e+04     0s
+   3  -2.75015734e+06 -8.07017442e+06  9.35e-04 6.16e-06  4.74e+03     0s
+   4  -4.06557925e+06 -5.38959425e+06  1.08e-04 7.10e-07  1.18e+03     0s
+   5  -4.31894343e+06 -4.81339799e+06  1.09e-10 2.27e-12  4.41e+02     0s
+   6  -4.40516584e+06 -4.54644129e+06  4.23e-12 5.46e-12  1.26e+02     0s
+   7  -4.43285126e+06 -4.47033932e+06  4.46e-12 5.46e-12  3.34e+01     0s
+   8  -4.44145021e+06 -4.45408362e+06  1.70e-11 4.55e-12  1.13e+01     0s
+   9  -4.44454938e+06 -4.44807995e+06  1.31e-11 5.46e-12  3.15e+00     0s
+  10  -4.44586373e+06 -4.44600256e+06  4.08e-11 4.55e-12  1.24e-01     0s
+  11  -4.44593270e+06 -4.44593655e+06  4.91e-10 3.64e-12  3.43e-03     0s
+  12  -4.44593421e+06 -4.44593433e+06  6.23e-10 4.55e-12  1.07e-04     0s
+  13  -4.44593425e+06 -4.44593425e+06  1.07e-09 3.64e-12  3.50e-07     0s
+  14  -4.44593425e+06 -4.44593425e+06  8.63e-11 7.66e-12  1.77e-09     0s
+
+Barrier solved model in 14 iterations and 0.26 seconds
+Optimal objective -4.44593425e+06
+
+
+Gurobi 6.5.2 (linux64) logging started Fri 25 Nov 2016 01:41:55 PM EST
+
