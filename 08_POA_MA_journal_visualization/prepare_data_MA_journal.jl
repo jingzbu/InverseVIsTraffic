@@ -180,13 +180,13 @@ using JSON
 
 function furInfo()
 
-    link_label_dict = readall("../temp_files/link_label_dict_MA_journal.json")
+    link_label_dict = readstring("../temp_files/link_label_dict_MA_journal.json")
     link_label_dict = JSON.parse(link_label_dict)
 
-    link_label_dict_ = readall("../temp_files/link_label_dict_MA_journal_.json")
+    link_label_dict_ = readstring("../temp_files/link_label_dict_MA_journal_.json")
     link_label_dict_ = JSON.parse(link_label_dict_)
 
-    link_length_dict = readall("../temp_files/link_length_dict_MA_journal.json")
+    link_length_dict = readstring("../temp_files/link_length_dict_MA_journal.json")
     link_length_dict = JSON.parse(link_length_dict)
     
     return link_label_dict, link_label_dict_, link_length_dict
