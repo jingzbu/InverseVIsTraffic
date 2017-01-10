@@ -23,7 +23,7 @@ with open('../temp_files/link_length_dict_MA.json', 'r') as json_file:
 m = 24
 
 # number of routes (obtained by counting the rows with '->' in 'path-link_incidence.txt')
-with open('../temp_files/path-link_incidence_MA.txt', 'r') as the_file:
+with open('../temp_files/path_link_incidence_MA_CDC.txt', 'r') as the_file:
     # path counts
     i = 0  
     for row in the_file:
@@ -39,7 +39,7 @@ A = np.zeros((m, r))
 
 # read in the manually created path-link incidence file 
 # create path-link incidence matrix A
-with open('../temp_files/path-link_incidence_MA.txt', 'r') as the_file:
+with open('../temp_files/path_link_incidence_MA_CDC.txt', 'r') as the_file:
     # path counts
     i = 0  
     for row in the_file:
@@ -49,7 +49,7 @@ with open('../temp_files/path-link_incidence_MA.txt', 'r') as the_file:
                     A[j, i] = 1
             i = i + 1
     assert(i == r)
-zdump(A, '../temp_files/path-link_incidence_matrix_MA.pkz')
+zdump(A, '../temp_files/path_link_incidence_MA_CDCtrix_MA.pkz')
 
 # link_length_dict['0'].length
 
@@ -59,7 +59,7 @@ zdump(A, '../temp_files/path-link_incidence_matrix_MA.pkz')
 # calculate length of each route
 
 length_of_route_list = []
-with open('../temp_files/path-link_incidence_MA.txt', 'r') as the_file:
+with open('../temp_files/path_link_incidence_MA_CDC.txt', 'r') as the_file:
     for row in the_file:
         if '->' in row:
             link_list = []
@@ -84,7 +84,7 @@ OD_pair_label_dict = zload('../temp_files/OD_pair_label_dict_MA.pkz')
 OD_pair_route_label_list = []
 OD_pair_idx_list = []
 route_idx_list = []
-with open('../temp_files/path-link_incidence_MA.txt', 'r') as the_file:
+with open('../temp_files/path_link_incidence_MA_CDC.txt', 'r') as the_file:
     route_idx = 0
     for row in the_file:
         if '->' in row:
