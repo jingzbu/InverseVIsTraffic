@@ -107,8 +107,8 @@ function tapMSA_Multi(travel_demand_car, travel_demand_truck, fcoeffs, numIter=1
     end
         
     tapFlows = Dict{}()
-    tapFlowsCar = Dict{(Int64,Int64),Float64}()
-    tapFlowsTruck = Dict{(Int64,Int64),Float64}()
+    tapFlowsCar = Dict{}()
+    tapFlowsTruck = Dict{}()
     tapFlowVect = zeros(2,length(xl_car))
 
     for i = 1:length(ta_data.start_node)

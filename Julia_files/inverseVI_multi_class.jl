@@ -13,7 +13,7 @@ end
 
 function comb(n::Int64, m::Int64)
     combi = facto(n) / (facto(m) * facto(n-m))
-    return int(combi)
+    return convert(Int, combi)
 end
 
 function setUpFitting(deg::Int64, c::Float64)
@@ -25,56 +25,56 @@ function setUpFitting(deg::Int64, c::Float64)
 
     m = Model(solver=GurobiSolver(OutputFlag=false))
     
-    @defVar(m, coeffs[1:deg+1])
+    @variable(m, coeffs[1:deg+1])
 
     return m, coeffs, normCoeffs
 
 end
 
 function addResid(m, coeffs, ys_car, ys_truck, demands_car, demands_truck, arcs, scaling)
-    @defVar(m, resid)
-    @defVar(m, dual_cost)
-    @defVar(m, dual_cost_car)
-    @defVar(m, dual_cost_truck)
-    @defVar(m, primal_cost)
-    @defVar(m, primal_cost_car)
-    @defVar(m, primal_cost_truck)
+    @variable(m, resid)
+    @variable(m, dual_cost)
+    @variable(m, dual_cost_car)
+    @variable(m, dual_cost_truck)
+    @variable(m, primal_cost)
+    @variable(m, primal_cost_car)
+    @variable(m, primal_cost_truck)
 
-    @addConstraint(m, dual_cost_car == sum{demands_car[(s,t)] * (ys_car[(s,t), t] - ys_car[(s,t), s]), (s,t)=keys(demands_car)})  
-    @addConstraint(m, dual_cost_truck == sum{demands_truck[(s,t)] * (ys_truck[(s,t), t] - ys_truck[(s,t), s]), (s,t)=keys(demands_truck)})  
-    @addConstraint(m, dual_cost == dual_cost_car + dual_cost_truck)
+    @constraint(m, dual_cost_car == sum{demands_car[(s,t)] * (ys_car[(s,t), t] - ys_car[(s,t), s]), (s,t)=keys(demands_car)})  
+    @constraint(m, dual_cost_truck == sum{demands_truck[(s,t)] * (ys_truck[(s,t), t] - ys_truck[(s,t), s]), (s,t)=keys(demands_truck)})  
+    @constraint(m, dual_cost == dual_cost_car + dual_cost_truck)
     
-    @addConstraint(m, primal_cost_car == sum{a.flow_car * 1.0 * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
-    @addConstraint(m, primal_cost_truck == sum{a.flow_truck * 1.1 * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
-    @addConstraint(m, primal_cost == primal_cost_car + primal_cost_truck)
+    @constraint(m, primal_cost_car == sum{a.flow_car * 1.0 * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
+    @constraint(m, primal_cost_truck == sum{a.flow_truck * 1.1 * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
+    @constraint(m, primal_cost == primal_cost_car + primal_cost_truck)
                    
-    @addConstraint(m, resid >= (primal_cost - dual_cost) / scaling)
-    @addConstraint(m, resid >= 0)
+    @constraint(m, resid >= (primal_cost - dual_cost) / scaling)
+    @constraint(m, resid >= 0)
     return resid
 end
 
 function addIncreasingCnsts(m, coeffs, arcs)
 	sorted_flows = sort([a.flow / a.capacity for a in values(arcs)])
 	for i = 2:length(sorted_flows)
-		@addConstraint(m, polyEval(coeffs, sorted_flows[i-1]) <= polyEval(coeffs, sorted_flows[i]))
+		@constraint(m, polyEval(coeffs, sorted_flows[i-1]) <= polyEval(coeffs, sorted_flows[i]))
 	end
 end
 
 function normalize(m, coeffs)
-    @addConstraint(m, coeffs[1] == 1)
+    @constraint(m, coeffs[1] == 1)
 end
 
 function addNetworkCnsts(m, coeffs, demands_car, demands_truck, arcs, numNodes)
-    @defVar(m, ys_car[keys(demands_car), 1:numNodes])
-    @defVar(m, ys_truck[keys(demands_truck), 1:numNodes])
+    @variable(m, ys_car[keys(demands_car), 1:numNodes])
+    @variable(m, ys_truck[keys(demands_truck), 1:numNodes])
     for k = keys(arcs)
 	a = arcs[k]
 	rhs = a.freeflowtime * polyEval(coeffs, a.flow/a.capacity)
 	for od in keys(demands_car)
-	    @addConstraint(m, ys_car[od, k[2]] - ys_car[od, k[1]] <= 1.0 * rhs)
+	    @constraint(m, ys_car[od, k[2]] - ys_car[od, k[1]] <= 1.0 * rhs)
 	end
 	for od in keys(demands_truck)
-	    @addConstraint(m, ys_truck[od, k[2]] - ys_truck[od, k[1]] <= 1.1 * rhs)
+	    @constraint(m, ys_truck[od, k[2]] - ys_truck[od, k[1]] <= 1.1 * rhs)
 	end
     end
 return ys_car, ys_truck
@@ -112,9 +112,9 @@ function train(lam::Float64, deg::Int, c::Float64, demands_car, demands_truck, a
     #add the residual for this data point
     push!(resids, addResid(m, coeffs, ys_car, ys_truck, demands_car, demands_truck, arcs, 1e6))
     
-    @setObjective(m, Min, sum{resids[i], i = 1:length(resids)} 
+    @objective(m, Min, sum{resids[i], i = 1:length(resids)} 
                             + lam * sum{coeffs[i] * coeffs[i] / normCoeffs[i], i=1:deg + 1})
     solve(m)
     
-    return [getValue(coeffs[i]) for i =1:length(coeffs)], getObjectiveValue(m)
+    return [getvalue(coeffs[i]) for i =1:length(coeffs)], getobjectivevalue(m)
 end

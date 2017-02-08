@@ -13,7 +13,7 @@ end
 
 function comb(n::Int64, m::Int64)
     combi = facto(n) / (facto(m) * facto(n-m))
-    return int(combi)
+    return convert(Int, combi)
 end
 
 function setUpFitting(deg::Int64, c::Float64)
@@ -23,7 +23,7 @@ function setUpFitting(deg::Int64, c::Float64)
         normCoeffs[i] = comb(deg, i-1) * c^(deg-i+1)
     end
 
-	m = Model(solver=GurobiSolver(OutputFlag=false))
+    m = Model(solver=GurobiSolver(OutputFlag=false))
     
 	@variable(m, coeffs[1:deg+1])
 
@@ -109,5 +109,5 @@ function train(lam::Float64, deg::Int, c::Float64, demands, arcs; fcoeffs=nothin
                             + lam * sum{coeffs[i] * coeffs[i] / normCoeffs[i], i=1:deg + 1})
     solve(m)
     
-    return [getvalue(coeffs[i]) for i =1:length(coeffs)], getObjectiveValue(m)
+    return [getvalue(coeffs[i]) for i =1:length(coeffs)], getobjectivevalue(m)
 end
