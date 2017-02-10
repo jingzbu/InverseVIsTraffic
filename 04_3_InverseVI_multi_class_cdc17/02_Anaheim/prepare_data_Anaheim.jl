@@ -199,27 +199,27 @@ using JSON
 function furInfo()
     
     #get number of routes
-    numRoutes = readall("../../temp_files/numRoutes_Anaheim.json")
+    numRoutes = readstring("../../temp_files/numRoutes_Anaheim.json")
     numRoutes = JSON.parse(numRoutes)
 
     #load OD pair-route incidence
-    odPairRoute = readall("../../temp_files/od_pair_route_incidence_Anaheim.json")
+    odPairRoute = readstring("../../temp_files/od_pair_route_incidence_Anaheim.json")
     odPairRoute = JSON.parse(odPairRoute)
 
     #load link-route incidence
-    linkRoute = readall("../../temp_files/link_route_incidence_Anaheim.json")
+    linkRoute = readstring("../../temp_files/link_route_incidence_Anaheim.json")
     linkRoute = JSON.parse(linkRoute)
 
-    link_label_dict = readall("../../temp_files/link_label_dict_Anaheim.json")
+    link_label_dict = readstring("../../temp_files/link_label_dict_Anaheim.json")
     link_label_dict = JSON.parse(link_label_dict)
 
-    link_label_dict_ = readall("../../temp_files/link_label_dict_Anaheim_.json")
+    link_label_dict_ = readstring("../../temp_files/link_label_dict_Anaheim_.json")
     link_label_dict_ = JSON.parse(link_label_dict_)
 
-    link_length_dict = readall("../../temp_files/link_length_dict_Anaheim.json")
+    link_length_dict = readstring("../../temp_files/link_length_dict_Anaheim.json")
     link_length_dict = JSON.parse(link_length_dict)
 
-    OD_pair_route_dict = readall("../../temp_files/OD_pair_route_dict_Anaheim.json")
+    OD_pair_route_dict = readstring("../../temp_files/OD_pair_route_dict_Anaheim.json")
     OD_pair_route_dict = JSON.parse(OD_pair_route_dict)
     
     return numRoutes, odPairRoute, linkRoute, link_label_dict, link_label_dict_, link_length_dict, OD_pair_route_dict
