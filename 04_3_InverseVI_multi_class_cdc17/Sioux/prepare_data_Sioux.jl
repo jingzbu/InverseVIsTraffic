@@ -45,7 +45,7 @@ end
 
 # obtain important parameters of the network
 
-include("../Julia_files/load_network_uni_class.jl")
+include("../../Julia_files/load_network_uni_class.jl")
 
 function paraNetwork(nameNetwork)
     ta_data = load_ta_network(nameNetwork)
@@ -74,39 +74,4 @@ function tapFlowVecToLinkCostDict(tapFlowVec, fcoeffsInvVI)
     linkCostDict["truck"] = temp_dict_truck
 
     return linkCostDict
-end
-
-
-
-# obtain further info of the network
-
-using JSON
-
-function furInfo()
-    
-    #get number of routes
-    numRoutes = readall("../temp_files/numRoutes_Sioux.json")
-    numRoutes = JSON.parse(numRoutes)
-
-    #load OD pair-route incidence
-    odPairRoute = readall("../temp_files/od_pair_route_incidence_Sioux.json")
-    odPairRoute = JSON.parse(odPairRoute)
-
-    #load link-route incidence
-    linkRoute = readall("../temp_files/link_route_incidence_Sioux.json")
-    linkRoute = JSON.parse(linkRoute)
-
-    link_label_dict = readall("../temp_files/link_label_dict_Sioux.json")
-    link_label_dict = JSON.parse(link_label_dict)
-
-    link_label_dict_ = readall("../temp_files/link_label_dict_Sioux_.json")
-    link_label_dict_ = JSON.parse(link_label_dict_)
-
-    link_length_dict = readall("../temp_files/link_length_dict_Sioux.json")
-    link_length_dict = JSON.parse(link_length_dict)
-
-    OD_pair_route_dict = readall("../temp_files/OD_pair_route_dict_Sioux.json")
-    OD_pair_route_dict = JSON.parse(OD_pair_route_dict)
-    
-    return numRoutes, odPairRoute, linkRoute, link_label_dict, link_label_dict_, link_length_dict, OD_pair_route_dict
 end
