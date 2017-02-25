@@ -62,6 +62,10 @@ end
 
 function normalize(m, coeffs)
     @constraint(m, coeffs[1] == 1)
+    sample_points = linspace(0,1,20)
+    for i = 1:length(sample_points)
+        @constraint(m, polyEval(coeffs, sample_points[i]) >= 1.0)
+    end
 end
 
 function addNetworkCnsts(m, coeffs, demands_car, demands_truck, arcs, numNodes)
