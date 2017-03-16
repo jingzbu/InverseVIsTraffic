@@ -1,0 +1,16 @@
+tapFlowVecDict = Dict();
+tapFlowDicDict = Dict();
+arcsDict = Dict();
+coeffs_dict = Dict();
+jacobDict = Dict();
+descDirecDict = Dict();
+searchDirecDict = Dict();
+demandsVecDict = Dict();
+thetaMaxDict = Dict();
+objFunDict = Dict();
+norObjFunDict = Dict();
+objInvVIDict = Dict();
+demandsDiffDict = Dict();
+odPairRouteDict = Dict();
+jacobiSpiessDict = Dict();
+linkCostDicDict = Dict();
