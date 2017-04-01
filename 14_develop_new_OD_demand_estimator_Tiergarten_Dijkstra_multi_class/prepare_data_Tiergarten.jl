@@ -14,7 +14,7 @@ Arc(initNode::Int, termNode::Int, capacity::Float64,freeflowtime::Float64) =
     Arc(initNode, termNode, capacity, freeflowtime, 0., 0., 0.)
 
 function arcData(arc_file)
-    arcs = Dict{(Int, Int), Arc}()
+    arcs = Dict{}()
     file = open(arc_file)
     inHeader=true
     for line in eachline(file)
@@ -23,7 +23,7 @@ function arcData(arc_file)
             continue
         end
         vals = split(line, )
-        arcs[(int(vals[1]), int(vals[2]))] = Arc(int(vals[1]), int(vals[2]), float(vals[3]), float(vals[5]))
+        arcs[(parse(Int, vals[1]), parse(Int, vals[2]))] = Arc(parse(Int, vals[1]), parse(Int, vals[2]), parse(Float64, vals[3]), parse(Float64, vals[5]))
     end
     close(file) 
     return arcs
@@ -42,36 +42,36 @@ function observFlow(arc_file, tapFlowDic)
 end
 
 # read in initial demand data
-srand(816)
+srand(8579988625)
 function iniDemand(trip_file, flag=0)
     file = open(trip_file)
     demands = Dict{}()
     demandsCar = Dict{}()
     demandsTruck = Dict{}()
     for s=1:numZones
-	for t=1:numZones
-	    demandsCar[(s,t)] = 0
-	    demandsTruck[(s,t)] = 0
-	end
+        for t=1:numZones
+            demandsCar[(s,t)] = 0
+            demandsTruck[(s,t)] = 0
+        end
     end	 
     s = 0
     for line in eachline(file)
         if contains(line, "Origin")
-            s = int(split(line)[2])
+            s = parse(Int, split(line)[2])
         else
             pairs = split(line, ";")
             for pair in pairs
                 if !contains(pair, "\n")
                     pair_vals = split(pair, ":")
-                    t, demand = int(pair_vals[1]), float(pair_vals[2])
+                    t, demand = parse(Int, pair_vals[1]), parse(Float64, pair_vals[2])
                     demandsCar[(s,t)] = demand * 0.8  # demands for cars
-		    demandsTruck[(s,t)] = demand * 0.2  # demands for trucks
+                    demandsTruck[(s,t)] = demand * 0.2  # demands for trucks
                     if flag == 1
                         # perturb the ground truth demands slightly 
-                        # with perturbation factor uniformly distributed on [.8, 1.2)
-                        pert_fac = 1 + 0.2 * (1 - 2 * rand())
+                        # with perturbation factor uniformly distributed on [.9, 1.1)
+                        pert_fac = 1 + 0.1 * (1 - 2 * rand())
                         demandsCar[(s,t)] = demand * pert_fac * 0.8  # demands for cars
-			demandsTruck[(s,t)] = demand * pert_fac * 0.2  # demands for trucks
+                        demandsTruck[(s,t)] = demand * pert_fac * 0.2  # demands for trucks
                     end
                 end
             end
@@ -92,7 +92,7 @@ function demandsDicToVec(demandsDic)
 end
 
 function demandsVecToDic(demandsVec)  
-    demandsDic = Dict{(Int64,Int64), Float64}()
+    demandsDic = Dict{}()
     for i = 1:numNodes
         demandsDic[(i, i)] = 0
     end
@@ -104,7 +104,7 @@ end
 
 # obtain important parameters of the network
 
-include("../Julia_files/load_network_uni-class.jl")
+include("../Julia_files/load_network_uni_class.jl")
 
 function paraNetwork(nameNetwork)
     ta_data = load_ta_network(nameNetwork)
@@ -125,7 +125,7 @@ function tapFlowVecToLinkCostDict(tapFlowVec, fcoeffsInvVI)
     temp_dict_truck = Dict{}()
     for i = 1:length(linkCostVecCar)
         temp_dict_car["$(i-1)"] = linkCostVecCar[i]
-	temp_dict_truck["$(i-1)"] = linkCostVecTruck[i]
+        temp_dict_truck["$(i-1)"] = linkCostVecTruck[i]
     end
 
     linkCostDict = Dict{}()
@@ -199,13 +199,13 @@ using JSON
 
 function furInfo()
 
-    link_label_dict = readall("../temp_files/link_label_dict_Tiergarten.json")
+    link_label_dict = readstring("../temp_files/link_label_dict_Tiergarten.json")
     link_label_dict = JSON.parse(link_label_dict)
 
-    link_label_dict_ = readall("../temp_files/link_label_dict_Tiergarten_.json")
+    link_label_dict_ = readstring("../temp_files/link_label_dict_Tiergarten_.json")
     link_label_dict_ = JSON.parse(link_label_dict_)
 
-    link_length_dict = readall("../temp_files/link_length_dict_Tiergarten.json")
+    link_length_dict = readstring("../temp_files/link_length_dict_Tiergarten.json")
     link_length_dict = JSON.parse(link_length_dict)
     
     return link_label_dict, link_label_dict_, link_length_dict
