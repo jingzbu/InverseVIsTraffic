@@ -64,6 +64,10 @@ function load_ta_network(network_name="Sioux Falls")
         network_data_file = "journal_net_Apr_PM.txt"
         trip_table_file = "journal_trips_Apr_PM.txt"
         best_objective = 0
+    elseif network_name == "MA_journal_Apr_weekend"
+        network_data_file = "journal_net_Apr_weekend.txt"
+        trip_table_file = "journal_trips_Apr_weekend.txt"
+        best_objective = 0
     elseif network_name == "East_Massachusetts_Jan_AM"
         network_data_file = "East_Massachusetts_net_Jan_AM.txt"
         trip_table_file = "East_Massachusetts_trips_Jan_AM.txt"
@@ -103,7 +107,7 @@ function load_ta_network(network_name="Sioux Falls")
     elseif network_name == "East_Massachusetts_Apr_weekend"
         network_data_file = "East_Massachusetts_net_Apr_weekend.txt"
         trip_table_file = "East_Massachusetts_trips_Apr_weekend.txt"
-	best_objective = 0
+        best_objective = 0
     elseif network_name == "East_Massachusetts_Jul_AM"
         network_data_file = "East_Massachusetts_net_Jul_AM.txt"
         trip_table_file = "East_Massachusetts_trips_Jul_AM.txt"
@@ -123,7 +127,7 @@ function load_ta_network(network_name="Sioux Falls")
     elseif network_name == "East_Massachusetts_Jul_weekend"
         network_data_file = "East_Massachusetts_net_Jul_weekend.txt"
         trip_table_file = "East_Massachusetts_trips_Jul_weekend.txt"
-	best_objective = 0
+        best_objective = 0
     elseif network_name == "East_Massachusetts_Oct_AM"
         network_data_file = "East_Massachusetts_net_Oct_AM.txt"
         trip_table_file = "East_Massachusetts_trips_Oct_AM.txt"
@@ -143,7 +147,7 @@ function load_ta_network(network_name="Sioux Falls")
     elseif network_name == "East_Massachusetts_Oct_weekend"
         network_data_file = "East_Massachusetts_net_Oct_weekend.txt"
         trip_table_file = "East_Massachusetts_trips_Oct_weekend.txt"
-	best_objective = 0
+        best_objective = 0
     elseif network_name == "Sioux Falls simplified"
         network_data_file = "SiouxFalls_net_simplified.txt"
         trip_table_file = "SiouxFalls_trips_simplified.txt"
