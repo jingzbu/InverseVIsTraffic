@@ -41,9 +41,9 @@ function BPR(flowVec, fcoeffs)
     bpr = similar(flowVec)
     for a = 1:length(bpr)
         bpr[a] = free_flow_time[a] * sum([fcoeffs[i] * (flowVec[a]/capacity[a])^(i-1) for i = 1:length(fcoeffs)])
-	if bpr[a] < free_flow_time[a]
-	    bpr[a] = free_flow_time[a]
-	end
+        if bpr[a] < free_flow_time[a]
+            bpr[a] = free_flow_time[a]
+        end
     end
     return bpr
 end
@@ -112,16 +112,16 @@ function tapMSA_Multi(travel_demand_car, travel_demand_truck, fcoeffs, numIter=1
     tapFlowVect = zeros(2,length(xl_car))
 
     for i = 1:length(ta_data.start_node)
-	key = (ta_data.start_node[i], ta_data.end_node[i])
-	tapFlowsCar[key] = xl_car[i]
-	tapFlowsTruck[key] = xl_truck[i]
+        key = (ta_data.start_node[i], ta_data.end_node[i])
+        tapFlowsCar[key] = xl_car[i]
+        tapFlowsTruck[key] = xl_truck[i]
     end
     tapFlows["car"] = tapFlowsCar
     tapFlows["truck"] = tapFlowsTruck
 
     for j = 1:length(xl_car)
-	tapFlowVect[1,j] = xl_car[j]
-	tapFlowVect[2,j] = xl_truck[j]
+        tapFlowVect[1,j] = xl_car[j]
+        tapFlowVect[2,j] = xl_truck[j]
     end
 
     return tapFlows, tapFlowVect
