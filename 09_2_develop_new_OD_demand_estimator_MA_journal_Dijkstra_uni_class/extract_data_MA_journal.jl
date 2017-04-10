@@ -6,7 +6,7 @@ demandsDict[0] = iniDemand("../data_original/MA_journal_trips.txt")
 # get initial demands, indexed by 1
 demandsDict[1] = iniDemand("../data_original/MA_journal_trips.txt", 1)
 
-numNodes, numLinks, numODpairs, capacity, free_flow_time, ta_data = paraNetwork("MA_journal")
+numNodes, numLinks, numODpairs, capacity, free_flow_time, ta_data = paraNetwork("MA_journal_Apr_PM")
 link_label_dict, link_label_dict_, link_length_dict = furInfo()
 
 start_node = ta_data.start_node

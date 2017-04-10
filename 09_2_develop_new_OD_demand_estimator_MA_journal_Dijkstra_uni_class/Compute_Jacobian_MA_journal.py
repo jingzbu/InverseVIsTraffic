@@ -9,7 +9,7 @@ i = -9
 for line in MA_journal_flow_lines:
     i += 1
     if i > 0:
-        MA_journal_links.append(line.split('\t')[1:3])
+        MA_journal_links.append(line.split('  ')[1:3])
 numLinks = i
 
 link_list_js = [str(int(MA_journal_links[i][0])) + ',' + str(int(MA_journal_links[i][1])) for \
@@ -123,7 +123,7 @@ with open('./benchmark_data/MA_journal_net.txt', 'r') as f:
         if ';' in row:
             flag += 1
             if flag > 1:
-                link_length_list.append(float(row.split('\t')[4]))
+                link_length_list.append(float(row.split('  ')[5]))
 
 link_label_dict = zload('../temp_files/link_label_dict_MA_journal_network.pkz')
 link_label_dict_ = zload('../temp_files/link_label_dict_MA_journal_network_.pkz')
