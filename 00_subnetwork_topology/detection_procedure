@@ -1,14 +1,14 @@
 digraph G {
 	subgraph cluster_0 {
 		node [color=white style=filled]
-		style=filled
-		color=lightgrey
-				"historical data" -> "Probability Law &pi;" [label="statistical inference"]
+	style=filled
+	color=lightgrey
+			"historical data" -> "Probability Law &pi;" [label="statistical inference"]
 	}
 	subgraph cluster_1 {
 		node [style=filled]
-				"data in current detection window" -> "empirical Probability Law &nu;" [label=estimation]
-		color=blue
+			"data in current detection window" -> "empirical Probability Law &nu;" [label=estimation]
+	color=blue
 	}
 		"Probability Law &pi;" -> "Divergence between &nu; and &pi;, i.e., D(&nu;||&pi;)"
 		"empirical Probability Law &nu;" -> "Divergence between &nu; and &pi;, i.e., D(&nu;||&pi;)"
