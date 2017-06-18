@@ -54,7 +54,7 @@ function solveJacob(i_th, tapFlowVec, fcoeffs, capacity, free_flow_time, numLink
         @constraint(jacobi, sumDeltaX == d[i])
     end
 
-    @objective(jacobi, Min, sum{saVec[i] * (d[i])^2, i = 1:length(numLinks)})
+    @objective(jacobi, Min, sum(saVec[i] * (d[i])^2 for i = 1:length(numLinks)))
 
     solve(jacobi)
 
@@ -85,17 +85,17 @@ function solveJacobSpiess(i_th, numLinks, numODpairs, numRoutes, linkRoute, odPa
 end
 
 # compute the gradient
-function gradient(tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
+function gradient(gamma1, gamma2, demandsVec, demandsVec0, tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
     gradi = zeros(numODpairs)
     for i = 1:numODpairs
-        gradi[i] = sum([2 * (tapFlowVec[j] - observFlowVec[j]) * jacob[i, j] for j = 1:numLinks])
+        gradi[i] = 2 * gamma1 * (demandsVec[i] - demandsVec0[i]) + 2 * gamma2 * sum([(tapFlowVec[j] - observFlowVec[j]) * jacob[i, j] for j = 1:numLinks])
     end
     return gradi
 end
 
 # compute a descent direction
-function descDirec(tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
-    gradi = gradient(tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
+function descDirec(gamma1, gamma2, demandsVec, demandsVec0, tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
+    gradi = gradient(gamma1, gamma2, demandsVec, demandsVec0, tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
     h = similar(gradi)
     for i = 1:length(gradi)
         h[i] = -1 * gradi[i]
@@ -131,13 +131,13 @@ function thetaMax(demandsVec, searchDirect)
 end
 
 # Armijo line search and update
-function objF(demandsVec, fcoeffs)
+function objF(gamma1, gamma2, demandsVec, demandsVec0, fcoeffs)
     demandsDic = demandsVecToDic(demandsVec)
     tapFlowVec = tapMSA(demandsDic, fcoeffs)[2]
-    return sum([(tapFlowVec[a] - tapFlowVecDict[0][a])^2 for a = 1:length(tapFlowVec)])
+    return gamma1 * sum([(demandsVec[i] - demandsVec0[i])^2 for i = 1:length(demandsVec)]) + gamma2 * sum([(tapFlowVec[a] - tapFlowVecDict[0][a])^2 for a = 1:length(tapFlowVec)])
 end     
 
-function armijo(objFunOld, demandsVecOld, fcoeffs, searchDirec, thetaMax, Theta, N)
+function armijo(gamma1, gamma2, objFunOld, demandsVecOld, demandsVec0, fcoeffs, searchDirec, thetaMax, Theta, N)
     demandsVecList = Array{Float64}[]
     objFunList = Float64[]
     push!(demandsVecList, demandsVecOld)
@@ -148,7 +148,7 @@ function armijo(objFunOld, demandsVecOld, fcoeffs, searchDirec, thetaMax, Theta,
             demandsVecNew[i] = demandsVecOld[i] + (thetaMax/(Theta^n)) * searchDirec[i] 
         end
     	push!(demandsVecList, demandsVecNew)
-    	push!(objFunList, objF(demandsVecNew, fcoeffs))
+    	push!(objFunList, objF(gamma1, gamma2, demandsVecNew, demandsVec0, fcoeffs))
     end
     idx = indmin(objFunList)
     objFunNew = objFunList[idx]

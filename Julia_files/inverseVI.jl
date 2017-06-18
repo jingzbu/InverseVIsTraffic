@@ -36,8 +36,8 @@ function addResid(m, coeffs, ys, demands, arcs, scaling)
 	@variable(m, dual_cost)
 	@variable(m, primal_cost)
 
-	@constraint(m, dual_cost == sum{demands[(s,t)] * (ys[(s,t), t] - ys[(s,t), s]), (s,t)=keys(demands)})  
-	@constraint(m, primal_cost == sum{a.flow * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
+	@constraint(m, dual_cost == sum(demands[(s,t)] * (ys[(s,t), t] - ys[(s,t), s]) for (s,t)=keys(demands)))  
+	@constraint(m, primal_cost == sum(a.flow * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity) for a=values(arcs)))
 	@constraint(m, resid >= (primal_cost - dual_cost) / scaling)
 	@constraint(m, resid >= 0)
 
@@ -105,8 +105,8 @@ function train(lam::Float64, deg::Int, c::Float64, demands, arcs; fcoeffs=nothin
         fixCoeffs(m, fcoeffs, coeffs)
     end
     
-    @objective(m, Min, sum{resids[i], i = 1:length(resids)} 
-                            + lam * sum{coeffs[i] * coeffs[i] / normCoeffs[i], i=1:deg + 1})
+    @objective(m, Min, sum(resids[i] for i = 1:length(resids)) 
+                            + lam * sum(coeffs[i] * coeffs[i] / normCoeffs[i] for i=1:deg + 1))
     solve(m)
     
     return [getvalue(coeffs[i]) for i =1:length(coeffs)], getobjectivevalue(m)
