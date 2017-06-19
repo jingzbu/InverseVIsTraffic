@@ -12,7 +12,7 @@ Arc(initNode::Int, termNode::Int, capacity::Float64, freeflowtime::Float64) =
     Arc(initNode, termNode, capacity, freeflowtime, 0.)
 
 function arcData(arc_file)
-    arcs = Dict{(Int, Int), Arc}()
+    arcs = Dict()
     file = open(arc_file)
     inHeader=true
     for line in eachline(file)
@@ -21,7 +21,7 @@ function arcData(arc_file)
             continue
         end
         vals = split(line, )
-        arcs[(int(vals[1]), int(vals[2]))] = Arc(int(vals[1]), int(vals[2]), float(vals[3]), float(vals[5]))
+        arcs[(parse(Int, vals[1]), parse(Int, vals[2]))] = Arc(parse(Int, vals[1]), parse(Int, vals[2]), parse(Float64, vals[3]), parse(Float64, vals[5]))
     end
     close(file) 
     return arcs
@@ -41,7 +41,7 @@ end
 srand(1617)
 function iniDemand(trip_file, flag=0)
     file = open(trip_file)
-    demands = Dict{(Int64,Int64), Float64}()
+    demands = Dict()
     for s=1:numZones
 	for t=1:numZones
 	    demands[(s,t)] = 0
@@ -50,13 +50,13 @@ function iniDemand(trip_file, flag=0)
     s = 0
     for line in eachline(file)
         if contains(line, "Origin")
-            s = int(split(line)[2])
+            s = parse(Int, split(line)[2])
         else
             pairs = split(line, ";")
             for pair in pairs
                 if !contains(pair, "\n")
                     pair_vals = split(pair, ":")
-                    t, demand = int(pair_vals[1]), float(pair_vals[2])
+                    t, demand = parse(Int, pair_vals[1]), parse(Float64, pair_vals[2])
                     demands[(s,t)] = demand
                     if flag == 1
                         # perturb the ground truth demands slightly 
@@ -81,7 +81,7 @@ function demandsDicToVec(demandsDic)
 end
 
 function demandsVecToDic(demandsVec)
-    demandsDic = Dict{(Int64,Int64), Float64}()
+    demandsDic = Dict()
     for i = 1:numNodes
         demandsDic[(i, i)] = 0
     end
@@ -92,8 +92,6 @@ function demandsVecToDic(demandsVec)
 end
 
 # obtain important parameters of the network
-
-include("load_network_uni-class.jl")
 
 function paraNetwork(nameNetwork)
     ta_data = load_ta_network(nameNetwork)
@@ -108,7 +106,7 @@ end
 
 function tapFlowVecToLinkCostDict(tapFlowVec, fcoeffsInvVI)
     linkCostVec = BPR(tapFlowVec, fcoeffsInvVI)
-    temp_dict = Dict{}()
+    temp_dict = Dict()
     for i in 1:length(linkCostVec)
         temp_dict["$(i-1)"] = linkCostVec[i]
     end
@@ -131,7 +129,7 @@ function odPairRouteProb(tau, route_cost_vec, OD_pair_route_dict, numODpairs, nu
 
     # maximum(P[9,:])
 
-    P_dict = Dict{}()
+    P_dict = Dict()
     for i in 1:numODpairs
         for j in 1:numRoutes
             key = "$(i)-$(j)"
@@ -179,13 +177,13 @@ using JSON
 
 function furInfo()
 
-    link_label_dict = readall("../temp_files/link_label_dict_Tiergarten.json")
+    link_label_dict = readstring("../temp_files/link_label_dict_Tiergarten.json")
     link_label_dict = JSON.parse(link_label_dict)
 
-    link_label_dict_ = readall("../temp_files/link_label_dict_Tiergarten_.json")
+    link_label_dict_ = readstring("../temp_files/link_label_dict_Tiergarten_.json")
     link_label_dict_ = JSON.parse(link_label_dict_)
 
-    link_length_dict = readall("../temp_files/link_length_dict_Tiergarten.json")
+    link_length_dict = readstring("../temp_files/link_length_dict_Tiergarten.json")
     link_length_dict = JSON.parse(link_length_dict)
     
     return link_label_dict, link_label_dict_, link_length_dict
