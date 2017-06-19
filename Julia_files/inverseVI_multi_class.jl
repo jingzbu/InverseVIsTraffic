@@ -40,12 +40,12 @@ function addResid(m, coeffs, ys_car, ys_truck, demands_car, demands_truck, arcs,
     @variable(m, primal_cost_car)
     @variable(m, primal_cost_truck)
 
-    @constraint(m, dual_cost_car == sum{demands_car[(s,t)] * (ys_car[(s,t), t] - ys_car[(s,t), s]), (s,t)=keys(demands_car)})  
-    @constraint(m, dual_cost_truck == sum{demands_truck[(s,t)] * (ys_truck[(s,t), t] - ys_truck[(s,t), s]), (s,t)=keys(demands_truck)})  
+    @constraint(m, dual_cost_car == sum(demands_car[(s,t)] * (ys_car[(s,t), t] - ys_car[(s,t), s]) for (s,t)=keys(demands_car)))  
+    @constraint(m, dual_cost_truck == sum(demands_truck[(s,t)] * (ys_truck[(s,t), t] - ys_truck[(s,t), s]) for (s,t)=keys(demands_truck)))  
     @constraint(m, dual_cost == dual_cost_car + dual_cost_truck)
     
-    @constraint(m, primal_cost_car == sum{a.flow_car * 1.0 * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
-    @constraint(m, primal_cost_truck == sum{a.flow_truck * 1.1 * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity), a=values(arcs)})
+    @constraint(m, primal_cost_car == sum(a.flow_car * 1.0 * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity) for a=values(arcs)))
+    @constraint(m, primal_cost_truck == sum(a.flow_truck * 1.1 * a.freeflowtime * polyEval(coeffs, a.flow/a.capacity) for a=values(arcs)))
     @constraint(m, primal_cost == primal_cost_car + primal_cost_truck)
                    
     @constraint(m, resid >= (primal_cost - dual_cost) / scaling)
@@ -116,8 +116,8 @@ function train(lam::Float64, deg::Int, c::Float64, demands_car, demands_truck, a
     #add the residual for this data point
     push!(resids, addResid(m, coeffs, ys_car, ys_truck, demands_car, demands_truck, arcs, 1e6))
     
-    @objective(m, Min, sum{resids[i], i = 1:length(resids)} 
-                            + lam * sum{coeffs[i] * coeffs[i] / normCoeffs[i], i=1:deg + 1})
+    @objective(m, Min, sum(resids[i] for i = 1:length(resids))
+                            + lam * sum(coeffs[i] * coeffs[i] / normCoeffs[i] for i=1:deg + 1))
     solve(m)
     
     return [getvalue(coeffs[i]) for i =1:length(coeffs)], getobjectivevalue(m)

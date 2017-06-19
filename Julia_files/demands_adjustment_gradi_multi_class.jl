@@ -3,23 +3,23 @@ using Gurobi
 
 
 # compute the gradient
-function gradient(tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
+function gradient(gamma1, gamma2, demandsVecCar, demandsVecCar0, demandsVecTruck, demandsVecTruck0, tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
     gradi = zeros(2, numODpairs)
     for i = 1:numODpairs
-        gradi[1, i] = sum([2 * (tapFlowVec[1, j] - observFlowVec[1, j]) * jacob[i, j, 1] for j = 1:numLinks]) 
-	gradi[2, i] = sum([2 * (tapFlowVec[2, j] - observFlowVec[2, j]) * jacob[i, j, 2] for j = 1:numLinks]) 
+        gradi[1, i] = 2 * gamma1 * (demandsVecCar[i] - demandsVecCar0[i]) + 2 * gamma2 * sum([(tapFlowVec[1, j] - observFlowVec[1, j]) * jacob[i, j, 1] for j = 1:numLinks]) 
+        gradi[2, i] = 2 * gamma1 * (demandsVecTruck[i] - demandsVecTruck0[i]) + 2 * gamma2 * sum([(tapFlowVec[2, j] - observFlowVec[2, j]) * jacob[i, j, 2] for j = 1:numLinks]) 
     end
     return gradi
 end
 
 # compute a descent direction
-function descDirec(tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
-    gradi = gradient(tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
+function descDirec(gamma1, gamma2, demandsVecCar, demandsVecCar0, demandsVecTruck, demandsVecTruck0, tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
+    gradi = gradient(gamma1, gamma2, demandsVecCar, demandsVecCar0, demandsVecTruck, demandsVecTruck0, tapFlowVec, observFlowVec, jacob, numODpairs, numLinks)
     h = similar(gradi)
     for k = 1:size(gradi)[1]
-	for i = 1:size(gradi)[2]
-            h[k, i] = -1 * gradi[k, i]
-	end
+        for i = 1:size(gradi)[2]
+                h[k, i] = -1 * gradi[k, i]
+        end
     end
     return h
 end
@@ -60,14 +60,14 @@ function thetaMax(demandsVecCar, demandsVecTruck, searchDirect)
 end
 
 # Armijo line search and update
-function objF(demandsVecCar, demandsVecTruck, fcoeffs)
+function objF(gamma1, gamma2, demandsVecCar, demandsVecCar0, demandsVecTruck, demandsVecTruck0, fcoeffs)
     demandsDicCar = demandsVecToDic(demandsVecCar)
     demandsDicTruck = demandsVecToDic(demandsVecTruck)
     tapFlowVec = tapMSA_Multi(demandsDicCar, demandsDicTruck, fcoeffs)[2]
-    return sum([(tapFlowVec[1, j] - tapFlowVecDict[0][1, j])^2 for j = 1:numLinks]) + sum([(tapFlowVec[2, j] - tapFlowVecDict[0][2, j])^2 for j = 1:numLinks])
+    return gamma1 * sum([(demandsVecCar[i] - demandsVecCar0[i])^2 for i = 1:length(demandsVecCar)]) + gamma1 * sum([(demandsVecTruck[i] - demandsVecTruck0[i])^2 for i = 1:length(demandsVecTruck)]) + gamma2 * sum([(tapFlowVec[1, j] - tapFlowVecDict[0][1, j])^2 for j = 1:numLinks]) + gamma2 * sum([(tapFlowVec[2, j] - tapFlowVecDict[0][2, j])^2 for j = 1:numLinks])
 end     
 
-function armijo(objFunOld, demandsVecCarOld, demandsVecTruckOld, fcoeffs, searchDirec, thetaMax, Theta, N)
+function armijo(gamma1, gamma2, objFunOld, demandsVecCarOld, demandsVecTruckOld, demandsVecCar0, demandsVecTruck0, fcoeffs, searchDirec, thetaMax, Theta, N)
     demandsVecCarList = Array{Float64}[]
     demandsVecTruckList = Array{Float64}[]
     objFunList = Float64[]
@@ -85,7 +85,7 @@ function armijo(objFunOld, demandsVecCarOld, demandsVecTruckOld, fcoeffs, search
         end
     	push!(demandsVecCarList, demandsVecCarNew)
     	push!(demandsVecTruckList, demandsVecTruckNew)
-    	push!(objFunList, objF(demandsVecCarNew, demandsVecTruckNew, fcoeffs))
+    	push!(objFunList, objF(gamma1, gamma2, demandsVecCarNew, demandsVecCar0, demandsVecTruckNew, demandsVecTruck0, fcoeffs))
     end
     idx = indmin(objFunList)
     objFunNew = objFunList[idx]
