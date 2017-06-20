@@ -55,8 +55,8 @@ function iniDemand(trip_file, flag=0)
                     demands[(s,t)] = demand
                     if flag == 1
                         # perturb the ground truth demands slightly 
-                        # with perturbation factor uniformly distributed on [.8, 1.2)
-                        pert_fac = 1 + 0.2 * (1 - 2 * rand())
+                        # with perturbation factor uniformly distributed on [.9, 1.1)
+                        pert_fac = 1 + 0.1 * (1 - 2 * rand())
                         demands[(s,t)] = demand * pert_fac
                     end
                 end
