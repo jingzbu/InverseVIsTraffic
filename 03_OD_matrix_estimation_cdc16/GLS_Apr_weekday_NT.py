@@ -103,7 +103,7 @@ for link_idx in range(24):
 # print(len(link_day_minute_Apr_list))
 
 x = np.matrix(link_day_minute_Apr_list)
-x = np.matrix.reshape(x, 24, 2520)
+x = np.matrix.reshape(x, 24, 120 * len(week_day_Apr_list))
 
 x = np.nan_to_num(x)
 y = np.array(np.transpose(x))
