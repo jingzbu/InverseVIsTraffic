@@ -49,7 +49,7 @@ with open('../temp_files/path_link_incidence_MA_CDC.txt', 'r') as the_file:
                     A[j, i] = 1
             i = i + 1
     assert(i == r)
-zdump(A, '../temp_files/path_link_incidence_MA_CDCtrix_MA.pkz')
+zdump(A, '../temp_files/path-link_incidence_matrix_MA.pkz')
 
 # link_length_dict['0'].length
 

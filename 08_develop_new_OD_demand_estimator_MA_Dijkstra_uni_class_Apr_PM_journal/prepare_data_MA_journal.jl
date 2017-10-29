@@ -94,7 +94,7 @@ end
 
 # obtain important parameters of the network
 
-include("load_network_uni-class.jl")
+include("load_network_uni_class.jl")
 
 function paraNetwork(nameNetwork)
     ta_data = load_ta_network(nameNetwork)

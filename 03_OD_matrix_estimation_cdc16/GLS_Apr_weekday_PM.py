@@ -87,6 +87,8 @@ P = np.matrix(P)
 # load path-link incidence matrix
 A = zload('../temp_files/path-link_incidence_matrix_MA.pkz')
 
+# print(np.size(A,0), np.size(A,1))
+
 # load link counts data
 with open('../temp_files/link_day_minute_Apr_dict_JSON.json', 'r') as json_file:
     link_day_minute_Apr_dict_JSON = json.load(json_file)

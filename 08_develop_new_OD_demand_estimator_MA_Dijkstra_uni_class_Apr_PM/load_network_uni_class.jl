@@ -88,9 +88,9 @@ function load_ta_network(network_name="Sioux Falls")
         network_data_file = "East_Massachusetts_net_Apr_PM.txt"
         trip_table_file = "East_Massachusetts_trips_Apr_PM.txt"
         best_objective = 0
-    elseif network_name == "MA"
-        network_data_file = "MA_net.txt"
-        trip_table_file = "MA_trips.txt"
+    elseif network_name == "EMA_IFAC_Apr_PM"
+        network_data_file = "East_Massachusetts_net_Apr_PM_ext.txt"
+        trip_table_file = "East_Massachusetts_trips_Apr_PM_ext.txt"
         best_objective = 0
     elseif network_name == "East_Massachusetts_Apr_NT"
         network_data_file = "East_Massachusetts_net_Apr_NT.txt"
@@ -151,8 +151,8 @@ function load_ta_network(network_name="Sioux Falls")
     end
 
 
-    network_data_file = joinpath("../data_traffic_assignment_uni-class", network_data_file)
-    trip_table_file = joinpath("../data_traffic_assignment_uni-class", trip_table_file)
+    network_data_file = joinpath("../data_traffic_assignment_uni_class", network_data_file)
+    trip_table_file = joinpath("../data_traffic_assignment_uni_class", trip_table_file)
 
 
 
@@ -171,13 +171,13 @@ function load_ta_network(network_name="Sioux Falls")
 
     while (line=readline(n)) != ""
         if contains(line, "<NUMBER OF ZONES>")
-            number_of_zones = parseint( line[ search(line, '>')+1 : end-1 ] )
+            number_of_zones = parse( Int, line[ search(line, '>')+1 : end-1 ] )
         elseif contains(line, "<NUMBER OF NODES>")
-            number_of_nodes = parseint( line[ search(line, '>')+1 : end-1 ] )
+            number_of_nodes = parse( Int, line[ search(line, '>')+1 : end-1 ] )
         elseif contains(line, "<FIRST THRU NODE>")
-            first_thru_node = parseint( line[ search(line, '>')+1 : end-1 ] )
+            first_thru_node = parse( Int, line[ search(line, '>')+1 : end-1 ] )
         elseif contains(line, "<NUMBER OF LINKS>")
-            number_of_links = parseint( line[ search(line, '>')+1 : end-1 ] )
+            number_of_links = parse( Int, line[ search(line, '>')+1 : end-1 ] )
         elseif contains(line, "<END OF METADATA>")
             break
         end
@@ -208,16 +208,16 @@ function load_ta_network(network_name="Sioux Falls")
 
             numbers = split(line)
 
-            start_node[idx] = parseint(numbers[1])
-            end_node[idx] = parseint(numbers[2])
-            capacity[idx] = parsefloat(numbers[3])
-            link_length[idx] = parsefloat(numbers[4])
-            free_flow_time[idx] = parsefloat(numbers[5])
-            B[idx] = parsefloat(numbers[6])
-            power[idx] = parsefloat(numbers[7])
-            speed_limit[idx] = parsefloat(numbers[8])
-            toll[idx] = parsefloat(numbers[9])
-            link_type[idx] = parsefloat(numbers[10])
+            start_node[idx] = parse(Int, numbers[1])
+            end_node[idx] = parse(Int, numbers[2])
+            capacity[idx] = parse(Float64, numbers[3])
+            link_length[idx] = parse(Float64, numbers[4])
+            free_flow_time[idx] = parse(Float64, numbers[5])
+            B[idx] = parse(Float64, numbers[6])
+            power[idx] = parse(Float64, numbers[7])
+            speed_limit[idx] = parse(Float64, numbers[8])
+            toll[idx] = parse(Float64, numbers[9])
+            link_type[idx] = parse(Float64, numbers[10])
 
             idx = idx + 1
         end
@@ -234,9 +234,9 @@ function load_ta_network(network_name="Sioux Falls")
 
     while (line=readline(f)) != ""
         if contains(line, "<NUMBER OF ZONES>")
-            number_of_zones_trip = parseint( line[ search(line, '>')+1 : end-1 ] )
+            number_of_zones_trip = parse( Int, line[ search(line, '>')+1 : end-1 ] )
         elseif contains(line, "<TOTAL OD FLOW>")
-            total_od_flow = parsefloat( line[ search(line, '>')+1 : end-1 ] )
+            total_od_flow = parse( Float64, line[ search(line, '>')+1 : end-1 ] )
         elseif contains(line, "<END OF METADATA>")
             break
         end
@@ -245,17 +245,17 @@ function load_ta_network(network_name="Sioux Falls")
     @assert number_of_zones_trip == number_of_zones # Check if number_of_zone is same in both txt files
 
     travel_demand = zeros(number_of_zones, number_of_zones)
-    od_pairs = Array((Int64,Int64),0)
+    od_pairs = []
     while (line=readline(f)) != ""
         if contains(line, "Origin")
-            origin = parseint( split(line)[2] )
+            origin = parse( Int, split(line)[2] )
         elseif contains(line, ";")
             pairs = split(line, ";")
             for i=1:size(pairs)[1]
                 if contains(pairs[i], ":")
                     pair = split(pairs[i], ":")
-                    destination = parseint( strip(pair[1]) )
-                    od_flow = parsefloat( strip(pair[2]) )
+                    destination = parse( Int, strip(pair[1]) )
+                    od_flow = parse( Float64, strip(pair[2]) )
                     travel_demand[origin, destination] = od_flow
                     push!(od_pairs, (origin, destination))
                     # println("origin=$origin, destination=$destination, flow=$od_flow")

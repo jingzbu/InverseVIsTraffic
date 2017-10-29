@@ -91,7 +91,9 @@ A = zload('../temp_files/path-link_incidence_matrix_MA.pkz')
 with open('../temp_files/link_day_minute_Oct_dict_JSON.json', 'r') as json_file:
     link_day_minute_Oct_dict_JSON = json.load(json_file)
 
-week_day_Oct_list = [1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26, 29, 30, 31]
+# week_day_Oct_list = [1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26, 29, 30, 31]
+week_day_Oct_list = [5, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26, 29]
+
 
 link_day_minute_Oct_list = []
 for link_idx in range(24):
@@ -103,7 +105,7 @@ for link_idx in range(24):
 # print(len(link_day_minute_Oct_list))
 
 x = np.matrix(link_day_minute_Oct_list)
-x = np.matrix.reshape(x, 24, 2760)
+x = np.matrix.reshape(x, 24, 120 * len(week_day_Oct_list))
 
 x = np.nan_to_num(x)
 y = np.array(np.transpose(x))
